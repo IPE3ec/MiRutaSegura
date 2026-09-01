@@ -1,0 +1,634 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Sistema de transporte escolar en tiempo real">
+
+    <title>Transporte Escolar</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .app {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            margin: auto;
+            background: #ffffff;
+            position: relative;
+            padding-bottom: 80px;
+        }
+
+        /* ENCABEZADO */
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 22px 20px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .notification {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .welcome {
+            margin-top: 20px;
+        }
+
+        .welcome small {
+            opacity: 0.85;
+        }
+
+        .welcome h2 {
+            margin-top: 5px;
+            font-size: 24px;
+        }
+
+        /* CONTENIDO */
+        .content {
+            padding: 20px;
+        }
+
+        /* ESTADO */
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ecfdf5;
+            border: 1px solid #bbf7d0;
+            padding: 14px;
+            border-radius: 15px;
+            margin-bottom: 18px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        .status strong {
+            color: #15803d;
+        }
+
+        .status span {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        /* MAPA */
+        .map-container {
+            position: relative;
+            height: 300px;
+            background: #dbeafe;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Calles simuladas */
+        .road {
+            position: absolute;
+            background: #ffffff;
+        }
+
+        .road.horizontal {
+            height: 30px;
+            width: 120%;
+            left: -10%;
+            transform: rotate(-12deg);
+            top: 48%;
+        }
+
+        .road.horizontal2 {
+            height: 20px;
+            width: 120%;
+            left: -10%;
+            transform: rotate(18deg);
+            top: 70%;
+        }
+
+        .road.vertical {
+            width: 25px;
+            height: 120%;
+            top: -10%;
+            left: 48%;
+            transform: rotate(15deg);
+        }
+
+        .road.vertical2 {
+            width: 18px;
+            height: 120%;
+            top: -10%;
+            left: 22%;
+            transform: rotate(-20deg);
+        }
+
+        /* RUTA */
+        .route {
+            position: absolute;
+            width: 65%;
+            height: 4px;
+            background: #2563eb;
+            top: 48%;
+            left: 18%;
+            transform: rotate(-18deg);
+            border-radius: 5px;
+        }
+
+        /* BUS */
+        .bus {
+            position: absolute;
+            top: 43%;
+            left: 45%;
+            width: 50px;
+            height: 50px;
+            background: #2563eb;
+            border: 4px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            z-index: 5;
+        }
+
+        /* PARADA */
+        .stop {
+            position: absolute;
+            bottom: 45px;
+            right: 35px;
+            width: 42px;
+            height: 42px;
+            background: #ef4444;
+            border: 4px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .map-label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        /* ETA */
+        .eta-card {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 18px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .eta-title {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .eta-time {
+            font-size: 40px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 5px 0;
+        }
+
+        .eta-subtitle {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* ESTUDIANTE */
+        .student-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .student-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-avatar {
+            width: 55px;
+            height: 55px;
+            background: #dbeafe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .student-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .student-grade {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .student-status {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f0fdf4;
+            color: #15803d;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* PARADA */
+        .stop-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .stop-icon {
+            width: 42px;
+            height: 42px;
+            background: #fee2e2;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stop-info strong {
+            font-size: 14px;
+        }
+
+        .stop-info span {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        /* BOTÓN */
+        .main-button {
+            width: 100%;
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .main-button:active {
+            transform: scale(0.98);
+        }
+
+        /* MENÚ INFERIOR */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            height: 70px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #64748b;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .nav-item div {
+            font-size: 22px;
+            margin-bottom: 3px;
+        }
+
+        .nav-item.active {
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        /* ESCRITORIO */
+        @media (min-width: 600px) {
+            body {
+                padding: 20px;
+            }
+
+            .app {
+                border-radius: 25px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+
+            .bottom-nav {
+                position: fixed;
+                bottom: 20px;
+                border-radius: 0 0 25px 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ENCABEZADO -->
+    <header class="header">
+
+        <div class="header-top">
+
+            <div class="logo">
+                🚌 Mi Transporte
+            </div>
+
+            <div class="notification" onclick="mostrarNotificacion()">
+                🔔
+            </div>
+
+        </div>
+
+        <div class="welcome">
+            <small>Bienvenido</small>
+            <h2>Familia Pérez</h2>
+        </div>
+
+    </header>
+
+
+    <!-- CONTENIDO -->
+    <main class="content">
+
+        <!-- ESTADO DEL TRANSPORTE -->
+        <div class="status">
+
+            <div class="status-dot"></div>
+
+            <div>
+                <strong>Transporte en recorrido</strong>
+                <span>Última actualización: hace pocos segundos</span>
+            </div>
+
+        </div>
+
+
+        <!-- MAPA -->
+        <div class="map-container">
+
+            <div class="map-label">
+                📍 Recorrido en tiempo real
+            </div>
+
+            <div class="road horizontal"></div>
+            <div class="road horizontal2"></div>
+            <div class="road vertical"></div>
+            <div class="road vertical2"></div>
+
+            <div class="route"></div>
+
+            <div class="bus">
+                🚌
+            </div>
+
+            <div class="stop">
+                🏠
+            </div>
+
+        </div>
+
+
+        <!-- ETA -->
+        <div class="eta-card">
+
+            <div class="eta-title">
+                Tiempo estimado de llegada
+            </div>
+
+            <div class="eta-time" id="eta">
+                08 min
+            </div>
+
+            <div class="eta-subtitle">
+                El transporte llegará aproximadamente a las 13:35
+            </div>
+
+        </div>
+
+
+        <!-- ESTUDIANTE -->
+        <div class="student-card">
+
+            <div class="student-header">
+
+                <div class="student-avatar">
+                    👦
+                </div>
+
+                <div>
+                    <div class="student-name">
+                        Juan Pérez
+                    </div>
+
+                    <div class="student-grade">
+                        5.º Básica
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="student-status">
+                🟢 Estudiante en camino
+            </div>
+
+
+            <div class="stop-info">
+
+                <div class="stop-icon">
+                    🏠
+                </div>
+
+                <div>
+                    <strong>Parada asignada</strong>
+                    <span>Av. Principal y Calle 5</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTÓN -->
+        <button class="main-button" onclick="verRecorrido()">
+            🗺️ Ver recorrido completo
+        </button>
+
+    </main>
+
+
+    <!-- MENÚ -->
+    <nav class="bottom-nav">
+
+        <div class="nav-item active" onclick="inicio()">
+            <div>🏠</div>
+            Inicio
+        </div>
+
+        <div class="nav-item" onclick="verRecorrido()">
+            <div>🗺️</div>
+            Recorrido
+        </div>
+
+        <div class="nav-item" onclick="mostrarNotificacion()">
+            <div>🔔</div>
+            Alertas
+        </div>
+
+        <div class="nav-item" onclick="perfil()">
+            <div>👤</div>
+            Perfil
+        </div>
+
+    </nav>
+
+</div>
+
+
+<script>
+
+    /* NOTIFICACIONES */
+    function mostrarNotificacion() {
+
+        alert(
+            "🔔 No tienes nuevas notificaciones."
+        );
+
+    }
+
+
+    /* RECORRIDO */
+    function verRecorrido() {
+
+        alert(
+            "🗺️ Aquí mostraremos el recorrido completo del transporte."
+        );
+
+    }
+
+
+    /* INICIO */
+    function inicio() {
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    /* PERFIL */
+    function perfil() {
+
+        alert(
+            "👤 Perfil de Familia Pérez"
+        );
+
+    }
+
+
+    /*
+        SIMULACIÓN DEL TIEMPO DE LLEGADA
+
+        Posteriormente este valor será calculado
+        automáticamente utilizando la ubicación
+        GPS real del transporte.
+    */
+
+    let minutos = 8;
+
+    setInterval(function () {
+
+        if (minutos > 1) {
+
+            minutos--;
+
+            document.getElementById("eta").innerText =
+                minutos + " min";
+
+        }
+
+    }, 60000);
+
+</script>
+
+</body>
+</html>
+```
