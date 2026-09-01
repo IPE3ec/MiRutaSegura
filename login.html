@@ -1,0 +1,797 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#2563eb">
+
+    <meta name="description"
+          content="Acceso al sistema de transporte escolar">
+
+    <title>Iniciar sesión - Mi Transporte</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #1d4ed8
+                );
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+        }
+
+
+        .login-container {
+
+            width: 100%;
+
+            max-width: 420px;
+
+        }
+
+
+        /* LOGO */
+
+        .logo {
+
+            text-align: center;
+
+            color: white;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .logo-icon {
+
+            width: 80px;
+
+            height: 80px;
+
+            background: white;
+
+            border-radius: 25px;
+
+            margin: auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 42px;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0,0,0,0.15);
+
+        }
+
+
+        .logo h1 {
+
+            margin-top: 15px;
+
+            font-size: 28px;
+
+        }
+
+
+        .logo p {
+
+            margin-top: 6px;
+
+            opacity: 0.85;
+
+            font-size: 14px;
+
+        }
+
+
+        /* CARD */
+
+        .login-card {
+
+            background: white;
+
+            border-radius: 25px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(0,0,0,0.20);
+
+        }
+
+
+        .login-card h2 {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+
+            color: #1e293b;
+
+        }
+
+
+        /* CAMPOS */
+
+        .form-group {
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: #334155;
+
+        }
+
+
+        .input {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 12px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.2s;
+
+        }
+
+
+        .input:focus {
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37,99,235,0.10);
+
+        }
+
+
+        /* PASSWORD */
+
+        .password-container {
+
+            position: relative;
+
+        }
+
+
+        .password-container .input {
+
+            padding-right: 50px;
+
+        }
+
+
+        .show-password {
+
+            position: absolute;
+
+            right: 14px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: none;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+        }
+
+
+        /* RECORDAR */
+
+        .options {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 22px;
+
+            font-size: 13px;
+
+        }
+
+
+        .remember {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+        }
+
+
+        .forgot {
+
+            color: #2563eb;
+
+            cursor: pointer;
+
+        }
+
+
+        /* BOTÓN */
+
+        .login-button {
+
+            width: 100%;
+
+            border: none;
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 15px;
+
+            border-radius: 13px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .login-button:hover {
+
+            background: #1d4ed8;
+
+        }
+
+
+        .login-button:active {
+
+            transform: scale(0.98);
+
+        }
+
+
+        /* SEPARADOR */
+
+        .separator {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin: 25px 0;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+        }
+
+
+        .separator::before,
+        .separator::after {
+
+            content: "";
+
+            height: 1px;
+
+            background: #e2e8f0;
+
+            flex: 1;
+
+        }
+
+
+        /* AYUDA */
+
+        .help {
+
+            text-align: center;
+
+            font-size: 13px;
+
+            color: #64748b;
+
+        }
+
+
+        .help strong {
+
+            color: #2563eb;
+
+            cursor: pointer;
+
+        }
+
+
+        /* FOOTER */
+
+        .footer {
+
+            text-align: center;
+
+            color: white;
+
+            font-size: 11px;
+
+            margin-top: 20px;
+
+            opacity: 0.8;
+
+        }
+
+
+        /* ERROR */
+
+        .error {
+
+            display: none;
+
+            background: #fee2e2;
+
+            color: #b91c1c;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            font-size: 13px;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        /* RESPONSIVE */
+
+        @media (max-width: 400px) {
+
+            .login-card {
+
+                padding: 23px;
+
+            }
+
+            .logo h1 {
+
+                font-size: 24px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-container">
+
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🚌
+        </div>
+
+        <h1>
+            Mi Transporte
+        </h1>
+
+        <p>
+            Transporte escolar en tiempo real
+        </p>
+
+    </div>
+
+
+
+    <!-- LOGIN -->
+
+    <div class="login-card">
+
+        <h2>
+            Iniciar sesión
+        </h2>
+
+
+        <!-- ERROR -->
+
+        <div
+            class="error"
+            id="error">
+
+            ⚠️ Correo o contraseña incorrectos.
+
+        </div>
+
+
+        <!-- FORMULARIO -->
+
+        <form
+            id="loginForm">
+
+
+            <!-- CORREO -->
+
+            <div class="form-group">
+
+                <label>
+                    Correo electrónico
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    class="input"
+                    placeholder="correo@ejemplo.com"
+                    required>
+
+            </div>
+
+
+
+            <!-- CONTRASEÑA -->
+
+            <div class="form-group">
+
+                <label>
+                    Contraseña
+                </label>
+
+
+                <div
+                    class="password-container">
+
+                    <input
+                        type="password"
+                        id="password"
+                        class="input"
+                        placeholder="Ingrese su contraseña"
+                        required>
+
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        onclick="mostrarPassword()">
+
+                        👁️
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- OPCIONES -->
+
+            <div class="options">
+
+                <label class="remember">
+
+                    <input
+                        type="checkbox"
+                        id="remember">
+
+                    Recordarme
+
+                </label>
+
+
+                <span
+                    class="forgot"
+                    onclick="recuperarPassword()">
+
+                    ¿Olvidaste tu contraseña?
+
+                </span>
+
+            </div>
+
+
+
+            <!-- BOTÓN -->
+
+            <button
+                type="submit"
+                class="login-button">
+
+                🔐 Ingresar
+
+            </button>
+
+
+        </form>
+
+
+
+        <!-- SEPARADOR -->
+
+        <div class="separator">
+
+            o
+
+        </div>
+
+
+
+        <!-- AYUDA -->
+
+        <div class="help">
+
+            ¿No tienes una cuenta?
+
+            <strong
+                onclick="contactarAdministrador()">
+
+                Solicitar acceso
+
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+
+        © 2026 Mi Transporte Escolar
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* ============================
+   MOSTRAR CONTRASEÑA
+============================ */
+
+function mostrarPassword() {
+
+    const password =
+        document.getElementById("password");
+
+    const button =
+        document.querySelector(
+            ".show-password"
+        );
+
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        button.innerText = "🙈";
+
+    } else {
+
+        password.type = "password";
+
+        button.innerText = "👁️";
+
+    }
+
+}
+
+
+
+/* ============================
+   LOGIN
+============================ */
+
+document
+    .getElementById("loginForm")
+    .addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const email =
+                document
+                .getElementById("email")
+                .value;
+
+
+            const password =
+                document
+                .getElementById("password")
+                .value;
+
+
+            const error =
+                document
+                .getElementById("error");
+
+
+            /*
+                LOGIN TEMPORAL
+
+                Más adelante aquí
+                conectaremos el backend.
+
+                Por ahora:
+
+                administrador:
+                admin@transporte.com
+
+                conductor:
+                conductor@transporte.com
+
+                padre:
+                padre@transporte.com
+
+                contraseña:
+                123456
+            */
+
+
+            if (
+                password === "123456"
+            ) {
+
+
+                if (
+                    email ===
+                    "admin@transporte.com"
+                ) {
+
+                    window.location.href =
+                        "admin.html";
+
+                    return;
+
+                }
+
+
+                if (
+                    email ===
+                    "conductor@transporte.com"
+                ) {
+
+                    window.location.href =
+                        "conductor.html";
+
+                    return;
+
+                }
+
+
+                if (
+                    email ===
+                    "padre@transporte.com"
+                ) {
+
+                    window.location.href =
+                        "index.html";
+
+                    return;
+
+                }
+
+            }
+
+
+            error.style.display =
+                "block";
+
+        }
+    );
+
+
+
+/* ============================
+   RECUPERAR PASSWORD
+============================ */
+
+function recuperarPassword() {
+
+    alert(
+        "📧 En la versión final podrás recuperar tu contraseña mediante tu correo electrónico."
+    );
+
+}
+
+
+
+/* ============================
+   SOLICITAR ACCESO
+============================ */
+
+function contactarAdministrador() {
+
+    alert(
+        "👨‍💼 Solicita al administrador de la institución que cree tu cuenta."
+    );
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
+```
