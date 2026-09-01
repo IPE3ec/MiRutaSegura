@@ -3,631 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="theme-color" content="#2563eb">
-    <meta name="description" content="Sistema de transporte escolar en tiempo real">
-
-    <title>Transporte Escolar</title>
-
+    <meta name="description" content="Mi Ruta Segura - transporte escolar con acceso para padres, conductor y administrador">
+    <title>Mi Ruta Segura</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        body {
-            background: #f1f5f9;
-            color: #1e293b;
-        }
-
-        /* CONTENEDOR PRINCIPAL */
-        .app {
-            width: 100%;
-            max-width: 480px;
-            min-height: 100vh;
-            margin: auto;
-            background: #ffffff;
-            position: relative;
-            padding-bottom: 80px;
-        }
-
-        /* ENCABEZADO */
-        .header {
-            background: #2563eb;
-            color: white;
-            padding: 22px 20px;
-            border-radius: 0 0 25px 25px;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .notification {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .welcome {
-            margin-top: 20px;
-        }
-
-        .welcome small {
-            opacity: 0.85;
-        }
-
-        .welcome h2 {
-            margin-top: 5px;
-            font-size: 24px;
-        }
-
-        /* CONTENIDO */
-        .content {
-            padding: 20px;
-        }
-
-        /* ESTADO */
-        .status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #ecfdf5;
-            border: 1px solid #bbf7d0;
-            padding: 14px;
-            border-radius: 15px;
-            margin-bottom: 18px;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            background: #22c55e;
-            border-radius: 50%;
-        }
-
-        .status strong {
-            color: #15803d;
-        }
-
-        .status span {
-            display: block;
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 3px;
-        }
-
-        /* MAPA */
-        .map-container {
-            position: relative;
-            height: 300px;
-            background: #dbeafe;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            border: 1px solid #bfdbfe;
-        }
-
-        /* Calles simuladas */
-        .road {
-            position: absolute;
-            background: #ffffff;
-        }
-
-        .road.horizontal {
-            height: 30px;
-            width: 120%;
-            left: -10%;
-            transform: rotate(-12deg);
-            top: 48%;
-        }
-
-        .road.horizontal2 {
-            height: 20px;
-            width: 120%;
-            left: -10%;
-            transform: rotate(18deg);
-            top: 70%;
-        }
-
-        .road.vertical {
-            width: 25px;
-            height: 120%;
-            top: -10%;
-            left: 48%;
-            transform: rotate(15deg);
-        }
-
-        .road.vertical2 {
-            width: 18px;
-            height: 120%;
-            top: -10%;
-            left: 22%;
-            transform: rotate(-20deg);
-        }
-
-        /* RUTA */
-        .route {
-            position: absolute;
-            width: 65%;
-            height: 4px;
-            background: #2563eb;
-            top: 48%;
-            left: 18%;
-            transform: rotate(-18deg);
-            border-radius: 5px;
-        }
-
-        /* BUS */
-        .bus {
-            position: absolute;
-            top: 43%;
-            left: 45%;
-            width: 50px;
-            height: 50px;
-            background: #2563eb;
-            border: 4px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            z-index: 5;
-        }
-
-        /* PARADA */
-        .stop {
-            position: absolute;
-            bottom: 45px;
-            right: 35px;
-            width: 42px;
-            height: 42px;
-            background: #ef4444;
-            border: 4px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        .map-label {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: white;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
-
-        /* ETA */
-        .eta-card {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 18px;
-            padding: 18px;
-            text-align: center;
-            margin-bottom: 18px;
-        }
-
-        .eta-title {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .eta-time {
-            font-size: 40px;
-            font-weight: bold;
-            color: #2563eb;
-            margin: 5px 0;
-        }
-
-        .eta-subtitle {
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        /* ESTUDIANTE */
-        .student-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
-            padding: 18px;
-            margin-bottom: 18px;
-        }
-
-        .student-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .student-avatar {
-            width: 55px;
-            height: 55px;
-            background: #dbeafe;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-
-        .student-name {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .student-grade {
-            color: #64748b;
-            font-size: 13px;
-            margin-top: 3px;
-        }
-
-        .student-status {
-            margin-top: 15px;
-            padding: 12px;
-            background: #f0fdf4;
-            color: #15803d;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        /* PARADA */
-        .stop-info {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .stop-icon {
-            width: 42px;
-            height: 42px;
-            background: #fee2e2;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .stop-info strong {
-            font-size: 14px;
-        }
-
-        .stop-info span {
-            display: block;
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 3px;
-        }
-
-        /* BOTÓN */
-        .main-button {
-            width: 100%;
-            border: none;
-            background: #2563eb;
-            color: white;
-            padding: 15px;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .main-button:active {
-            transform: scale(0.98);
-        }
-
-        /* MENÚ INFERIOR */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 480px;
-            height: 70px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .nav-item {
-            text-align: center;
-            color: #64748b;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .nav-item div {
-            font-size: 22px;
-            margin-bottom: 3px;
-        }
-
-        .nav-item.active {
-            color: #2563eb;
-            font-weight: bold;
-        }
-
-        /* ESCRITORIO */
-        @media (min-width: 600px) {
-            body {
-                padding: 20px;
-            }
-
-            .app {
-                border-radius: 25px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-                overflow: hidden;
-            }
-
-            .bottom-nav {
-                position: fixed;
-                bottom: 20px;
-                border-radius: 0 0 25px 25px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+        body { background: #e5e7eb; color: #1e293b; }
+        .app { width: 100%; max-width: 480px; min-height: 100vh; margin: auto; background: #fff; position: relative; padding-bottom: 86px; }
+        .header { background: #2563eb; color: #fff; padding: 22px 20px; border-radius: 0 0 25px 25px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .logo { font-size: 22px; font-weight: 700; }
+        .icon-button { width: 40px; height: 40px; background: rgba(255,255,255,.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; border: none; color: inherit; }
+        .welcome { margin-top: 18px; }
+        .welcome small { opacity: .86; }
+        .welcome h2 { margin-top: 5px; font-size: 24px; line-height: 1.2; }
+        .content { padding: 20px; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .login-wrap { min-height: 100vh; display: grid; align-items: center; padding: 24px 20px; background: linear-gradient(180deg, #2563eb 0%, #2563eb 34%, #fff 34%, #fff 100%); }
+        .login-card { background: #fff; border: 1px solid #dbeafe; border-radius: 22px; padding: 22px; box-shadow: 0 20px 50px rgba(37,99,235,.18); }
+        .login-brand { color: #fff; margin-bottom: 28px; }
+        .login-brand h1 { font-size: 30px; line-height: 1.1; }
+        .login-brand p { margin-top: 8px; opacity: .9; line-height: 1.35; }
+        .login-card h2 { font-size: 20px; margin-bottom: 6px; }
+        .login-card > p { color: #64748b; font-size: 14px; line-height: 1.4; margin-bottom: 16px; }
+        .status { display: flex; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid #bbf7d0; padding: 14px; border-radius: 15px; margin-bottom: 18px; }
+        .status.paused { background: #fff7ed; border-color: #fed7aa; }
+        .status-dot { width: 12px; height: 12px; background: #22c55e; border-radius: 50%; flex: 0 0 auto; }
+        .status.paused .status-dot { background: #f97316; }
+        .status strong { color: #15803d; }
+        .status.paused strong { color: #c2410c; }
+        .status span { display: block; font-size: 12px; color: #64748b; margin-top: 3px; }
+        .map-container { position: relative; height: 300px; background: #dbeafe; border-radius: 20px; overflow: hidden; margin-bottom: 20px; border: 1px solid #bfdbfe; }
+        .road { position: absolute; background: #fff; box-shadow: inset 0 0 0 1px rgba(37,99,235,.05); }
+        .road.horizontal { height: 30px; width: 120%; left: -10%; transform: rotate(-12deg); top: 48%; }
+        .road.horizontal2 { height: 20px; width: 120%; left: -10%; transform: rotate(18deg); top: 70%; }
+        .road.vertical { width: 25px; height: 120%; top: -10%; left: 48%; transform: rotate(15deg); }
+        .road.vertical2 { width: 18px; height: 120%; top: -10%; left: 22%; transform: rotate(-20deg); }
+        .route { position: absolute; width: 65%; height: 4px; background: #2563eb; top: 48%; left: 18%; transform: rotate(-18deg); border-radius: 5px; z-index: 2; }
+        .route::after { content: ""; position: absolute; right: -1px; top: 50%; width: 10px; height: 10px; border-radius: 50%; background: #2563eb; transform: translateY(-50%); }
+        .bus { position: absolute; top: 43%; left: 45%; width: 50px; height: 50px; background: #2563eb; border: 4px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 4px 12px rgba(0,0,0,.25); z-index: 5; transition: left .35s ease, top .35s ease; }
+        .stop { position: absolute; bottom: 45px; right: 35px; width: 42px; height: 42px; background: #ef4444; border: 4px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,.2); z-index: 4; }
+        .map-label { position: absolute; top: 15px; left: 15px; background: #fff; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,.1); z-index: 10; }
+        .eta-card { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 18px; padding: 18px; text-align: center; margin-bottom: 18px; }
+        .eta-title { font-size: 14px; color: #64748b; }
+        .eta-time { font-size: 40px; font-weight: 700; color: #2563eb; margin: 5px 0; }
+        .eta-subtitle { font-size: 13px; color: #64748b; }
+        .student-card, .info-card, .admin-card { border: 1px solid #e2e8f0; border-radius: 18px; padding: 18px; margin-bottom: 18px; background: #fff; }
+        .student-header { display: flex; align-items: center; gap: 12px; }
+        .student-avatar { width: 55px; height: 55px; background: #dbeafe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; flex: 0 0 auto; }
+        .student-name { font-size: 18px; font-weight: 700; }
+        .student-grade { color: #64748b; font-size: 13px; margin-top: 3px; }
+        .student-status { margin-top: 15px; padding: 12px; background: #f0fdf4; color: #15803d; border-radius: 10px; font-size: 14px; font-weight: 700; }
+        .row { display: flex; gap: 12px; align-items: center; margin-top: 15px; }
+        .row-icon { width: 42px; height: 42px; background: #fee2e2; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: 0 0 auto; }
+        .row-icon.blue { background: #dbeafe; } .row-icon.green { background: #dcfce7; } .row-icon.yellow { background: #fef3c7; } .row-icon.purple { background: #ede9fe; }
+        .row strong { font-size: 14px; } .row span { display: block; font-size: 12px; color: #64748b; margin-top: 3px; line-height: 1.35; }
+        .button-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+        button { font: inherit; }
+        .main-button, .secondary-button, .danger-button, .ghost-button { width: 100%; border: none; color: #fff; padding: 14px 12px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; min-height: 48px; }
+        .main-button { background: #2563eb; } .secondary-button { background: #0f766e; } .danger-button { background: #ef4444; } .ghost-button { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+        .main-button:active, .secondary-button:active, .danger-button:active, .ghost-button:active, .nav-item:active { transform: scale(.98); }
+        .form-grid { display: grid; gap: 10px; margin-top: 14px; }
+        input, select, textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; font-size: 14px; color: #1e293b; background: #fff; }
+        textarea { min-height: 82px; resize: vertical; }
+        label { display: grid; gap: 6px; font-size: 12px; font-weight: 700; color: #475569; }
+        .mini-title { font-size: 13px; color: #64748b; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; }
+        .student-list { display: grid; gap: 10px; margin-top: 14px; }
+        .student-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; background: #f8fafc; }
+        .student-item strong { font-size: 14px; } .student-item span { display: block; font-size: 12px; color: #64748b; margin-top: 3px; }
+        .pill { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 6px 9px; background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .pill.pending { background: #fef3c7; color: #a16207; } .pill.done { background: #dbeafe; color: #1d4ed8; }
+        .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+        .stat { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; }
+        .stat strong { display: block; font-size: 24px; color: #2563eb; } .stat span { color: #64748b; font-size: 12px; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; height: 70px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .nav-item { flex: 1; text-align: center; color: #64748b; font-size: 11px; cursor: pointer; border: none; background: transparent; height: 100%; }
+        .nav-item div { font-size: 22px; margin-bottom: 3px; } .nav-item.active { color: #2563eb; font-weight: 700; }
+        .hidden { display: none !important; }
+        .error { display: none; background: #fee2e2; color: #991b1b; border-radius: 12px; padding: 10px; font-size: 13px; margin-top: 12px; }
+        .hint { margin-top: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; color: #64748b; font-size: 12px; line-height: 1.45; }
+        @media (min-width: 600px) { body { padding: 20px; } .app { border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,.1); overflow: hidden; } .bottom-nav { bottom: 20px; border-radius: 0 0 25px 25px; } }
     </style>
 </head>
-
 <body>
-
-<div class="app">
-
-    <!-- ENCABEZADO -->
-    <header class="header">
-
-        <div class="header-top">
-
-            <div class="logo">
-                🚌 Mi Transporte
-            </div>
-
-            <div class="notification" onclick="mostrarNotificacion()">
-                🔔
-            </div>
-
+<div id="loginScreen" class="login-wrap">
+    <div>
+        <div class="login-brand">
+            <h1>🚌 Mi Ruta Segura</h1>
+            <p>Acceso separado para padres, conductor y administrador.</p>
         </div>
-
-        <div class="welcome">
-            <small>Bienvenido</small>
-            <h2>Familia Pérez</h2>
-        </div>
-
-    </header>
-
-
-    <!-- CONTENIDO -->
-    <main class="content">
-
-        <!-- ESTADO DEL TRANSPORTE -->
-        <div class="status">
-
-            <div class="status-dot"></div>
-
-            <div>
-                <strong>Transporte en recorrido</strong>
-                <span>Última actualización: hace pocos segundos</span>
+        <form class="login-card" onsubmit="iniciarSesion(event)">
+            <h2>Iniciar sesión</h2>
+            <p>Selecciona tu perfil e ingresa tus datos para ver solo tu módulo.</p>
+            <div class="form-grid">
+                <label>Tipo de usuario
+                    <select id="loginRol">
+                        <option value="padres">Padre / Madre</option>
+                        <option value="conductor">Conductor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </label>
+                <label>Usuario
+                    <input id="loginUsuario" type="text" autocomplete="username" placeholder="Ej. familia.perez" required>
+                </label>
+                <label>Clave
+                    <input id="loginClave" type="password" autocomplete="current-password" placeholder="Clave de acceso" required>
+                </label>
+                <button class="main-button" type="submit">Entrar</button>
             </div>
-
-        </div>
-
-
-        <!-- MAPA -->
-        <div class="map-container">
-
-            <div class="map-label">
-                📍 Recorrido en tiempo real
-            </div>
-
-            <div class="road horizontal"></div>
-            <div class="road horizontal2"></div>
-            <div class="road vertical"></div>
-            <div class="road vertical2"></div>
-
-            <div class="route"></div>
-
-            <div class="bus">
-                🚌
-            </div>
-
-            <div class="stop">
-                🏠
-            </div>
-
-        </div>
-
-
-        <!-- ETA -->
-        <div class="eta-card">
-
-            <div class="eta-title">
-                Tiempo estimado de llegada
-            </div>
-
-            <div class="eta-time" id="eta">
-                08 min
-            </div>
-
-            <div class="eta-subtitle">
-                El transporte llegará aproximadamente a las 13:35
-            </div>
-
-        </div>
-
-
-        <!-- ESTUDIANTE -->
-        <div class="student-card">
-
-            <div class="student-header">
-
-                <div class="student-avatar">
-                    👦
-                </div>
-
-                <div>
-                    <div class="student-name">
-                        Juan Pérez
-                    </div>
-
-                    <div class="student-grade">
-                        5.º Básica
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div class="student-status">
-                🟢 Estudiante en camino
-            </div>
-
-
-            <div class="stop-info">
-
-                <div class="stop-icon">
-                    🏠
-                </div>
-
-                <div>
-                    <strong>Parada asignada</strong>
-                    <span>Av. Principal y Calle 5</span>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- BOTÓN -->
-        <button class="main-button" onclick="verRecorrido()">
-            🗺️ Ver recorrido completo
-        </button>
-
-    </main>
-
-
-    <!-- MENÚ -->
-    <nav class="bottom-nav">
-
-        <div class="nav-item active" onclick="inicio()">
-            <div>🏠</div>
-            Inicio
-        </div>
-
-        <div class="nav-item" onclick="verRecorrido()">
-            <div>🗺️</div>
-            Recorrido
-        </div>
-
-        <div class="nav-item" onclick="mostrarNotificacion()">
-            <div>🔔</div>
-            Alertas
-        </div>
-
-        <div class="nav-item" onclick="perfil()">
-            <div>👤</div>
-            Perfil
-        </div>
-
-    </nav>
-
+            <div id="loginError" class="error">Usuario, clave o perfil incorrecto.</div>
+            <div class="hint">Demo: padre <b>familia.perez / padre123</b>, conductor <b>conductor03 / ruta123</b>, admin <b>admin / admin123</b>.</div>
+        </form>
+    </div>
 </div>
 
+<div id="appScreen" class="app hidden">
+    <header class="header">
+        <div class="header-top">
+            <div class="logo">🚌 Mi Ruta Segura</div>
+            <button class="icon-button" type="button" onclick="cerrarSesion()" aria-label="Cerrar sesión">⎋</button>
+        </div>
+        <div class="welcome">
+            <small id="subtituloRol">Vista para padres</small>
+            <h2 id="tituloPrincipal">Familia Pérez</h2>
+        </div>
+    </header>
+
+    <main class="content">
+        <section id="padres" class="screen">
+            <div class="status" id="estadoRecorridoPadres"><div class="status-dot"></div><div><strong id="textoRecorridoPadres">Transporte en recorrido</strong><span id="actualizacion">Última actualización: hace pocos segundos</span></div></div>
+            <div class="map-container"><div class="map-label">📍 Recorrido en tiempo real</div><div class="road horizontal"></div><div class="road horizontal2"></div><div class="road vertical"></div><div class="road vertical2"></div><div class="route"></div><div class="bus" id="bus">🚌</div><div class="stop">🏠</div></div>
+            <div class="eta-card"><div class="eta-title">Tiempo estimado de llegada</div><div class="eta-time" id="eta">08 min</div><div class="eta-subtitle" id="horaLlegada">El transporte llegará aproximadamente a las 13:35</div></div>
+            <div class="student-card"><div class="student-header"><div class="student-avatar">👦</div><div><div class="student-name" id="nombreEstudiantePadres">Juan Pérez</div><div class="student-grade" id="gradoEstudiantePadres">5.º Básica</div></div></div><div class="student-status" id="estadoEstudiantePadres">🟢 Estudiante en camino</div><div class="row"><div class="row-icon">🏠</div><div><strong>Parada asignada</strong><span id="paradaPadres">Av. Principal y Calle 5</span></div></div><div class="row"><div class="row-icon yellow">🚍</div><div><strong>Transporte Escolar #03</strong><span id="distanciaPadres">A 1.8 km de tu parada. Próxima parada: Av. Principal y Calle 5.</span></div></div></div>
+            <button class="main-button" type="button" onclick="mostrarPantalla('recorrido')">🗺️ Ver recorrido completo</button>
+        </section>
+
+        <section id="conductor" class="screen">
+            <div class="status" id="estadoRecorridoConductor"><div class="status-dot"></div><div><strong id="textoRecorridoConductor">Recorrido activo</strong><span id="gpsTexto">GPS listo para compartir ubicación</span></div></div>
+            <div class="button-grid"><button class="main-button" type="button" onclick="iniciarRecorrido()">▶️ Iniciar</button><button class="danger-button" type="button" onclick="finalizarRecorrido()">⏹️ Finalizar</button></div>
+            <button class="secondary-button" type="button" onclick="compartirGps()">📍 Compartir GPS actual</button>
+            <div class="info-card"><div class="mini-title">Ruta asignada</div><div class="row"><div class="row-icon blue">🏫</div><div><strong>Unidad Educativa</strong><span>Salida 06:35 - Ruta Norte</span></div></div><div class="row"><div class="row-icon yellow">📍</div><div><strong>Av. Principal y Calle 5</strong><span>Próxima parada - ETA <b id="etaConductor">08 min</b></span></div></div><div class="row"><div class="row-icon green">🏁</div><div><strong>Barrio Central</strong><span>Última parada estimada 07:20</span></div></div></div>
+            <div class="student-card"><div class="mini-title">Estudiantes de la ruta</div><div class="student-list" id="listaConductor"></div></div>
+        </section>
+
+        <section id="admin" class="screen">
+            <div class="admin-stats"><div class="stat"><strong id="totalEstudiantes">3</strong><span>Estudiantes</span></div><div class="stat"><strong>1</strong><span>Vehículo activo</span></div><div class="stat"><strong>4</strong><span>Paradas</span></div><div class="stat"><strong id="totalEntregados">0</strong><span>Entregados</span></div></div>
+            <div class="admin-card"><div class="mini-title">Registrar estudiante</div><div class="form-grid"><label>Estudiante<input id="nuevoEstudiante" type="text" placeholder="Nombre del estudiante"></label><label>Padre / Madre<input id="nuevoPadre" type="text" placeholder="Representante"></label><label>Curso<input id="nuevoCurso" type="text" placeholder="Ej. 5.º Básica"></label><label>Parada<input id="nuevaParada" type="text" placeholder="Dirección de parada"></label><button class="main-button" type="button" onclick="registrarEstudiante()">➕ Guardar estudiante</button></div></div>
+            <div class="admin-card"><div class="mini-title">Gestionar ruta</div><div class="form-grid"><label>Conductor<input id="conductorNombre" type="text" value="Carlos Andrade"></label><label>Vehículo<input id="vehiculoNombre" type="text" value="Transporte Escolar #03"></label><label>Horario<input id="horarioRuta" type="text" value="06:35 - 07:20"></label><label>Ruta<textarea id="rutaTexto">Unidad Educativa, Av. Principal y Calle 5, Barrio Central</textarea></label><button class="secondary-button" type="button" onclick="guardarRuta()">💾 Actualizar ruta</button></div></div>
+            <div class="admin-card"><div class="mini-title">Listado actual</div><div class="student-list" id="listaAdmin"></div><div class="button-grid" style="margin-top:14px;margin-bottom:0;"><button class="main-button" type="button" onclick="exportarCSV()">⬇️ CSV</button><button class="secondary-button" type="button" onclick="window.print()">🖨️ Imprimir</button></div></div>
+        </section>
+
+        <section id="recorrido" class="screen">
+            <div class="info-card"><h3>Recorrido completo</h3><div class="row"><div class="row-icon blue">🏫</div><div><strong>Unidad Educativa</strong><span>Punto de salida del transporte escolar.</span></div></div><div class="row"><div class="row-icon yellow">🚌</div><div><strong>Transporte Escolar #03</strong><span>A 1.8 km de tu parada. ETA: <b id="etaRecorrido">08 min</b>.</span></div></div><div class="row"><div class="row-icon green">🏠</div><div><strong>Tu parada</strong><span>Av. Principal y Calle 5.</span></div></div></div>
+            <button class="main-button" type="button" onclick="mostrarPantalla('padres')">Volver</button>
+        </section>
+
+        <section id="alertas" class="screen">
+            <div class="info-card"><h3>Alertas</h3><div class="row"><div class="row-icon green">✅</div><div><strong id="alertaEstado">Juan Pérez está en camino</strong><span>El conductor actualizó el estado del estudiante.</span></div></div><div class="row"><div class="row-icon yellow">⏱️</div><div><strong>Llegada estimada</strong><span>El transporte llegará aproximadamente en <b id="etaAlerta">08 min</b>.</span></div></div><div class="row"><div class="row-icon blue">📍</div><div><strong>Próxima parada</strong><span>Av. Principal y Calle 5.</span></div></div></div>
+            <button class="main-button" type="button" onclick="solicitarNotificaciones()">🔔 Activar notificaciones</button>
+        </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Menú principal" id="bottomNav"></nav>
+</div>
 
 <script>
-
-    /* NOTIFICACIONES */
-    function mostrarNotificacion() {
-
-        alert(
-            "🔔 No tienes nuevas notificaciones."
-        );
-
-    }
-
-
-    /* RECORRIDO */
-    function verRecorrido() {
-
-        alert(
-            "🗺️ Aquí mostraremos el recorrido completo del transporte."
-        );
-
-    }
-
-
-    /* INICIO */
-    function inicio() {
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    }
-
-
-    /* PERFIL */
-    function perfil() {
-
-        alert(
-            "👤 Perfil de Familia Pérez"
-        );
-
-    }
-
-
-    /*
-        SIMULACIÓN DEL TIEMPO DE LLEGADA
-
-        Posteriormente este valor será calculado
-        automáticamente utilizando la ubicación
-        GPS real del transporte.
-    */
-
     let minutos = 8;
+    let busPaso = 0;
+    let recorridoActivo = true;
+    let sesion = null;
+
+    const usuarios = {
+        padres: { usuario: 'familia.perez', clave: 'padre123', titulo: 'Familia Pérez', subtitulo: 'Vista para padres', pantalla: 'padres' },
+        conductor: { usuario: 'conductor03', clave: 'ruta123', titulo: 'Carlos Andrade', subtitulo: 'Aplicación del conductor', pantalla: 'conductor' },
+        admin: { usuario: 'admin', clave: 'admin123', titulo: 'Institución Educativa', subtitulo: 'Panel administrativo', pantalla: 'admin' }
+    };
+
+    const permisos = {
+        padres: ['padres', 'recorrido', 'alertas'],
+        conductor: ['conductor'],
+        admin: ['admin']
+    };
+
+    const navPorRol = {
+        padres: [{ id: 'padres', icono: '🏠', texto: 'Inicio' }, { id: 'recorrido', icono: '🗺️', texto: 'Ruta' }, { id: 'alertas', icono: '🔔', texto: 'Alertas' }],
+        conductor: [{ id: 'conductor', icono: '🚍', texto: 'Conductor' }],
+        admin: [{ id: 'admin', icono: '🧑‍💼', texto: 'Admin' }]
+    };
+
+    const estudiantes = [
+        { nombre: 'Juan Pérez', padre: 'Familia Pérez', curso: '5.º Básica', parada: 'Av. Principal y Calle 5', estado: 'En camino' },
+        { nombre: 'Ana Gómez', padre: 'Familia Gómez', curso: '4.º Básica', parada: 'Parque Central', estado: 'Pendiente' },
+        { nombre: 'Luis Vera', padre: 'Familia Vera', curso: '6.º Básica', parada: 'Barrio Central', estado: 'Pendiente' }
+    ];
+
+    function iniciarSesion(event) {
+        event.preventDefault();
+        const rol = document.getElementById('loginRol').value;
+        const usuario = document.getElementById('loginUsuario').value.trim();
+        const clave = document.getElementById('loginClave').value;
+        const cuenta = usuarios[rol];
+        if (!cuenta || cuenta.usuario !== usuario || cuenta.clave !== clave) {
+            document.getElementById('loginError').style.display = 'block';
+            return;
+        }
+        sesion = rol;
+        sessionStorage.setItem('miRutaSeguraRol', rol);
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        prepararSesion(rol);
+    }
+
+    function prepararSesion(rol) {
+        const cuenta = usuarios[rol];
+        document.getElementById('subtituloRol').innerText = cuenta.subtitulo;
+        document.getElementById('tituloPrincipal').innerText = cuenta.titulo;
+        document.querySelectorAll('.screen').forEach(function (screen) { screen.classList.remove('active'); });
+        pintarNavegacion(rol);
+        mostrarPantalla(cuenta.pantalla);
+    }
+
+    function pintarNavegacion(rol) {
+        const nav = document.getElementById('bottomNav');
+        nav.innerHTML = '';
+        navPorRol[rol].forEach(function (item) {
+            const boton = document.createElement('button');
+            boton.className = 'nav-item';
+            boton.type = 'button';
+            boton.dataset.screen = item.id;
+            boton.onclick = function () { mostrarPantalla(item.id); };
+            boton.innerHTML = '<div>' + item.icono + '</div>' + item.texto;
+            nav.appendChild(boton);
+        });
+    }
+
+    function mostrarPantalla(nombre) {
+        if (!sesion || permisos[sesion].indexOf(nombre) === -1) {
+            alert('No tienes acceso a esta sección con tu perfil.');
+            return;
+        }
+        document.querySelectorAll('.screen').forEach(function (screen) { screen.classList.remove('active'); });
+        document.querySelectorAll('.nav-item').forEach(function (item) { item.classList.toggle('active', item.dataset.screen === nombre); });
+        const pantalla = document.getElementById(nombre);
+        if (pantalla) pantalla.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cerrarSesion() {
+        sesion = null;
+        sessionStorage.removeItem('miRutaSeguraRol');
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('loginClave').value = '';
+    }
+
+    function solicitarNotificaciones() {
+        if (!('Notification' in window)) { alert('Este navegador no soporta notificaciones.'); return; }
+        Notification.requestPermission().then(function (permiso) {
+            if (permiso === 'granted') new Notification('Mi Ruta Segura', { body: 'Recibirás avisos del recorrido escolar.' });
+            else alert('Las notificaciones no fueron autorizadas.');
+        });
+    }
+
+    function actualizarEta() {
+        const texto = String(minutos).padStart(2, '0') + ' min';
+        ['eta', 'etaRecorrido', 'etaAlerta', 'etaConductor'].forEach(function (id) { const el = document.getElementById(id); if (el) el.innerText = texto; });
+        const llegada = new Date(Date.now() + minutos * 60000);
+        document.getElementById('horaLlegada').innerText = 'El transporte llegará aproximadamente a las ' + llegada.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function moverBus() {
+        const posiciones = [{ left: '38%', top: '46%' }, { left: '45%', top: '43%' }, { left: '52%', top: '41%' }, { left: '59%', top: '39%' }];
+        const bus = document.getElementById('bus');
+        const posicion = posiciones[busPaso % posiciones.length];
+        bus.style.left = posicion.left;
+        bus.style.top = posicion.top;
+        busPaso++;
+    }
+
+    function pintarEstudiantes() {
+        const listaConductor = document.getElementById('listaConductor');
+        const listaAdmin = document.getElementById('listaAdmin');
+        listaConductor.innerHTML = '';
+        listaAdmin.innerHTML = '';
+        estudiantes.forEach(function (estudiante, index) {
+            const clase = estudiante.estado === 'Pendiente' ? 'pending' : estudiante.estado === 'Entregado' ? 'done' : '';
+            const conductorItem = document.createElement('div');
+            conductorItem.className = 'student-item';
+            conductorItem.innerHTML = '<div><strong>' + estudiante.nombre + '</strong><span>' + estudiante.parada + '</span></div><button class="main-button" style="width:auto;min-height:38px;padding:9px 10px;font-size:12px;" onclick="cambiarEstado(' + index + ')">' + estudiante.estado + '</button>';
+            listaConductor.appendChild(conductorItem);
+            const adminItem = document.createElement('div');
+            adminItem.className = 'student-item';
+            adminItem.innerHTML = '<div><strong>' + estudiante.nombre + '</strong><span>' + estudiante.padre + ' - ' + estudiante.curso + ' - ' + estudiante.parada + '</span></div><span class="pill ' + clase + '">' + estudiante.estado + '</span>';
+            listaAdmin.appendChild(adminItem);
+        });
+        document.getElementById('totalEstudiantes').innerText = estudiantes.length;
+        document.getElementById('totalEntregados').innerText = estudiantes.filter(function (e) { return e.estado === 'Entregado'; }).length;
+    }
+
+    function cambiarEstado(index) {
+        const orden = ['Pendiente', 'Recogido', 'En camino', 'Entregado'];
+        estudiantes[index].estado = orden[(orden.indexOf(estudiantes[index].estado) + 1) % orden.length];
+        if (index === 0) {
+            document.getElementById('estadoEstudiantePadres').innerText = '🟢 Estudiante ' + estudiantes[index].estado.toLowerCase();
+            document.getElementById('alertaEstado').innerText = estudiantes[index].nombre + ' está ' + estudiantes[index].estado.toLowerCase();
+        }
+        pintarEstudiantes();
+    }
+
+    function iniciarRecorrido() { recorridoActivo = true; actualizarEstadoRecorrido(); alert('Recorrido iniciado.'); }
+    function finalizarRecorrido() { recorridoActivo = false; actualizarEstadoRecorrido(); alert('Recorrido finalizado.'); }
+    function actualizarEstadoRecorrido() {
+        const padres = document.getElementById('estadoRecorridoPadres');
+        const conductor = document.getElementById('estadoRecorridoConductor');
+        padres.classList.toggle('paused', !recorridoActivo);
+        conductor.classList.toggle('paused', !recorridoActivo);
+        document.getElementById('textoRecorridoPadres').innerText = recorridoActivo ? 'Transporte en recorrido' : 'Recorrido finalizado';
+        document.getElementById('textoRecorridoConductor').innerText = recorridoActivo ? 'Recorrido activo' : 'Recorrido finalizado';
+    }
+
+    function compartirGps() {
+        if (!navigator.geolocation) { alert('Este celular no permite obtener GPS desde el navegador.'); return; }
+        navigator.geolocation.getCurrentPosition(function (posicion) {
+            const lat = posicion.coords.latitude.toFixed(6);
+            const lng = posicion.coords.longitude.toFixed(6);
+            document.getElementById('gpsTexto').innerText = 'Ubicación enviada: ' + lat + ', ' + lng;
+            document.getElementById('actualizacion').innerText = 'Última actualización: ahora';
+            alert('Ubicación GPS compartida con los padres.');
+        }, function () { alert('No se pudo obtener la ubicación. Revisa los permisos del GPS.'); });
+    }
+
+    function registrarEstudiante() {
+        const nombre = document.getElementById('nuevoEstudiante').value.trim();
+        const padre = document.getElementById('nuevoPadre').value.trim();
+        const curso = document.getElementById('nuevoCurso').value.trim();
+        const parada = document.getElementById('nuevaParada').value.trim();
+        if (!nombre || !padre || !curso || !parada) { alert('Completa estudiante, representante, curso y parada.'); return; }
+        estudiantes.push({ nombre: nombre, padre: padre, curso: curso, parada: parada, estado: 'Pendiente' });
+        ['nuevoEstudiante', 'nuevoPadre', 'nuevoCurso', 'nuevaParada'].forEach(function (id) { document.getElementById(id).value = ''; });
+        pintarEstudiantes();
+        alert('Estudiante registrado en esta sesión.');
+    }
+
+    function guardarRuta() {
+        const conductor = document.getElementById('conductorNombre').value.trim();
+        const vehiculo = document.getElementById('vehiculoNombre').value.trim();
+        alert('Ruta actualizada: ' + vehiculo + ' - Conductor: ' + conductor);
+    }
+
+    function exportarCSV() {
+        const encabezado = 'Estudiante,Representante,Curso,Parada,Estado\n';
+        const filas = estudiantes.map(function (e) { return [e.nombre, e.padre, e.curso, e.parada, e.estado].map(function (valor) { return '"' + String(valor).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+        const blob = new Blob([encabezado + filas], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mi-ruta-segura-estudiantes.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
 
     setInterval(function () {
-
-        if (minutos > 1) {
-
+        if (recorridoActivo && minutos > 1) {
             minutos--;
-
-            document.getElementById("eta").innerText =
-                minutos + " min";
-
+            actualizarEta();
+            moverBus();
+            document.getElementById('actualizacion').innerText = 'Última actualización: hace pocos segundos';
         }
-
     }, 60000);
 
+    actualizarEta();
+    pintarEstudiantes();
+    actualizarEstadoRecorrido();
 </script>
-
 </body>
 </html>
-```
