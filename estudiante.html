@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Mi Estudiante - Mi Transporte</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 480px;
+            margin: auto;
+            min-height: 100vh;
+            background: #f8fafc;
+            padding-bottom: 85px;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 22px 18px 28px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,.18);
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        header h1 {
+            font-size: 22px;
+        }
+
+        header p {
+            margin-top: 5px;
+            font-size: 13px;
+            opacity: .85;
+        }
+
+        /* CONTENIDO */
+        .content {
+            padding: 18px;
+        }
+
+        /* ESTUDIANTE */
+        .student-card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 5px 20px rgba(15,23,42,.07);
+            text-align: center;
+            margin-top: -5px;
+        }
+
+        .avatar {
+            width: 95px;
+            height: 95px;
+            margin: auto;
+            border-radius: 50%;
+            background: #dbeafe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,.12);
+        }
+
+        .student-card h2 {
+            margin-top: 13px;
+            font-size: 22px;
+        }
+
+        .student-card .course {
+            margin-top: 5px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .student-id {
+            display: inline-block;
+            margin-top: 10px;
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ESTADO */
+        .status-card {
+            background: white;
+            margin-top: 18px;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(15,23,42,.06);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .status-main {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            background: #ecfdf5;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .status-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #10b981;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+        }
+
+        .status-main strong {
+            display: block;
+            color: #047857;
+            font-size: 16px;
+        }
+
+        .status-main span {
+            display: block;
+            margin-top: 3px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* PROGRESO */
+        .progress {
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 22px;
+            left: 12%;
+            right: 12%;
+            height: 4px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+
+        .progress-line-active {
+            position: absolute;
+            top: 22px;
+            left: 12%;
+            width: 76%;
+            height: 4px;
+            background: #2563eb;
+            z-index: 1;
+            transition: .5s;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step {
+            width: 25%;
+            text-align: center;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            border: 4px solid white;
+        }
+
+        .step.active {
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .step.active .circle {
+            background: #2563eb;
+            color: white;
+        }
+
+        .step.completed {
+            color: #059669;
+            font-weight: bold;
+        }
+
+        .step.completed .circle {
+            background: #10b981;
+            color: white;
+        }
+
+        .step span:last-child {
+            display: block;
+            margin-top: 8px;
+        }
+
+        /* INFORMACIÓN */
+        .info-card {
+            background: white;
+            margin-top: 18px;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(15,23,42,.06);
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .info-value {
+            font-weight: bold;
+            font-size: 13px;
+            text-align: right;
+        }
+
+        /* BOTONES */
+        .actions {
+            margin-top: 18px;
+            display: grid;
+            gap: 10px;
+        }
+
+        button.action {
+            border: none;
+            border-radius: 14px;
+            padding: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .secondary {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #dbeafe !important;
+        }
+
+        .danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* NAVEGACIÓN */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            height: 70px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .nav-item .icon {
+            display: block;
+            font-size: 21px;
+            margin-bottom: 3px;
+        }
+
+        .nav-item.active {
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        /* ALERTA */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 85px;
+            transform: translateX(-50%) translateY(20px);
+            background: #1e293b;
+            color: white;
+            padding: 13px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            opacity: 0;
+            pointer-events: none;
+            transition: .3s;
+            width: calc(100% - 40px);
+            max-width: 400px;
+            text-align: center;
+            z-index: 20;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header>
+
+        <div class="header-top">
+
+            <button class="back" onclick="volver()">
+                ←
+            </button>
+
+            <div>
+                <h1>Mi estudiante</h1>
+                <p>Información del transporte escolar</p>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main class="content">
+
+        <!-- TARJETA DEL ESTUDIANTE -->
+        <section class="student-card">
+
+            <div class="avatar">
+                👦
+            </div>
+
+            <h2>Mateo Muñoz</h2>
+
+            <p class="course">
+                5.º Año de Educación Básica
+            </p>
+
+            <span class="student-id">
+                ID: EST-00125
+            </span>
+
+        </section>
+
+
+        <!-- ESTADO DEL ESTUDIANTE -->
+        <section class="status-card">
+
+            <div class="section-title">
+                🚍 Estado del transporte
+            </div>
+
+            <div class="status-main">
+
+                <div class="status-icon">
+                    ✓
+                </div>
+
+                <div>
+                    <strong id="statusText">
+                        En recorrido
+                    </strong>
+
+                    <span id="statusDescription">
+                        El transporte se dirige hacia la siguiente parada.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- PROGRESO -->
+            <div class="progress">
+
+                <div class="progress-line"></div>
+
+                <div
+                    class="progress-line-active"
+                    id="progressLine">
+                </div>
+
+                <div class="steps">
+
+                    <div class="step completed" id="step1">
+
+                        <div class="circle">
+                            ✓
+                        </div>
+
+                        <span>Pendiente</span>
+
+                    </div>
+
+
+                    <div class="step completed" id="step2">
+
+                        <div class="circle">
+                            ✓
+                        </div>
+
+                        <span>Recogido</span>
+
+                    </div>
+
+
+                    <div class="step active" id="step3">
+
+                        <div class="circle">
+                            🚌
+                        </div>
+
+                        <span>En ruta</span>
+
+                    </div>
+
+
+                    <div class="step" id="step4">
+
+                        <div class="circle">
+                            ✓
+                        </div>
+
+                        <span>Entregado</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- INFORMACIÓN DE LA PARADA -->
+        <section class="info-card">
+
+            <div class="section-title">
+                📍 Mi parada
+            </div>
+
+            <div class="info-row">
+
+                <div class="info-left">
+                    📍 Dirección
+                </div>
+
+                <div class="info-value">
+                    Av. Amazonas y Naciones Unidas
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-left">
+                    ⏰ Hora programada
+                </div>
+
+                <div class="info-value">
+                    07:30 AM
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-left">
+                    🕐 Llegada estimada
+                </div>
+
+                <div
+                    class="info-value"
+                    id="eta">
+                    08 minutos
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- INFORMACIÓN DEL BUS -->
+        <section class="info-card">
+
+            <div class="section-title">
+                🚌 Transporte asignado
+            </div>
+
+            <div class="info-row">
+
+                <div class="info-left">
+                    🚌 Bus
+                </div>
+
+                <div class="info-value">
+                    Escolar #03
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-left">
+                    👨‍✈️ Conductor
+                </div>
+
+                <div class="info-value">
+                    Carlos Rodríguez
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-left">
+                    📞 Contacto
+                </div>
+
+                <div class="info-value">
+                    099 123 4567
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACCIONES -->
+        <div class="actions">
+
+            <button
+                class="action primary"
+                onclick="verRecorrido()">
+
+                🗺️ Ver recorrido en vivo
+
+            </button>
+
+
+            <button
+                class="action secondary"
+                onclick="mostrarContacto()">
+
+                📞 Contactar conductor
+
+            </button>
+
+
+            <button
+                class="action danger"
+                onclick="mostrarEmergencia()">
+
+                🚨 Reportar emergencia
+
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <!-- NAVEGACIÓN -->
+    <nav class="bottom-nav">
+
+        <div
+            class="nav-item"
+            onclick="ir('index.html')">
+
+            <span class="icon">🏠</span>
+            Inicio
+
+        </div>
+
+
+        <div
+            class="nav-item"
+            onclick="ir('recorrido.html')">
+
+            <span class="icon">🗺️</span>
+            Recorrido
+
+        </div>
+
+
+        <div
+            class="nav-item active">
+
+            <span class="icon">👦</span>
+            Estudiante
+
+        </div>
+
+
+        <div
+            class="nav-item"
+            onclick="ir('alertas.html')">
+
+            <span class="icon">🔔</span>
+            Alertas
+
+        </div>
+
+
+        <div
+            class="nav-item"
+            onclick="ir('perfil.html')">
+
+            <span class="icon">👤</span>
+            Perfil
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+<!-- TOAST -->
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<script>
+
+    /* NAVEGACIÓN */
+
+    function ir(pagina) {
+        window.location.href = pagina;
+    }
+
+
+    function volver() {
+        window.location.href = "recorrido.html";
+    }
+
+
+    function verRecorrido() {
+        window.location.href = "recorrido.html";
+    }
+
+
+    /* MENSAJE */
+
+    function mostrarToast(mensaje) {
+
+        const toast = document.getElementById("toast");
+
+        toast.textContent = mensaje;
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
+
+    }
+
+
+    /* CONTACTO */
+
+    function mostrarContacto() {
+
+        mostrarToast(
+            "📞 Contactando al conductor: 099 123 4567"
+        );
+
+    }
+
+
+    /* EMERGENCIA */
+
+    function mostrarEmergencia() {
+
+        const confirmar = confirm(
+            "¿Deseas reportar una emergencia relacionada con el transporte?"
+        );
+
+        if (confirmar) {
+
+            mostrarToast(
+                "🚨 Emergencia reportada. El administrador ha sido notificado."
+            );
+
+        }
+
+    }
+
+
+    /* SIMULACIÓN DEL ETA */
+
+    let minutos = 8;
+
+    setInterval(() => {
+
+        if (minutos > 1) {
+
+            minutos--;
+
+            document.getElementById("eta").textContent =
+                minutos + " minutos";
+
+        }
+
+    }, 10000);
+
+
+</script>
+
+</body>
+</html>
