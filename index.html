@@ -17,7 +17,7 @@
             padding: 25px; 
             border-radius: 12px; 
             box-shadow: 0 6px 15px rgba(0,0,0,0.15); 
-            border-top: 8px solid #ffcc00; /* Amarillo Bus Escolar */
+            border-top: 8px solid #ffcc00;
         }
         
         .header-title { text-align: center; margin-bottom: 20px; }
@@ -37,7 +37,7 @@
         .form-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 6px; font-weight: bold; color: #111; font-size: 14px; }
         
-        /* Forzar visualmente texto en MAYÚSCULAS en campos de entrada */
+        /* Forzar texto en MAYÚSCULAS */
         input[type="text"], textarea { 
             text-transform: uppercase; 
         }
@@ -52,7 +52,6 @@
         }
         input:focus, select:focus, textarea:focus { border-color: #ffcc00; outline: none; }
         
-        /* Estilos para campos bloqueados */
         input:disabled, select:disabled, textarea:disabled {
             background-color: #e9ecef;
             border-color: #ced4da;
@@ -76,7 +75,6 @@
         #map { width: 100%; height: 320px; border-radius: 6px; border: 2px solid #111; z-index: 1; }
         .map-instruction { font-size: 13px; color: #333; margin-bottom: 8px; font-weight: 500; }
         
-        /* Capa para deshabilitar interacción con el mapa cuando está bloqueado */
         .map-disabled-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -90,7 +88,6 @@
             border-radius: 6px;
         }
 
-        /* Animación para el botón de Guardar Ubicación */
         @keyframes latido-alerta {
             0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
             70% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 0 12px rgba(40, 167, 69, 0); }
@@ -164,7 +161,7 @@
         </div>
         <div class="form-group">
             <label for="grado">Grado / Año de EGB *</label>
-            <input type="text" id="grado" name="grado" placeholder="EJ. INICIAL 2 A, 3RO B, ETC." required disabled>
+            <input type="text" id="grado" name="grado" placeholder="EJ. INICIAL 2, 3RO EGB, ETC." required disabled>
         </div>
 
         <div class="section-title">2. Datos del Representante</div>
@@ -204,7 +201,6 @@
             </div>
             
             <div id="status-busqueda" class="status-busqueda"></div>
-            <!-- Campo Oculto Obligatorio para Coordenadas -->
             <input type="hidden" id="url_maps" name="url_maps" required>
         </div>
 
@@ -248,10 +244,8 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    // URL del Web App de Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC9S7bE9KpqVTL4DuneQC7LTZ5iggLg-P69PrYJ0eG8bsUkXPp_h78C-Yq2uZGDZK8/exec";
 
-    // Coordenadas fijas de la Ruta 7
     const coordenadasSectores = {
         "CIUDAD JARDIN": [-0.334591, -78.528823],
         "VENECIA": [-0.332753, -78.542990],
@@ -279,7 +273,6 @@
     const statusDiv = document.getElementById('status-busqueda');
     const inputUrlMaps = document.getElementById('url_maps');
 
-    // REFERENCIAS DE CAMPOS PARA EL DESBLOQUEO PASO A PASO
     const campoNombres = document.getElementById('nombres_estudiante');
     const campoNivel = document.getElementById('nivel');
     const campoGrado = document.getElementById('grado');
@@ -294,7 +287,7 @@
     const campoHorario = document.getElementById('horario_servicio');
     const btnEnviar = document.getElementById('btn-enviar');
 
-    // CONVERSIÓN EN TIEMPO REAL A MAYÚSCULAS MIENTRAS ESCRIBE
+    // CONVERSIÓN EN TIEMPO REAL A MAYÚSCULAS
     document.querySelectorAll('input[type="text"], textarea').forEach(input => {
         input.addEventListener('input', function() {
             this.value = this.value.toUpperCase();
@@ -327,7 +320,7 @@
 
     campoSector.addEventListener('change', function() {
         if (this.value !== "") {
-            mapOverlay.style.display = 'none'; // Activa el mapa
+            mapOverlay.style.display = 'none';
             const coords = coordenadasSectores[this.value];
             if (coords) {
                 map.flyTo(coords, 17);
@@ -357,7 +350,6 @@
         mostrarBotonGuardar(e.latlng.lat, e.latlng.lng);
     });
 
-    // GUARDAR UBICACIÓN Y DESBLOQUEAR CAMPOS DE DIRECCIÓN
     btnConfirmar.addEventListener('click', function() {
         const lat = coordenadasPendientes.lat.toFixed(6);
         const lng = coordenadasPendientes.lng.toFixed(6);
@@ -376,7 +368,6 @@
                     if (callePrin) campoCallePrin.value = callePrin.toUpperCase();
                     if (addr.house_number) campoNumCasa.value = addr.house_number.toUpperCase();
                 }
-                
                 finalizarGuardadoMapa(lat, lng);
             })
             .catch(() => {
@@ -389,7 +380,6 @@
         statusDiv.innerText = `✅ Ubicación guardada con éxito (${lat}, ${lng}).`;
         statusDiv.style.color = "#28a745";
 
-        // Desbloquea la calle principal y secundaria
         campoCallePrin.disabled = false;
         campoCalleSec.disabled = false;
     }
@@ -414,7 +404,7 @@
         btnEnviar.disabled = this.value === "";
     });
 
-    // ENVÍO DEL FORMULARIO A GOOGLE APPS SCRIPT
+    // ENVÍO AL SCRIPT CON MODO NO-CORS (Garantiza el guardado)
     document.getElementById('formulario-registro').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -427,7 +417,7 @@
         btn.disabled = true;
         btn.innerText = "ENVIANDO REGISTRO...";
 
-        // Asegurar que todos los campos de texto se envíen estrictamente en Mayúsculas
+        // Convertir campos de texto a mayúsculas
         document.querySelectorAll('input[type="text"], textarea').forEach(el => {
             el.value = el.value.toUpperCase();
         });
@@ -436,9 +426,10 @@
 
         fetch(SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors', // Evita el bloqueo CORS de Google Apps Script
             body: formData
         })
-        .then(response => {
+        .then(() => {
             document.getElementById('formulario-registro').style.display = 'none';
             document.getElementById('mensaje-exito').style.display = 'block';
         })
