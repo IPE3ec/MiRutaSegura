@@ -404,7 +404,7 @@
         btnEnviar.disabled = this.value === "";
     });
 
-    // ENVÍO AL SCRIPT CON MODO NO-CORS (Garantiza el guardado)
+    // ENVÍO DE DATOS EN FORMATO URL-ENCODED (RECOMENDADO PARA GOOGLE APPS SCRIPT)
     document.getElementById('formulario-registro').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -417,17 +417,22 @@
         btn.disabled = true;
         btn.innerText = "ENVIANDO REGISTRO...";
 
-        // Convertir campos de texto a mayúsculas
+        // Convertir texto a mayúsculas
         document.querySelectorAll('input[type="text"], textarea').forEach(el => {
             el.value = el.value.toUpperCase();
         });
 
+        // Convertir FormData a URLSearchParams
         const formData = new FormData(this);
+        const searchParams = new URLSearchParams(formData);
 
         fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Evita el bloqueo CORS de Google Apps Script
-            body: formData
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: searchParams.toString()
         })
         .then(() => {
             document.getElementById('formulario-registro').style.display = 'none';
