@@ -37,6 +37,11 @@
         .form-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 6px; font-weight: bold; color: #111; font-size: 14px; }
         
+        /* Forzar visualmente texto en MAYÚSCULAS en campos de entrada */
+        input[type="text"], textarea { 
+            text-transform: uppercase; 
+        }
+
         input[type="text"], input[type="tel"], select, textarea { 
             width: 100%; 
             padding: 11px; 
@@ -147,29 +152,29 @@
         <div class="section-title">1. Datos del Estudiante</div>
         <div class="form-group">
             <label for="nombres_estudiante">Nombres y Apellidos del Estudiante *</label>
-            <input type="text" id="nombres_estudiante" name="nombres_estudiante" required placeholder="Ej. Juan Carlos Pérez">
+            <input type="text" id="nombres_estudiante" name="nombres_estudiante" required placeholder="EJ. JUAN CARLOS PÉREZ">
         </div>
         <div class="form-group">
             <label for="nivel">Nivel Educativo *</label>
             <select id="nivel" name="nivel" required disabled>
                 <option value="">Seleccione una opción</option>
-                <option value="Inicial">Inicial</option>
-                <option value="Educacion Basica">Educación General Básica</option>
+                <option value="INICIAL">INICIAL</option>
+                <option value="EDUCACION BASICA">EDUCACIÓN GENERAL BÁSICA</option>
             </select>
         </div>
         <div class="form-group">
             <label for="grado">Grado / Año de EGB *</label>
-            <input type="text" id="grado" name="grado" placeholder="Ej. Inicial 2, 3ro EGB, etc." required disabled>
+            <input type="text" id="grado" name="grado" placeholder="EJ. INICIAL 2, 3RO EGB, ETC." required disabled>
         </div>
 
         <div class="section-title">2. Datos del Representante</div>
         <div class="form-group">
             <label for="nombre_representante">Nombre del Representante Legal *</label>
-            <input type="text" id="nombre_representante" name="nombre_representante" required placeholder="Ej. María López" disabled>
+            <input type="text" id="nombre_representante" name="nombre_representante" required placeholder="EJ. MARÍA LÓPEZ" disabled>
         </div>
         <div class="form-group">
             <label for="telefono">Teléfono / WhatsApp de Contacto *</label>
-            <input type="tel" id="telefono" name="telefono" maxlength="10" placeholder="Ej. 0991234567" required pattern="09[0-9]{8}" disabled>
+            <input type="tel" id="telefono" name="telefono" maxlength="10" placeholder="EJ. 0991234567" required pattern="09[0-9]{8}" disabled>
             <span id="tel-error" class="error-msg">Debe ingresar un número celular válido de 10 dígitos (ej. 0991234567).</span>
         </div>
 
@@ -178,13 +183,13 @@
             <label for="sector">Sector *</label>
             <select id="sector" name="sector" required disabled>
                 <option value="">Seleccione un sector</option>
-                <option value="Ciudad Jardín">Ciudad Jardín</option>
-                <option value="Venecia">Venecia</option>
-                <option value="Santo Tomás 1">Santo Tomás 1</option>
-                <option value="Santo Tomás 2">Santo Tomás 2</option>
-                <option value="Caupicho">Caupicho</option>
-                <option value="Beaterio">Beaterio</option>
-                <option value="La Bretaña">La Bretaña</option>
+                <option value="CIUDAD JARDIN">CIUDAD JARDÍN</option>
+                <option value="VENECIA">VENECIA</option>
+                <option value="SANTO TOMAS 1">SANTO TOMÁS 1</option>
+                <option value="SANTO TOMAS 2">SANTO TOMÁS 2</option>
+                <option value="CAUPICHO">CAUPICHO</option>
+                <option value="BEATERIO">BEATERIO</option>
+                <option value="LA BRETAÑA">LA BRETAÑA</option>
             </select>
         </div>
 
@@ -205,20 +210,20 @@
 
         <div class="form-group">
             <label for="calle_principal">Calle Principal *</label>
-            <input type="text" id="calle_principal" name="calle_principal" placeholder="Se llena al guardar mapa o escribe manualmente" required disabled>
+            <input type="text" id="calle_principal" name="calle_principal" placeholder="SE LLENA AL GUARDAR MAPA O ESCRIBE MANUALMENTE" required disabled>
         </div>
         <div class="form-group">
             <label for="calle_secundaria">Calle Secundaria *</label>
-            <input type="text" id="calle_secundaria" name="calle_secundaria" placeholder="Escribe la calle secundaria" required disabled>
+            <input type="text" id="calle_secundaria" name="calle_secundaria" placeholder="ESCRIBE LA CALLE SECUNDARIA" required disabled>
         </div>
         <div class="form-group">
             <label for="numero_casa">Número de Casa / Lote *</label>
-            <input type="text" id="numero_casa" name="numero_casa" placeholder="Ej. N12-34 / Lote 5" required disabled>
+            <input type="text" id="numero_casa" name="numero_casa" placeholder="EJ. N12-34 / LOTE 5" required disabled>
         </div>
 
         <div class="form-group">
             <label for="referencia">Referencia Adicional *</label>
-            <textarea id="referencia" name="referencia" rows="2" placeholder="Ej. Frente a la tienda, portón blanco, etc." required disabled></textarea>
+            <textarea id="referencia" name="referencia" rows="2" placeholder="EJ. FRENTE A LA TIENDA, PORTÓN BLANCO, ETC." required disabled></textarea>
         </div>
 
         <div class="section-title">4. Horario del Servicio</div>
@@ -226,8 +231,8 @@
             <label for="horario_servicio">Horario Requerido *</label>
             <select id="horario_servicio" name="horario_servicio" required disabled>
                 <option value="">Seleccione el horario</option>
-                <option value="Matutino (Mañana)">Matutino (Mañana)</option>
-                <option value="Vespertino (Tarde)">Vespertino (Tarde)</option>
+                <option value="MATUTINO (MAÑANA)">MATUTINO (MAÑANA)</option>
+                <option value="VESPERTINO (TARDE)">VESPERTINO (TARDE)</option>
             </select>
         </div>
 
@@ -243,17 +248,18 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+    // URL del Web App de Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqwiY6axQqd03UpgTv_Z9qa_6a04oI9nJ8q4kuOJDu3yZ4odUiELroR3Kj-d12WcCU/exec";
 
     // Coordenadas fijas de la Ruta 7
     const coordenadasSectores = {
-        "Ciudad Jardín": [-0.334591, -78.528823],
-        "Venecia": [-0.332753, -78.542990],
-        "Santo Tomás 1": [-0.333682, -78.547079],
-        "Santo Tomás 2": [-0.337373, -78.542910],
-        "Caupicho": [-0.328020, -78.538705],
-        "Beaterio": [-0.321569, -78.536778],
-        "La Bretaña": [-0.313609, -78.544318]
+        "CIUDAD JARDIN": [-0.334591, -78.528823],
+        "VENECIA": [-0.332753, -78.542990],
+        "SANTO TOMAS 1": [-0.333682, -78.547079],
+        "SANTO TOMAS 2": [-0.337373, -78.542910],
+        "CAUPICHO": [-0.328020, -78.538705],
+        "BEATERIO": [-0.321569, -78.536778],
+        "LA BRETAÑA": [-0.313609, -78.544318]
     };
 
     const latInicial = -0.334591;
@@ -287,6 +293,13 @@
     const campoReferencia = document.getElementById('referencia');
     const campoHorario = document.getElementById('horario_servicio');
     const btnEnviar = document.getElementById('btn-enviar');
+
+    // CONVERSIÓN EN TIEMPO REAL A MAYÚSCULAS MIENTRAS ESCRIBE
+    document.querySelectorAll('input[type="text"], textarea').forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    });
 
     // LÓGICA DE DESBLOQUEO SECUENCIAL
     campoNombres.addEventListener('input', function() {
@@ -360,8 +373,8 @@
                 if (data && data.address) {
                     const addr = data.address;
                     const callePrin = addr.road || addr.pedestrian || addr.path || "";
-                    if (callePrin) campoCallePrin.value = callePrin;
-                    if (addr.house_number) campoNumCasa.value = addr.house_number;
+                    if (callePrin) campoCallePrin.value = callePrin.toUpperCase();
+                    if (addr.house_number) campoNumCasa.value = addr.house_number.toUpperCase();
                 }
                 
                 finalizarGuardadoMapa(lat, lng);
@@ -382,7 +395,6 @@
     }
 
     campoCallePrin.addEventListener('input', function() {
-        // Mantiene la calle secundaria disponible
         campoCalleSec.disabled = false;
     });
 
@@ -402,7 +414,7 @@
         btnEnviar.disabled = this.value === "";
     });
 
-    // ENVÍO DEL FORMULARIO
+    // ENVÍO DEL FORMULARIO A GOOGLE APPS SCRIPT
     document.getElementById('formulario-registro').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -413,7 +425,12 @@
 
         const btn = document.getElementById('btn-enviar');
         btn.disabled = true;
-        btn.innerText = "Enviando Registro...";
+        btn.innerText = "ENVIANDO REGISTRO...";
+
+        // Asegurar que todos los campos de texto se envíen estrictamente en Mayúsculas
+        document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+            el.value = el.value.toUpperCase();
+        });
 
         const formData = new FormData(this);
 
@@ -428,7 +445,7 @@
         .catch(error => {
             alert('Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo.');
             btn.disabled = false;
-            btn.innerText = "Enviar Inscripción - Ruta 7";
+            btn.innerText = "ENVIAR INSCRIPCIÓN - RUTA 7";
         });
     });
 </script>
