@@ -5,298 +5,146 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ruta 7 - Monitoreo</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
   <style>
     * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, sans-serif; }
     body { margin: 0; background: #f0f2f5; }
     #map-container { position: relative; width: 100vw; height: 100vh; }
     #map { width: 100%; height: 100%; }
-
-    .panel-control {
-      position: absolute;
-      top: 18px;
-      left: 18px;
-      z-index: 1000;
-      width: 360px;
-      max-width: calc(100vw - 36px);
-      max-height: calc(100vh - 36px);
-      background: rgba(255,255,255,.97);
-      border-radius: 10px;
-      box-shadow: 0 4px 18px rgba(0,0,0,.25);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header-panel {
-      background: #111;
-      color: #ffcc00;
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: 900;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-
-    .modo-ruta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .btn {
-      width: 100%;
-      border: 0;
-      border-radius: 6px;
-      padding: 11px;
-      font-size: 12px;
-      font-weight: 900;
-      cursor: pointer;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
+    .panel-control { position: absolute; top: 18px; left: 18px; z-index: 1000; width: 380px; max-width: calc(100vw - 36px); max-height: calc(100vh - 36px); background: rgba(255,255,255,.97); border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.25); padding: 16px; display: flex; flex-direction: column; }
+    .header-panel { background: #111; color: #ffcc00; padding: 12px; border-radius: 6px; text-align: center; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .btn { width: 100%; border: 0; border-radius: 6px; padding: 11px; font-size: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; }
     .btn-cargar { background: #111; color: #ffcc00; }
     .btn-trazar { background: #28a745; color: white; }
     .btn-modo { background: #e9ecef; color: #111; border: 2px solid #ddd; }
     .btn-modo.activo { background: #ffcc00; color: #111; border-color: #111; }
     .btn:disabled { background: #ccc; color: #777; cursor: not-allowed; }
-
-    .estado {
-      font-size: 13px;
-      padding: 9px;
-      border-radius: 6px;
-      background: #fff3cd;
-      border: 1px solid #ffeeba;
-      margin-bottom: 10px;
-      display: none;
-    }
-
-    .resumen {
-      display: none;
-      background: #e8f4f8;
-      border: 1px solid #b8daff;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      margin-bottom: 10px;
-      line-height: 1.45;
-    }
-
-    .contador {
-      font-size: 13px;
-      font-weight: 900;
-      margin-bottom: 6px;
-    }
-
-    .lista-alumnos {
-      overflow-y: auto;
-      border-top: 1px solid #e0e0e0;
-      padding-top: 8px;
-      min-height: 120px;
-    }
-
-    .card-alumno {
-      background: #f8f9fa;
-      border-left: 4px solid #ffcc00;
-      padding: 9px 10px;
-      margin-bottom: 8px;
-      border-radius: 5px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .card-alumno strong {
-      display: block;
-      color: #111;
-      margin-bottom: 4px;
-    }
-
+    .estado { font-size: 13px; padding: 9px; border-radius: 6px; background: #fff3cd; border: 1px solid #ffeeba; margin-bottom: 10px; display: none; }
+    .resumen { display: none; background: #e8f4f8; border: 1px solid #b8daff; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; line-height: 1.45; }
+    .contador { font-size: 13px; font-weight: 900; margin-bottom: 6px; }
+    .lista-alumnos { overflow-y: auto; border-top: 1px solid #e0e0e0; padding-top: 8px; min-height: 120px; }
+    .card-alumno { background: #f8f9fa; border-left: 4px solid #ffcc00; padding: 9px 10px; margin-bottom: 8px; border-radius: 5px; font-size: 12px; cursor: pointer; }
+    .card-alumno strong { display: block; color: #111; margin-bottom: 4px; }
     .card-sin-coords { border-left-color: #dc3545; color: #666; }
-
-    .btn-nav {
-      margin-top: 8px;
-      width: 100%;
-      background: #111;
-      color: #ffcc00;
-      border: 0;
-      border-radius: 5px;
-      padding: 8px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .numbered-icon {
-      background: #ffcc00;
-      color: #111;
-      border: 2px solid #111;
-      border-radius: 50%;
-      font-weight: 900;
-      text-align: center;
-      line-height: 26px;
-      font-size: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,.4);
-    }
-
-    .school-icon {
-      background: #111;
-      color: #ffcc00;
-      border: 2px solid #ffcc00;
-      border-radius: 50%;
-      font-weight: 900;
-      text-align: center;
-      line-height: 30px;
-      font-size: 15px;
-    }
-
-    @media (max-width: 700px) {
-      .panel-control {
-        top: auto;
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
-        width: auto;
-        max-width: none;
-        max-height: 50vh;
-      }
-    }
+    .btn-nav { margin-top: 8px; width: 100%; background: #111; color: #ffcc00; border: 0; border-radius: 5px; padding: 8px; font-weight: 900; cursor: pointer; }
+    .numbered-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; font-weight: 900; text-align: center; line-height: 26px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
+    .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; font-size: 15px; }
+    @media (max-width: 700px) { .panel-control { top: auto; left: 10px; right: 10px; bottom: 10px; width: auto; max-width: none; max-height: 54vh; } }
   </style>
 </head>
-
 <body>
   <div id="map-container">
     <div class="panel-control">
       <div class="header-panel">Ruta 7 - San Gabriel</div>
-
-      <div class="modo-ruta">
-        <button id="btn-entrada" class="btn btn-modo activo" onclick="seleccionarModoRuta('entrada')">
-          Entrada mañana
-        </button>
-        <button id="btn-salida" class="btn btn-modo" onclick="seleccionarModoRuta('salida')">
-          Salida escuela
-        </button>
+      <div class="grid">
+        <button id="btn-entrada-manana" class="btn btn-modo activo" onclick="seleccionarOperacion('entrada_manana')">Entrada mañana</button>
+        <button id="btn-salida-manana" class="btn btn-modo" onclick="seleccionarOperacion('salida_manana')">Salida mañana</button>
+        <button id="btn-entrada-tarde" class="btn btn-modo" onclick="seleccionarOperacion('entrada_tarde')">Entrada tarde</button>
+        <button id="btn-salida-tarde" class="btn btn-modo" onclick="seleccionarOperacion('salida_tarde')">Salida tarde</button>
       </div>
-
       <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">Cargar estudiantes</button>
       <button class="btn btn-trazar" id="btn-trazar" onclick="generarRuta()" disabled>Trazar ruta</button>
-
       <div id="estado" class="estado"></div>
       <div id="resumen" class="resumen"></div>
-
-      <div class="contador">Inscritos: <span id="cant-alumnos">0</span></div>
-
-      <div class="lista-alumnos" id="lista-alumnos">
-        <p style="text-align:center;color:#777;font-size:12px;">
-          Presiona “Cargar estudiantes”.
-        </p>
-      </div>
+      <div id="navegacion"></div>
+      <div class="contador">Inscritos: <span id="cant-alumnos">0</span> | En esta ruta: <span id="cant-ruta">0</span></div>
+      <div class="lista-alumnos" id="lista-alumnos"><p style="text-align:center;color:#777;font-size:12px;">Presiona “Cargar estudiantes”.</p></div>
     </div>
-
     <div id="map"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQHxoQKvJaplF2u3eRYg4rjV-m8WKnwNr-gg0QpqlTRZ94ST4PLsrLLE6Xp9B0gGOGZg/exec";
-
-    const ESCUELA = {
-      nombre: "Unidad Educativa San Gabriel",
-      lat: -0.268130,
-      lng: -78.543977
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo5jjvhBXmZ_NwV136OdvQZMFVAmNO9VIfNkSYPNgXzUwj6SLxBb6CQEZn_cqoy3UsWw/exec";
+    const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
+    const OPERACIONES = {
+      entrada_manana: { label: "Entrada mañana", jornada: "MATUTINO", sentido: "entrada", descripcion: "Casa 1 → casa 2 → casa 3 → escuela" },
+      salida_manana: { label: "Salida mañana", jornada: "MATUTINO", sentido: "salida", descripcion: "Escuela → casa 1 → casa 2 → casa 3" },
+      entrada_tarde: { label: "Entrada tarde", jornada: "VESPERTINO", sentido: "entrada", descripcion: "Casa 1 → casa 2 → casa 3 → escuela" },
+      salida_tarde: { label: "Salida tarde", jornada: "VESPERTINO", sentido: "salida", descripcion: "Escuela → casa 1 → casa 2 → casa 3" }
     };
-
-    let modoRuta = "entrada";
+    let operacionActual = "entrada_manana";
     let estudiantesData = [];
     let puntosValidos = [];
+    let puntosRuta = [];
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
-
     const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "© OpenStreetMap"
-    }).addTo(map);
-
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
     marcadoresGroup.addTo(map);
     colocarEscuela();
 
     function colocarEscuela() {
-      const icon = L.divIcon({
-        className: "school-icon",
-        html: "E",
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
-      });
-
-      L.marker([ESCUELA.lat, ESCUELA.lng], { icon })
-        .bindPopup(`<strong>${ESCUELA.nombre}</strong><br>Escuela`)
-        .addTo(map);
+      const icon = L.divIcon({ className: "school-icon", html: "E", iconSize: [32, 32], iconAnchor: [16, 16] });
+      L.marker([ESCUELA.lat, ESCUELA.lng], { icon }).bindPopup(`<strong>${ESCUELA.nombre}</strong><br>Escuela`).addTo(map);
     }
 
-    function seleccionarModoRuta(modo) {
-      modoRuta = modo;
-
-      document.getElementById("btn-entrada").classList.toggle("activo", modo === "entrada");
-      document.getElementById("btn-salida").classList.toggle("activo", modo === "salida");
-
-      mostrarEstado(
-        modo === "entrada"
-          ? "Entrada mañana: recoge estudiantes y termina en la escuela."
-          : "Salida escuela: inicia en la escuela y termina en la última parada.",
-        "info"
-      );
-
-      if (puntosValidos.length > 0) generarRuta();
+    function seleccionarOperacion(operacion) {
+      operacionActual = operacion;
+      Object.keys(OPERACIONES).forEach(key => document.getElementById("btn-" + key.replace("_", "-")).classList.toggle("activo", key === operacion));
+      const config = OPERACIONES[operacion];
+      mostrarEstado(`${config.label}: ${config.descripcion}.`, "info");
+      if (estudiantesData.length) prepararPuntosParaOperacion();
+      if (puntosRuta.length) generarRuta();
     }
 
     function mostrarEstado(texto, tipo) {
       const estado = document.getElementById("estado");
       estado.style.display = "block";
       estado.textContent = texto;
-
-      if (tipo === "error") {
-        estado.style.background = "#f8d7da";
-        estado.style.borderColor = "#f5c6cb";
-        estado.style.color = "#721c24";
-      } else if (tipo === "ok") {
-        estado.style.background = "#d4edda";
-        estado.style.borderColor = "#c3e6cb";
-        estado.style.color = "#155724";
-      } else {
-        estado.style.background = "#fff3cd";
-        estado.style.borderColor = "#ffeeba";
-        estado.style.color = "#856404";
-      }
+      if (tipo === "error") { estado.style.background = "#f8d7da"; estado.style.borderColor = "#f5c6cb"; estado.style.color = "#721c24"; }
+      else if (tipo === "ok") { estado.style.background = "#d4edda"; estado.style.borderColor = "#c3e6cb"; estado.style.color = "#155724"; }
+      else { estado.style.background = "#fff3cd"; estado.style.borderColor = "#ffeeba"; estado.style.color = "#856404"; }
     }
 
     function cargarDatosDesdeGoogle() {
-      puntosValidos = [];
+      limpiarRuta();
       document.getElementById("lista-alumnos").innerHTML = "<p style='text-align:center;'>Leyendo Google Sheets...</p>";
       mostrarEstado("Conectando con Google Sheets...", "info");
+      cargarJsonp(`${SCRIPT_URL}?action=records`).then(data => {
+        const registros = Array.isArray(data) ? data : (data.records || []);
+        estudiantesData = registros.map(normalizarRegistro);
+        document.getElementById("cant-alumnos").textContent = estudiantesData.length;
+        prepararPuntosParaOperacion();
+      }).catch(error => {
+        console.error(error);
+        mostrarEstado("Error al leer Google Sheets. Revisa URL /exec, permisos y nueva versión.", "error");
+      });
+    }
 
-      cargarJsonp(`${SCRIPT_URL}?action=records`)
-        .then(data => {
-          const registros = Array.isArray(data) ? data : (data.records || []);
-          estudiantesData = registros.map(normalizarRegistro);
-          document.getElementById("cant-alumnos").textContent = estudiantesData.length;
-          renderizarMapaYLista();
-
-          if (puntosValidos.length > 0) {
-            document.getElementById("btn-trazar").disabled = false;
-            mostrarEstado(`${puntosValidos.length} estudiantes con ubicación válida.`, "ok");
-          } else {
-            document.getElementById("btn-trazar").disabled = true;
-            mostrarEstado("Se cargaron datos, pero no hay ubicaciones válidas.", "error");
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          mostrarEstado("Error al leer Google Sheets. Revisa URL /exec y permisos.", "error");
-        });
+    function prepararPuntosParaOperacion() {
+      const config = OPERACIONES[operacionActual];
+      puntosValidos = [];
+      puntosRuta = [];
+      marcadoresGroup.clearLayers();
+      limpiarRuta();
+      const lista = document.getElementById("lista-alumnos");
+      lista.innerHTML = "";
+      const bounds = [[ESCUELA.lat, ESCUELA.lng]];
+      estudiantesData.forEach((est, idx) => {
+        const coords = extraerCoordenadas(est.urlMaps);
+        const coincideJornada = obtenerJornada(est).includes(config.jornada);
+        if (!coincideJornada) return;
+        if (coords) {
+          const punto = { ...est, lat: coords.lat, lng: coords.lng, ordenOriginal: idx };
+          puntosValidos.push(punto);
+          bounds.push([coords.lat, coords.lng]);
+        } else {
+          const card = document.createElement("div");
+          card.className = "card-alumno card-sin-coords";
+          card.innerHTML = `<strong>${escapar(est.estudiante || "Estudiante sin nombre")}</strong><div>${config.label}: sin ubicación válida</div>`;
+          lista.appendChild(card);
+        }
+      });
+      document.getElementById("cant-ruta").textContent = puntosValidos.length;
+      document.getElementById("btn-trazar").disabled = puntosValidos.length === 0;
+      if (!puntosValidos.length) {
+        mostrarEstado(`No hay estudiantes con ubicación válida para ${config.label}.`, "error");
+        return;
+      }
+      puntosValidos.forEach((punto, index) => agregarParadaAlMapaYLista(punto, index + 1, lista));
+      map.fitBounds(bounds, { padding: [45, 45] });
+      mostrarEstado(`${puntosValidos.length} estudiantes listos para ${config.label}.`, "ok");
     }
 
     function cargarJsonp(url) {
@@ -304,19 +152,8 @@
         const callbackName = "jsonpCallback_" + Date.now();
         const script = document.createElement("script");
         const separator = url.includes("?") ? "&" : "?";
-
-        window[callbackName] = function(data) {
-          delete window[callbackName];
-          script.remove();
-          resolve(data);
-        };
-
-        script.onerror = function() {
-          delete window[callbackName];
-          script.remove();
-          reject(new Error("No se pudo cargar JSONP"));
-        };
-
+        window[callbackName] = function(data) { delete window[callbackName]; script.remove(); resolve(data); };
+        script.onerror = function() { delete window[callbackName]; script.remove(); reject(new Error("No se pudo cargar JSONP")); };
         script.src = `${url}${separator}callback=${callbackName}&t=${Date.now()}`;
         document.body.appendChild(script);
       });
@@ -341,216 +178,143 @@
       };
     }
 
-    function renderizarMapaYLista() {
-      const lista = document.getElementById("lista-alumnos");
-      lista.innerHTML = "";
-      marcadoresGroup.clearLayers();
-      puntosValidos = [];
-
-      if (rutaLayer) {
-        map.removeLayer(rutaLayer);
-        rutaLayer = null;
-      }
-
-      const bounds = [[ESCUELA.lat, ESCUELA.lng]];
-      let contador = 0;
-
-      estudiantesData.forEach((est, idx) => {
-        const coords = extraerCoordenadas(est.urlMaps);
-
-        if (coords) {
-          contador++;
-          const punto = { ...est, lat: coords.lat, lng: coords.lng, ordenOriginal: idx };
-          puntosValidos.push(punto);
-          bounds.push([coords.lat, coords.lng]);
-
-          agregarParadaAlMapaYLista(punto, contador, lista);
-        } else {
-          const card = document.createElement("div");
-          card.className = "card-alumno card-sin-coords";
-          card.innerHTML = `<strong>${escapar(est.estudiante || "Estudiante sin nombre")}</strong><div>Sin ubicación válida</div>`;
-          lista.appendChild(card);
-        }
-      });
-
-      if (bounds.length > 1) map.fitBounds(bounds, { padding: [45, 45] });
-    }
-
     function generarRuta() {
-      if (puntosValidos.length < 1) {
-        alert("No hay puntos válidos para trazar.");
-        return;
-      }
-
+      if (!puntosValidos.length) { alert("No hay puntos válidos para trazar."); return; }
       const btn = document.getElementById("btn-trazar");
+      const config = OPERACIONES[operacionActual];
       btn.disabled = true;
       btn.textContent = "Calculando...";
-
-      let ordenados;
-
-      if (modoRuta === "entrada") {
-        ordenados = ordenarPorCercania(ESCUELA, puntosValidos).reverse();
-      } else {
-        ordenados = ordenarPorCercania(ESCUELA, puntosValidos);
-      }
-
-      renderizarRutaOrdenada(ordenados);
-
-      const todosLosPuntos = modoRuta === "entrada"
-        ? [...ordenados, ESCUELA]
-        : [ESCUELA, ...ordenados];
-
+      puntosRuta = config.sentido === "entrada" ? ordenarPorCercania(ESCUELA, puntosValidos).reverse() : ordenarPorCercania(ESCUELA, puntosValidos);
+      renderizarRutaOrdenada(puntosRuta);
+      mostrarEnlacesNavegacion(puntosRuta, config.sentido);
+      const todosLosPuntos = config.sentido === "entrada" ? [...puntosRuta, ESCUELA] : [ESCUELA, ...puntosRuta];
       const waypoints = todosLosPuntos.map(p => `${p.lng},${p.lat}`).join(";");
       const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson`;
-
-      fetch(osrmUrl)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.routes || !data.routes.length) throw new Error("OSRM no devolvió ruta");
-
-          const route = data.routes[0];
-          if (rutaLayer) map.removeLayer(rutaLayer);
-
-          rutaLayer = L.geoJSON(route.geometry, {
-            style: {
-              color: modoRuta === "entrada" ? "#0066ff" : "#28a745",
-              weight: 6,
-              opacity: 0.85
-            }
-          }).addTo(map);
-
-          map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
-          mostrarResumen(route, ordenados);
-
-          mostrarEstado(
-            modoRuta === "entrada"
-              ? "Ruta de entrada trazada: paradas hacia la escuela."
-              : "Ruta de salida trazada: escuela hacia paradas.",
-            "ok"
-          );
-        })
-        .catch(error => {
-          console.error(error);
-          mostrarEstado("No se pudo trazar la ruta. Intenta nuevamente.", "error");
-        })
-        .finally(() => {
-          btn.disabled = false;
-          btn.textContent = "Trazar ruta";
-        });
+      fetch(osrmUrl).then(res => res.json()).then(data => {
+        if (!data.routes || !data.routes.length) throw new Error("OSRM no devolvió ruta");
+        const route = data.routes[0];
+        if (rutaLayer) map.removeLayer(rutaLayer);
+        rutaLayer = L.geoJSON(route.geometry, { style: { color: config.sentido === "entrada" ? "#0066ff" : "#28a745", weight: 6, opacity: 0.85 } }).addTo(map);
+        map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
+        mostrarResumen(route, puntosRuta, config);
+        mostrarEstado(`${config.label} trazada con paradas en orden.`, "ok");
+      }).catch(error => {
+        console.error(error);
+        mostrarEstado("No se pudo trazar con OSRM. La lista y navegación de Google Maps sí quedaron generadas.", "error");
+      }).finally(() => {
+        btn.disabled = false;
+        btn.textContent = "Trazar ruta";
+      });
     }
 
     function renderizarRutaOrdenada(ordenados) {
       const lista = document.getElementById("lista-alumnos");
       lista.innerHTML = "";
       marcadoresGroup.clearLayers();
-
       const bounds = [[ESCUELA.lat, ESCUELA.lng]];
-
-      ordenados.forEach((est, index) => {
-        const numero = index + 1;
-        bounds.push([est.lat, est.lng]);
-        agregarParadaAlMapaYLista(est, numero, lista);
-      });
-
+      ordenados.forEach((est, index) => { bounds.push([est.lat, est.lng]); agregarParadaAlMapaYLista(est, index + 1, lista); });
       map.fitBounds(bounds, { padding: [45, 45] });
     }
 
     function agregarParadaAlMapaYLista(est, numero, lista) {
-      const icon = L.divIcon({
-        className: "numbered-icon",
-        html: numero,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
-      });
-
+      const icon = L.divIcon({ className: "numbered-icon", html: numero, iconSize: [28, 28], iconAnchor: [14, 14] });
       const linkNavegar = `https://www.google.com/maps/dir/?api=1&destination=${est.lat},${est.lng}&travelmode=driving`;
-
       const marker = L.marker([est.lat, est.lng], { icon });
-      marker.bindPopup(`
-        <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><br>
-        <b>Sector:</b> ${escapar(est.sector || "Sin sector")}<br>
-        <b>Representante:</b> ${escapar(est.representante || "Sin representante")}<br>
-        <b>Teléfono:</b> ${crearLinkWhatsApp(est.telefono)}<br><br>
-        <a href="${linkNavegar}" target="_blank">Navegar a esta parada</a>
-      `);
-
+      marker.bindPopup(`<strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><br><b>Sector:</b> ${escapar(est.sector || "Sin sector")}<br><b>Representante:</b> ${escapar(est.representante || "Sin representante")}<br><b>Teléfono:</b> ${crearLinkWhatsApp(est.telefono)}<br><br><a href="${linkNavegar}" target="_blank">Navegar a esta parada</a>`);
       marcadoresGroup.addLayer(marker);
-
       const card = document.createElement("div");
       card.className = "card-alumno";
-      card.innerHTML = `
-        <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong>
-        <div>Sector: ${escapar(est.sector || "Sin sector")}</div>
-        <div>Teléfono: ${escapar(est.telefono || "Sin teléfono")}</div>
-        <div>Horario: ${escapar(est.horario || "Sin horario")}</div>
-        <button class="btn-nav" onclick="event.stopPropagation(); window.open('${linkNavegar}', '_blank')">
-          Navegar a parada #${numero}
-        </button>
-      `;
-
-      card.onclick = () => {
-        map.flyTo([est.lat, est.lng], 17);
-        marker.openPopup();
-      };
-
+      card.innerHTML = `<strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><div>Sector: ${escapar(est.sector || "Sin sector")}</div><div>Teléfono: ${escapar(est.telefono || "Sin teléfono")}</div><div>Servicio: ${escapar(est.horario || "Sin servicio")}</div><button class="btn-nav" onclick="event.stopPropagation(); window.open('${linkNavegar}', '_blank')">Navegar solo a parada #${numero}</button>`;
+      card.onclick = () => { map.flyTo([est.lat, est.lng], 17); marker.openPopup(); };
       lista.appendChild(card);
+    }
+
+    function mostrarEnlacesNavegacion(puntosOrdenados, sentido) {
+      const contenedor = document.getElementById("navegacion");
+      contenedor.innerHTML = "";
+      const links = crearLinksNavegacionCompleta(puntosOrdenados, sentido);
+      links.forEach((link, index) => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-cargar";
+        btn.textContent = links.length === 1 ? "Navegar ruta completa" : `Navegar tramo ${index + 1} de ${links.length}`;
+        btn.onclick = () => window.open(link, "_blank");
+        contenedor.appendChild(btn);
+      });
+    }
+
+    function crearLinksNavegacionCompleta(puntosOrdenados, sentido) {
+      if (!puntosOrdenados.length) return [];
+      const maxPuntosPorLink = 10;
+      const recorridoCompleto = sentido === "entrada" ? [...puntosOrdenados, ESCUELA] : [ESCUELA, ...puntosOrdenados];
+      const links = [];
+      let indiceOrigen = 0;
+      while (indiceOrigen < recorridoCompleto.length - 1) {
+        const indiceDestino = Math.min(indiceOrigen + maxPuntosPorLink, recorridoCompleto.length - 1);
+        const origen = recorridoCompleto[indiceOrigen];
+        const destino = recorridoCompleto[indiceDestino];
+        const intermedios = recorridoCompleto.slice(indiceOrigen + 1, indiceDestino);
+        links.push(crearUrlGoogleMaps(origen, destino, intermedios));
+        indiceOrigen = indiceDestino;
+      }
+      return links;
+    }
+
+    function crearUrlGoogleMaps(origen, destino, intermedios) {
+      let url = "https://www.google.com/maps/dir/?api=1";
+      url += `&origin=${origen.lat},${origen.lng}`;
+      url += `&destination=${destino.lat},${destino.lng}`;
+      url += "&travelmode=driving";
+      if (intermedios.length) url += `&waypoints=${encodeURIComponent(intermedios.map(p => `${p.lat},${p.lng}`).join("|"))}`;
+      return url;
     }
 
     function ordenarPorCercania(inicio, puntos) {
       const pendientes = [...puntos];
       const ordenados = [];
       let actual = inicio;
-
       while (pendientes.length) {
         let mejorIndex = 0;
         let mejorDistancia = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
-
         for (let i = 1; i < pendientes.length; i++) {
           const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
-          if (d < mejorDistancia) {
-            mejorDistancia = d;
-            mejorIndex = i;
-          }
+          if (d < mejorDistancia) { mejorDistancia = d; mejorIndex = i; }
         }
-
         const siguiente = pendientes.splice(mejorIndex, 1)[0];
         ordenados.push(siguiente);
         actual = siguiente;
       }
-
       return ordenados;
     }
 
-    function mostrarResumen(route, ordenados) {
+    function mostrarResumen(route, ordenados, config) {
       const km = (route.distance / 1000).toFixed(2);
       const min = Math.round(route.duration / 60);
-
       const resumen = document.getElementById("resumen");
       resumen.style.display = "block";
-      resumen.innerHTML = `
-        <b>Resumen de ruta</b><br>
-        Tipo: <b>${modoRuta === "entrada" ? "Entrada mañana" : "Salida escuela"}</b><br>
-        Paradas: <b>${ordenados.length}</b><br>
-        Distancia: <b>${km} km</b><br>
-        Tiempo estimado: <b>${min} min</b><br>
-        Primera parada: <b>${escapar(ordenados[0]?.estudiante || "N/D")}</b><br>
-        Última parada: <b>${escapar(ordenados[ordenados.length - 1]?.estudiante || "N/D")}</b>
-      `;
+      resumen.innerHTML = `<b>Resumen de ruta</b><br>Tipo: <b>${config.label}</b><br>Orden: <b>${config.descripcion}</b><br>Paradas: <b>${ordenados.length}</b><br>Distancia: <b>${km} km</b><br>Tiempo estimado: <b>${min} min</b><br>Primera parada: <b>${escapar(ordenados[0]?.estudiante || "N/D")}</b><br>Última parada: <b>${escapar(ordenados[ordenados.length - 1]?.estudiante || "N/D")}</b>`;
+    }
+
+    function obtenerJornada(est) {
+      const texto = `${est.horario || ""} ${est.servicio || ""}`.toUpperCase();
+      if (texto.includes("VESPERTINO") || texto.includes("TARDE")) return "VESPERTINO";
+      return "MATUTINO";
+    }
+
+    function limpiarRuta() {
+      if (rutaLayer) { map.removeLayer(rutaLayer); rutaLayer = null; }
+      document.getElementById("navegacion").innerHTML = "";
+      document.getElementById("resumen").style.display = "none";
     }
 
     function extraerCoordenadas(texto) {
       if (!texto) return null;
       const valor = String(texto);
-
       let match = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
       if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
-
       match = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
       if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
-
       match = valor.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
       if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
-
       return null;
     }
 
@@ -558,43 +322,24 @@
       const R = 6371;
       const dLat = gradosARadianes(lat2 - lat1);
       const dLng = gradosARadianes(lng2 - lng1);
-
-      const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(gradosARadianes(lat1)) *
-        Math.cos(gradosARadianes(lat2)) *
-        Math.sin(dLng / 2) ** 2;
-
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(gradosARadianes(lat1)) * Math.cos(gradosARadianes(lat2)) * Math.sin(dLng / 2) ** 2;
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    function gradosARadianes(grados) {
-      return grados * Math.PI / 180;
-    }
+    function gradosARadianes(grados) { return grados * Math.PI / 180; }
 
     function crearLinkWhatsApp(telefono) {
       const limpio = String(telefono || "").replace(/\D/g, "");
       if (!limpio) return "Sin teléfono";
-
-      const internacional = limpio.startsWith("0")
-        ? "593" + limpio.slice(1)
-        : "593" + limpio;
-
+      const internacional = limpio.startsWith("0") ? "593" + limpio.slice(1) : "593" + limpio;
       return `<a href="https://wa.me/${internacional}" target="_blank">${escapar(telefono)}</a>`;
     }
 
     function escapar(valor) {
-      return String(valor || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+      return String(valor || "").replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """).replace(/'/g, "'");
     }
 
-    window.addEventListener("load", () => {
-      setTimeout(() => map.invalidateSize(), 300);
-    });
+    window.addEventListener("load", () => setTimeout(() => map.invalidateSize(), 300));
   </script>
 </body>
 </html>
