@@ -26,7 +26,7 @@
             height: 100%;
         }
 
-        /* Panel flotante de control */
+        /* Panel flotante lateral */
         .panel-control {
             position: absolute;
             top: 20px;
@@ -36,7 +36,7 @@
             padding: 18px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-            width: 320px;
+            width: 340px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
@@ -97,21 +97,21 @@
             margin-top: 5px;
         }
 
-        .card-alumno {
+        .card-estudiante {
             background: #f8f9fa;
             border-left: 4px solid #ffcc00;
-            padding: 8px 10px;
+            padding: 10px;
             margin-bottom: 8px;
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .card-alumno:hover { background: #e9ecef; }
-        .card-alumno strong { display: block; color: #111; }
-        .card-sin-coords { border-left-color: #dc3545; color: #666; }
-
-        /* Estilo de marcadores numerados */
+        .card-estudiante:hover { background: #e9ecef; }
+        .card-estudiante strong { display: block; color: #111; font-size: 13px; margin-bottom: 3px; }
+        .sector-tag { display: inline-block; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-bottom: 4px; }
+        
         .numbered-icon {
             background-color: #ffcc00;
             color: #111;
@@ -129,7 +129,7 @@
 
 <div id="map-container">
     <div class="panel-control">
-        <div class="header-panel">RUTA 7 - SAN GABRIEL</div>
+        <div class="header-panel">RUTA VIAL - SAN GABRIEL</div>
         
         <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">🔄 Cargar Estudiantes</button>
         <button class="btn btn-trazar" id="btn-trazar" onclick="generarRutaOptima()" disabled>🚗 Trazar Ruta Óptima</button>
@@ -137,11 +137,11 @@
         <div id="resumen" class="resumen"></div>
 
         <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">
-            Inscritos: <span id="cant-alumnos">0</span>
+            Inscritos cargados: <span id="cant-alumnos">0</span>
         </div>
 
-        <div class="lista-alumnos" id="lista-alumnos">
-            <p style="text-align: center; color: #777; font-size: 12px;">Haz clic en "Cargar Estudiantes" para obtener los puntos desde Google Sheets.</p>
+        <div class="lista-alumnos" id="contenedor-lista">
+            <p style="text-align: center; color: #777; font-size: 12px;">Haz clic en "Cargar Estudiantes" para sincronizar la hoja de cálculo.</p>
         </div>
     </div>
 
@@ -152,15 +152,14 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    // Enlace Web App de Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxw6VjmBzYEGrykyyOX0enC6rzSCwIdX1WiOCU3qGHKFPgzLZY0Ama_Eyoq-R75RZMK/exec";
 
     let estudiantesData = [];
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
 
-    // Inicializar mapa centrado en Quito
-    const map = L.map('map').setView([-0.25, -78.52], 12);
+    // Inicializar mapa en Quito Sur (Beaterio / La Bretaña)
+    const map = L.map('map').setView([-0.3150, -78.5380], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -169,9 +168,9 @@
 
     marcadoresGroup.addTo(map);
 
-    // 1. OBTENER DATOS DESDE GOOGLE SHEETS (SIN ENCABEZADOS DE CORS MANUALES)
+    // 1. CARGAR DATOS
     function cargarDatosDesdeGoogle() {
-        const contenedor = document.getElementById('lista-alumnos');
+        const contenedor = document.getElementById('contenedor-lista');
         contenedor.innerHTML = "<p style='text-align:center;'>⏳ Leyendo Google Sheets...</p>";
 
         fetch(SCRIPT_URL, {
@@ -179,13 +178,10 @@
             redirect: "follow"
         })
         .then(res => {
-            if (!res.ok) {
-                throw new Error("Respuesta de red no válida");
-            }
+            if (!res.ok) throw new Error("Respuesta no válida");
             return res.json();
         })
         .then(data => {
-            console.log("Datos recibidos correctamente:", data);
             estudiantesData = Array.isArray(data) ? data : [];
             document.getElementById('cant-alumnos').innerText = estudiantesData.length;
 
@@ -195,76 +191,88 @@
                 document.getElementById('btn-trazar').disabled = true;
             }
 
-            renderizarMapaYLista();
+            renderizarListaYMapa();
         })
         .catch(err => {
-            console.error("Error al obtener los datos:", err);
-            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error al leer datos. Si persiste, actualiza la implementación en Apps Script a 'Nueva versión'.</p>";
+            console.error("Error cargando datos:", err);
+            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error de lectura. Asegúrate de publicar la Web App como 'Cualquiera' en Google Apps Script.</p>";
         });
     }
 
-    // 2. MOSTRAR MARCADORES Y TARJETAS
-    function renderizarMapaYLista() {
-        const contenedor = document.getElementById('lista-alumnos');
+    // 2. RENDEREAR LISTA Y PINES EN MAPA
+    function renderizarListaYMapa() {
+        const contenedor = document.getElementById('contenedor-lista');
         contenedor.innerHTML = "";
         marcadoresGroup.clearLayers();
         if (rutaLayer) map.removeLayer(rutaLayer);
 
         const bounds = [];
-        let contadorPuntos = 0;
+        let contUbicados = 0;
 
-        estudiantesData.forEach((est, idx) => {
-            // Mapeo flexible para leer diferentes encabezados de columna
-            const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${idx + 1}`;
+        estudiantesData.forEach((est, index) => {
+            // Claves mapeadas directamente con los nombres de tus columnas
+            const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${index + 1}`;
             const urlMaps = est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "";
-            const telefono = est.telefono || 'Sin número';
             const sector = est.sector || 'Sin sector';
+            const callePrin = est.calleprincipal || '';
+            const calleSec = est.callesecundaria || '';
+            const numCasa = est.nrocasalote || est.numerocasa || '';
+            const telefono = est.telefono || 'Sin teléfono';
+            const horario = est.tipodeservicio || '';
+            const rep = est.representante || '';
+            const ref = est.referencia || '';
 
             const coords = extraerCoordenadas(urlMaps);
 
             if (coords) {
-                contadorPuntos++;
+                contUbicados++;
                 est.lat = coords.lat;
                 est.lng = coords.lng;
                 bounds.push([coords.lat, coords.lng]);
 
-                // Ícono numerado
-                const icon = L.divIcon({
+                // Marcador Numerado
+                const customIcon = L.divIcon({
                     className: 'numbered-icon',
-                    html: contadorPuntos,
-                    iconSize: [26, 26],
-                    iconAnchor: [13, 13]
+                    html: contUbicados,
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
                 });
 
-                const marker = L.marker([coords.lat, coords.lng], { icon: icon });
+                const marker = L.marker([coords.lat, coords.lng], { icon: customIcon });
                 marker.bindPopup(`
-                    <strong>#${contadorPuntos} ${nombre}</strong><br>
+                    <strong>#${contUbicados} - ${nombre}</strong><br>
+                    <b>Representante:</b> ${rep}<br>
                     <b>Sector:</b> ${sector}<br>
+                    <b>Dirección:</b> ${callePrin} ${calleSec} ${numCasa}<br>
+                    <b>Ref:</b> ${ref}<br>
                     <b>Teléfono:</b> <a href="https://wa.me/593${telefono.toString().replace(/^0/, '')}" target="_blank">${telefono}</a>
                 `);
                 marcadoresGroup.addLayer(marker);
 
-                // Tarjeta en lista lateral
+                // Card Lateral
                 const card = document.createElement('div');
-                card.className = 'card-alumno';
+                card.className = 'card-estudiante';
                 card.innerHTML = `
-                    <strong>#${contadorPuntos} ${nombre}</strong>
-                    <div>📍 ${sector}</div>
-                    <div>📞 ${telefono}</div>
+                    <strong>#${contUbicados} ${nombre}</strong>
+                    <span class="sector-tag">📍 ${sector}</span>
+                    <div>🏠 ${callePrin} ${numCasa}</div>
+                    <div>📞 ${telefono} ${horario ? '| ⏰ ' + horario : ''}</div>
                 `;
+
                 card.onclick = () => {
                     map.flyTo([coords.lat, coords.lng], 16);
                     marker.openPopup();
                 };
-                contenedor.appendChild(card);
 
+                contenedor.appendChild(card);
             } else {
-                // Registro sin coordenadas
                 const card = document.createElement('div');
-                card.className = 'card-alumno card-sin-coords';
+                card.className = 'card-estudiante';
+                card.style.borderLeftColor = '#dc3545';
                 card.innerHTML = `
                     <strong>⚠️ ${nombre}</strong>
-                    <div>Sin ubicación válida</div>
+                    <span style="color:#dc3545; font-size:11px;">Sin ubicación válida</span>
+                    <div>📞 ${telefono}</div>
                 `;
                 contenedor.appendChild(card);
             }
@@ -275,27 +283,39 @@
         }
     }
 
-    // Extraer latitud y longitud desde cualquier URL o texto
+    // Extractor multi-patrón de coordenadas
     function extraerCoordenadas(texto) {
         if (!texto) return null;
-        const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
-        const match = texto.toString().match(regex);
-        if (match) {
-            return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
-        }
+        const str = texto.toString();
+
+        // 1. Patrón tipo @lat,lng
+        const regexAt = /@(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+        const matchAt = str.match(regexAt);
+        if (matchAt) return { lat: parseFloat(matchAt[1]), lng: parseFloat(matchAt[2]) };
+
+        // 2. Patrón con parámetro q=lat,lng (Formato de tus enlaces actualizados)
+        const regexQuery = /[?&](?:q|ll|place)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+        const matchQuery = str.match(regexQuery);
+        if (matchQuery) return { lat: parseFloat(matchQuery[1]), lng: parseFloat(matchQuery[2]) };
+
+        // 3. Patrón simple -lat.xxxx, -78.xxxx
+        const regexDirect = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+        const matchDirect = str.match(regexDirect);
+        if (matchDirect) return { lat: parseFloat(matchDirect[1]), lng: parseFloat(matchDirect[2]) };
+
         return null;
     }
 
-    // 3. TRAZADO VIAL CON MOTOR OSRM
+    // 3. TRAZADO DE RUTA VIAL
     function generarRutaOptima() {
         const puntosValidos = estudiantesData.filter(e => e.lat && e.lng);
         if (puntosValidos.length < 2) {
-            alert("Se necesitan al menos 2 puntos con ubicación para trazar la ruta.");
+            alert("Se necesitan al menos 2 puntos para trazar la ruta.");
             return;
         }
 
         const btn = document.getElementById('btn-trazar');
-        btn.innerText = "⏳ Calculando...";
+        btn.innerText = "⏳ Trazando...";
         btn.disabled = true;
 
         const waypoints = puntosValidos.map(e => `${e.lng},${e.lat}`).join(';');
@@ -309,7 +329,6 @@
 
                     if (rutaLayer) map.removeLayer(rutaLayer);
 
-                    // Trazo vial
                     rutaLayer = L.geoJSON(route.geometry, {
                         style: {
                             color: '#0066ff',
@@ -320,25 +339,24 @@
 
                     map.fitBounds(rutaLayer.getBounds(), { padding: [40, 40] });
 
-                    // Resumen
                     const km = (route.distance / 1000).toFixed(2);
                     const min = Math.round(route.duration / 60);
 
                     const divResumen = document.getElementById('resumen');
                     divResumen.style.display = 'block';
                     divResumen.innerHTML = `
-                        <b>📍 Resumen de Ruta:</b><br>
+                        <b>📍 Resumen de Ruta Vial:</b><br>
                         • Paradas: <b>${puntosValidos.length}</b><br>
                         • Distancia: <b>${km} km</b><br>
-                        • Tiempo estim.: <b>${min} min</b>
+                        • Tiempo estimado: <b>${min} min</b>
                     `;
                 }
                 btn.innerText = "🚗 Trazar Ruta Óptima";
                 btn.disabled = false;
             })
             .catch(err => {
-                console.error("Error trazando la ruta:", err);
-                alert("Ocurrió un error al calcular la ruta vial.");
+                console.error("Error al trazar:", err);
+                alert("Error al obtener la ruta vial.");
                 btn.innerText = "🚗 Trazar Ruta Óptima";
                 btn.disabled = false;
             });
