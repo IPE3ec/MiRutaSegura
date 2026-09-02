@@ -1,367 +1,578 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoreo y Ruta Vial - San Gabriel</title>
-    
-    <!-- Silenciar advertencia de favicon -->
-    <link rel="icon" href="data:,">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruta 7 - Monitoreo</title>
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-    <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { margin: 0; padding: 0; background-color: #f0f2f5; }
-        
-        #map-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        #map {
-            width: 100%;
-            height: 100%;
-        }
+    body {
+      margin: 0;
+      background: #f0f2f5;
+    }
 
-        /* Panel flotante lateral */
-        .panel-control {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 18px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-            width: 340px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-        }
+    #map-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
 
-        .header-panel {
-            background-color: #111;
-            color: #ffcc00;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
+    #map {
+      width: 100%;
+      height: 100%;
+    }
 
-        .btn {
-            width: 100%;
-            padding: 11px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.2s;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
+    .panel-control {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 1000;
+      width: 340px;
+      max-width: calc(100vw - 36px);
+      max-height: calc(100vh - 36px);
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .btn-cargar { background-color: #111; color: #ffcc00; }
-        .btn-cargar:hover { background-color: #333; }
+    .header-panel {
+      background: #111;
+      color: #ffcc00;
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
 
-        .btn-trazar { background-color: #28a745; color: white; }
-        .btn-trazar:hover { background-color: #218838; }
-        .btn-trazar:disabled { background-color: #ccc; cursor: not-allowed; }
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
 
-        .resumen {
-            background-color: #e8f4f8;
-            border: 1px solid #b8daff;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            margin-bottom: 10px;
-            display: none;
-            line-height: 1.4;
-        }
+    .btn-cargar {
+      background: #111;
+      color: #ffcc00;
+    }
 
-        .lista-alumnos {
-            overflow-y: auto;
-            flex-grow: 1;
-            border-top: 1px solid #eee;
-            padding-top: 8px;
-            margin-top: 5px;
-        }
+    .btn-trazar {
+      background: #28a745;
+      color: #fff;
+    }
 
-        .card-estudiante {
-            background: #f8f9fa;
-            border-left: 4px solid #ffcc00;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+    .btn:disabled {
+      background: #ccc;
+      color: #777;
+      cursor: not-allowed;
+    }
 
-        .card-estudiante:hover { background: #e9ecef; }
-        .card-estudiante strong { display: block; color: #111; font-size: 13px; margin-bottom: 3px; }
-        .sector-tag { display: inline-block; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-bottom: 4px; }
-        
-        .numbered-icon {
-            background-color: #ffcc00;
-            color: #111;
-            border: 2px solid #111;
-            border-radius: 50%;
-            font-weight: bold;
-            text-align: center;
-            line-height: 26px;
-            font-size: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-        }
-    </style>
+    .estado {
+      font-size: 13px;
+      padding: 9px;
+      border-radius: 6px;
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .resumen {
+      display: none;
+      background: #e8f4f8;
+      border: 1px solid #b8daff;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-bottom: 10px;
+      line-height: 1.45;
+    }
+
+    .contador {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .lista-alumnos {
+      overflow-y: auto;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 8px;
+      min-height: 120px;
+    }
+
+    .card-alumno {
+      background: #f8f9fa;
+      border-left: 4px solid #ffcc00;
+      padding: 9px 10px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .card-alumno strong {
+      display: block;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .card-alumno:hover {
+      background: #e9ecef;
+    }
+
+    .card-sin-coords {
+      border-left-color: #dc3545;
+      color: #666;
+    }
+
+    .numbered-icon {
+      background: #ffcc00;
+      color: #111;
+      border: 2px solid #111;
+      border-radius: 50%;
+      font-weight: 900;
+      text-align: center;
+      line-height: 26px;
+      font-size: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .school-icon {
+      background: #111;
+      color: #ffcc00;
+      border: 2px solid #ffcc00;
+      border-radius: 50%;
+      font-weight: 900;
+      text-align: center;
+      line-height: 28px;
+      font-size: 15px;
+    }
+
+    @media (max-width: 700px) {
+      .panel-control {
+        top: auto;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        width: auto;
+        max-width: none;
+        max-height: 48vh;
+      }
+    }
+  </style>
 </head>
+
 <body>
-
-<div id="map-container">
+  <div id="map-container">
     <div class="panel-control">
-        <div class="header-panel">RUTA VIAL - SAN GABRIEL</div>
-        
-        <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">🔄 Cargar Estudiantes</button>
-        <button class="btn btn-trazar" id="btn-trazar" onclick="generarRutaOptima()" disabled>🚗 Trazar Ruta Óptima</button>
+      <div class="header-panel">Ruta 7 - San Gabriel</div>
 
-        <div id="resumen" class="resumen"></div>
+      <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">Cargar estudiantes</button>
+      <button class="btn btn-trazar" id="btn-trazar" onclick="generarRuta()" disabled>Trazar ruta</button>
 
-        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">
-            Inscritos cargados: <span id="cant-alumnos">0</span>
-        </div>
+      <div id="estado" class="estado"></div>
+      <div id="resumen" class="resumen"></div>
 
-        <div class="lista-alumnos" id="contenedor-lista">
-            <p style="text-align: center; color: #777; font-size: 12px;">Haz clic en "Cargar Estudiantes" para sincronizar la hoja de cálculo.</p>
-        </div>
+      <div class="contador">
+        Inscritos: <span id="cant-alumnos">0</span>
+      </div>
+
+      <div class="lista-alumnos" id="lista-alumnos">
+        <p style="text-align:center;color:#777;font-size:12px;">
+          Presiona “Cargar estudiantes” para leer Google Sheets.
+        </p>
+      </div>
     </div>
 
     <div id="map"></div>
-</div>
+  </div>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxw6VjmBzYEGrykyyOX0enC6rzSCwIdX1WiOCU3qGHKFPgzLZY0Ama_Eyoq-R75RZMK/exec";
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0_eUWMYtsV2oSLFHhcqbGsLOMrcqU0ajwZATJk0OoFWQZdgA1EXjFSfGnvs5AD2Mf_A/exec";
+
+    const PUNTO_INICIO = {
+      nombre: "Unidad Educativa San Gabriel",
+      lat: -0.334591,
+      lng: -78.528823
+    };
 
     let estudiantesData = [];
+    let puntosValidos = [];
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
+    let inicioMarker = null;
 
-    // Inicializar mapa en Quito Sur (Beaterio / La Bretaña)
-    const map = L.map('map').setView([-0.3150, -78.5380], 13);
+    const map = L.map("map").setView([PUNTO_INICIO.lat, PUNTO_INICIO.lng], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap"
     }).addTo(map);
 
     marcadoresGroup.addTo(map);
 
-    // 1. CARGAR DATOS
+    colocarPuntoInicio();
+
+    function colocarPuntoInicio() {
+      const icon = L.divIcon({
+        className: "school-icon",
+        html: "S",
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+
+      inicioMarker = L.marker([PUNTO_INICIO.lat, PUNTO_INICIO.lng], { icon })
+        .bindPopup(`<strong>${PUNTO_INICIO.nombre}</strong><br>Punto de inicio`)
+        .addTo(map);
+    }
+
+    function mostrarEstado(texto, tipo) {
+      const estado = document.getElementById("estado");
+      estado.style.display = "block";
+      estado.textContent = texto;
+
+      if (tipo === "error") {
+        estado.style.background = "#f8d7da";
+        estado.style.borderColor = "#f5c6cb";
+        estado.style.color = "#721c24";
+      } else if (tipo === "ok") {
+        estado.style.background = "#d4edda";
+        estado.style.borderColor = "#c3e6cb";
+        estado.style.color = "#155724";
+      } else {
+        estado.style.background = "#fff3cd";
+        estado.style.borderColor = "#ffeeba";
+        estado.style.color = "#856404";
+      }
+    }
+
     function cargarDatosDesdeGoogle() {
-        const contenedor = document.getElementById('contenedor-lista');
-        contenedor.innerHTML = "<p style='text-align:center;'>⏳ Leyendo Google Sheets...</p>";
+      const lista = document.getElementById("lista-alumnos");
+      lista.innerHTML = "<p style='text-align:center;'>Leyendo Google Sheets...</p>";
+      mostrarEstado("Conectando con Google Sheets...", "info");
 
-        fetch(SCRIPT_URL, {
-            method: "GET",
-            redirect: "follow"
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Respuesta no válida");
-            return res.json();
-        })
+      cargarJsonp(`${SCRIPT_URL}?action=records`)
         .then(data => {
-            estudiantesData = Array.isArray(data) ? data : [];
-            document.getElementById('cant-alumnos').innerText = estudiantesData.length;
+          const registros = Array.isArray(data) ? data : (data.records || []);
 
-            if (estudiantesData.length > 0) {
-                document.getElementById('btn-trazar').disabled = false;
-            } else {
-                document.getElementById('btn-trazar').disabled = true;
-            }
+          estudiantesData = registros.map(normalizarRegistro);
+          puntosValidos = [];
 
-            renderizarListaYMapa();
+          document.getElementById("cant-alumnos").textContent = estudiantesData.length;
+          document.getElementById("btn-trazar").disabled = true;
+
+          renderizarMapaYLista();
+
+          if (puntosValidos.length > 0) {
+            document.getElementById("btn-trazar").disabled = false;
+            mostrarEstado(`Datos cargados. ${puntosValidos.length} estudiantes tienen ubicación válida.`, "ok");
+          } else {
+            mostrarEstado("Se cargaron datos, pero no hay ubicaciones válidas.", "error");
+          }
         })
-        .catch(err => {
-            console.error("Error cargando datos:", err);
-            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error de lectura. Asegúrate de publicar la Web App como 'Cualquiera' en Google Apps Script.</p>";
+        .catch(error => {
+          console.error(error);
+          lista.innerHTML = "<p style='color:#dc3545;text-align:center;'>No se pudieron cargar los datos.</p>";
+          mostrarEstado("Error al leer Google Sheets. Revisa la URL /exec y la nueva versión del Apps Script.", "error");
         });
     }
 
-    // 2. RENDEREAR LISTA Y PINES EN MAPA
-    function renderizarListaYMapa() {
-        const contenedor = document.getElementById('contenedor-lista');
-        contenedor.innerHTML = "";
-        marcadoresGroup.clearLayers();
-        if (rutaLayer) map.removeLayer(rutaLayer);
+    function cargarJsonp(url) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "jsonpCallback_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        const script = document.createElement("script");
+        const separator = url.includes("?") ? "&" : "?";
 
-        const bounds = [];
-        let contUbicados = 0;
+        window[callbackName] = function(data) {
+          cleanup();
+          resolve(data);
+        };
 
-        estudiantesData.forEach((est, index) => {
-            // Claves mapeadas directamente con los nombres de tus columnas
-            const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${index + 1}`;
-            const urlMaps = est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "";
-            const sector = est.sector || 'Sin sector';
-            const callePrin = est.calleprincipal || '';
-            const calleSec = est.callesecundaria || '';
-            const numCasa = est.nrocasalote || est.numerocasa || '';
-            const telefono = est.telefono || 'Sin teléfono';
-            const horario = est.tipodeservicio || '';
-            const rep = est.representante || '';
-            const ref = est.referencia || '';
+        script.onerror = function() {
+          cleanup();
+          reject(new Error("No se pudo cargar JSONP"));
+        };
 
-            const coords = extraerCoordenadas(urlMaps);
+        script.src = `${url}${separator}callback=${callbackName}&t=${Date.now()}`;
+        document.body.appendChild(script);
 
-            if (coords) {
-                contUbicados++;
-                est.lat = coords.lat;
-                est.lng = coords.lng;
-                bounds.push([coords.lat, coords.lng]);
+        function cleanup() {
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+      });
+    }
 
-                // Marcador Numerado
-                const customIcon = L.divIcon({
-                    className: 'numbered-icon',
-                    html: contUbicados,
-                    iconSize: [28, 28],
-                    iconAnchor: [14, 14]
-                });
+    function normalizarRegistro(est) {
+      return {
+        id: est.id || "",
+        estudiante: est.nombresestudiante || est.nombreestudiante || est.estudiante || est.nombre || "",
+        representante: est.nombrerepresentante || est.representante || "",
+        telefono: est.telefono || "",
+        sector: est.sector || "",
+        grado: est.grado || "",
+        nivel: est.nivel || "",
+        urlMaps: est.urlmaps || est.enlacegooglemaps || est.ubicacion || est.url || "",
+        callePrincipal: est.calleprincipal || "",
+        calleSecundaria: est.callesecundaria || "",
+        numeroCasa: est.numerocasa || "",
+        referencia: est.referencia || "",
+        horario: est.horarioservicio || est.horario || "",
+        estado: est.estado || ""
+      };
+    }
 
-                const marker = L.marker([coords.lat, coords.lng], { icon: customIcon });
-                marker.bindPopup(`
-                    <strong>#${contUbicados} - ${nombre}</strong><br>
-                    <b>Representante:</b> ${rep}<br>
-                    <b>Sector:</b> ${sector}<br>
-                    <b>Dirección:</b> ${callePrin} ${calleSec} ${numCasa}<br>
-                    <b>Ref:</b> ${ref}<br>
-                    <b>Teléfono:</b> <a href="https://wa.me/593${telefono.toString().replace(/^0/, '')}" target="_blank">${telefono}</a>
-                `);
-                marcadoresGroup.addLayer(marker);
+    function renderizarMapaYLista() {
+      const lista = document.getElementById("lista-alumnos");
+      lista.innerHTML = "";
+      marcadoresGroup.clearLayers();
 
-                // Card Lateral
-                const card = document.createElement('div');
-                card.className = 'card-estudiante';
-                card.innerHTML = `
-                    <strong>#${contUbicados} ${nombre}</strong>
-                    <span class="sector-tag">📍 ${sector}</span>
-                    <div>🏠 ${callePrin} ${numCasa}</div>
-                    <div>📞 ${telefono} ${horario ? '| ⏰ ' + horario : ''}</div>
-                `;
+      if (rutaLayer) {
+        map.removeLayer(rutaLayer);
+        rutaLayer = null;
+      }
 
-                card.onclick = () => {
-                    map.flyTo([coords.lat, coords.lng], 16);
-                    marker.openPopup();
-                };
+      const bounds = [[PUNTO_INICIO.lat, PUNTO_INICIO.lng]];
+      let contador = 0;
 
-                contenedor.appendChild(card);
-            } else {
-                const card = document.createElement('div');
-                card.className = 'card-estudiante';
-                card.style.borderLeftColor = '#dc3545';
-                card.innerHTML = `
-                    <strong>⚠️ ${nombre}</strong>
-                    <span style="color:#dc3545; font-size:11px;">Sin ubicación válida</span>
-                    <div>📞 ${telefono}</div>
-                `;
-                contenedor.appendChild(card);
+      estudiantesData.forEach((est, idx) => {
+        const coords = extraerCoordenadas(est.urlMaps);
+
+        if (coords) {
+          contador++;
+
+          const punto = {
+            ...est,
+            lat: coords.lat,
+            lng: coords.lng,
+            ordenOriginal: idx
+          };
+
+          puntosValidos.push(punto);
+          bounds.push([coords.lat, coords.lng]);
+
+          const icon = L.divIcon({
+            className: "numbered-icon",
+            html: contador,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+          });
+
+          const marker = L.marker([coords.lat, coords.lng], { icon });
+          marker.bindPopup(`
+            <strong>#${contador} ${escapar(est.estudiante || "Estudiante")}</strong><br>
+            <b>Sector:</b> ${escapar(est.sector || "Sin sector")}<br>
+            <b>Representante:</b> ${escapar(est.representante || "Sin representante")}<br>
+            <b>Teléfono:</b> ${crearLinkWhatsApp(est.telefono)}
+          `);
+
+          marcadoresGroup.addLayer(marker);
+
+          const card = document.createElement("div");
+          card.className = "card-alumno";
+          card.innerHTML = `
+            <strong>#${contador} ${escapar(est.estudiante || "Estudiante")}</strong>
+            <div>Sector: ${escapar(est.sector || "Sin sector")}</div>
+            <div>Teléfono: ${escapar(est.telefono || "Sin teléfono")}</div>
+            <div>Horario: ${escapar(est.horario || "Sin horario")}</div>
+          `;
+
+          card.onclick = () => {
+            map.flyTo([coords.lat, coords.lng], 17);
+            marker.openPopup();
+          };
+
+          lista.appendChild(card);
+        } else {
+          const card = document.createElement("div");
+          card.className = "card-alumno card-sin-coords";
+          card.innerHTML = `
+            <strong>${escapar(est.estudiante || "Estudiante sin nombre")}</strong>
+            <div>Sin ubicación válida</div>
+          `;
+          lista.appendChild(card);
+        }
+      });
+
+      if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [45, 45] });
+      }
+    }
+
+    function generarRuta() {
+      if (puntosValidos.length < 1) {
+        alert("No hay puntos válidos para trazar.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-trazar");
+      btn.disabled = true;
+      btn.textContent = "Calculando...";
+
+      const ordenados = ordenarPorCercania(PUNTO_INICIO, puntosValidos);
+      const todosLosPuntos = [PUNTO_INICIO, ...ordenados];
+
+      const waypoints = todosLosPuntos
+        .map(p => `${p.lng},${p.lat}`)
+        .join(";");
+
+      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson`;
+
+      fetch(osrmUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.routes || !data.routes.length) {
+            throw new Error("OSRM no devolvió ruta");
+          }
+
+          const route = data.routes[0];
+
+          if (rutaLayer) map.removeLayer(rutaLayer);
+
+          rutaLayer = L.geoJSON(route.geometry, {
+            style: {
+              color: "#0066ff",
+              weight: 6,
+              opacity: 0.85
             }
+          }).addTo(map);
+
+          map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
+
+          mostrarResumen(route, ordenados);
+          mostrarEstado("Ruta trazada correctamente con calles reales.", "ok");
+        })
+        .catch(error => {
+          console.error(error);
+          mostrarEstado("No se pudo trazar la ruta. Intenta nuevamente.", "error");
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = "Trazar ruta";
         });
-
-        if (bounds.length > 0) {
-            map.fitBounds(bounds, { padding: [40, 40] });
-        }
     }
 
-    // Extractor multi-patrón de coordenadas
+    function ordenarPorCercania(inicio, puntos) {
+      const pendientes = [...puntos];
+      const ordenados = [];
+      let actual = inicio;
+
+      while (pendientes.length) {
+        let mejorIndex = 0;
+        let mejorDistancia = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
+
+        for (let i = 1; i < pendientes.length; i++) {
+          const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
+          if (d < mejorDistancia) {
+            mejorDistancia = d;
+            mejorIndex = i;
+          }
+        }
+
+        const siguiente = pendientes.splice(mejorIndex, 1)[0];
+        ordenados.push(siguiente);
+        actual = siguiente;
+      }
+
+      return ordenados;
+    }
+
+    function mostrarResumen(route, ordenados) {
+      const km = (route.distance / 1000).toFixed(2);
+      const min = Math.round(route.duration / 60);
+
+      const resumen = document.getElementById("resumen");
+      resumen.style.display = "block";
+      resumen.innerHTML = `
+        <b>Resumen de ruta</b><br>
+        Paradas: <b>${ordenados.length}</b><br>
+        Distancia: <b>${km} km</b><br>
+        Tiempo estimado: <b>${min} min</b><br>
+        Primera parada: <b>${escapar(ordenados[0]?.estudiante || "N/D")}</b>
+      `;
+    }
+
     function extraerCoordenadas(texto) {
-        if (!texto) return null;
-        const str = texto.toString();
+      if (!texto) return null;
 
-        // 1. Patrón tipo @lat,lng
-        const regexAt = /@(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
-        const matchAt = str.match(regexAt);
-        if (matchAt) return { lat: parseFloat(matchAt[1]), lng: parseFloat(matchAt[2]) };
+      const valor = String(texto);
 
-        // 2. Patrón con parámetro q=lat,lng (Formato de tus enlaces actualizados)
-        const regexQuery = /[?&](?:q|ll|place)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
-        const matchQuery = str.match(regexQuery);
-        if (matchQuery) return { lat: parseFloat(matchQuery[1]), lng: parseFloat(matchQuery[2]) };
+      let match = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
+      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
 
-        // 3. Patrón simple -lat.xxxx, -78.xxxx
-        const regexDirect = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
-        const matchDirect = str.match(regexDirect);
-        if (matchDirect) return { lat: parseFloat(matchDirect[1]), lng: parseFloat(matchDirect[2]) };
+      match = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
+      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
 
-        return null;
+      match = valor.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
+
+      return null;
     }
 
-    // 3. TRAZADO DE RUTA VIAL
-    function generarRutaOptima() {
-        const puntosValidos = estudiantesData.filter(e => e.lat && e.lng);
-        if (puntosValidos.length < 2) {
-            alert("Se necesitan al menos 2 puntos para trazar la ruta.");
-            return;
-        }
+    function distanciaKm(lat1, lng1, lat2, lng2) {
+      const R = 6371;
+      const dLat = gradosARadianes(lat2 - lat1);
+      const dLng = gradosARadianes(lng2 - lng1);
 
-        const btn = document.getElementById('btn-trazar');
-        btn.innerText = "⏳ Trazando...";
-        btn.disabled = true;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(gradosARadianes(lat1)) *
+        Math.cos(gradosARadianes(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
 
-        const waypoints = puntosValidos.map(e => `${e.lng},${e.lat}`).join(';');
-        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson`;
-
-        fetch(osrmUrl)
-            .then(res => res.json())
-            .then(data => {
-                if (data.routes && data.routes.length > 0) {
-                    const route = data.routes[0];
-
-                    if (rutaLayer) map.removeLayer(rutaLayer);
-
-                    rutaLayer = L.geoJSON(route.geometry, {
-                        style: {
-                            color: '#0066ff',
-                            weight: 5,
-                            opacity: 0.85
-                        }
-                    }).addTo(map);
-
-                    map.fitBounds(rutaLayer.getBounds(), { padding: [40, 40] });
-
-                    const km = (route.distance / 1000).toFixed(2);
-                    const min = Math.round(route.duration / 60);
-
-                    const divResumen = document.getElementById('resumen');
-                    divResumen.style.display = 'block';
-                    divResumen.innerHTML = `
-                        <b>📍 Resumen de Ruta Vial:</b><br>
-                        • Paradas: <b>${puntosValidos.length}</b><br>
-                        • Distancia: <b>${km} km</b><br>
-                        • Tiempo estimado: <b>${min} min</b>
-                    `;
-                }
-                btn.innerText = "🚗 Trazar Ruta Óptima";
-                btn.disabled = false;
-            })
-            .catch(err => {
-                console.error("Error al trazar:", err);
-                alert("Error al obtener la ruta vial.");
-                btn.innerText = "🚗 Trazar Ruta Óptima";
-                btn.disabled = false;
-            });
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
-</script>
 
+    function gradosARadianes(grados) {
+      return grados * Math.PI / 180;
+    }
+
+    function crearLinkWhatsApp(telefono) {
+      const limpio = String(telefono || "").replace(/\D/g, "");
+      if (!limpio) return "Sin teléfono";
+
+      const internacional = limpio.startsWith("0")
+        ? "593" + limpio.slice(1)
+        : limpio;
+
+      return `<a href="https://wa.me/${internacional}" target="_blank">${escapar(telefono)}</a>`;
+    }
+
+    function escapar(valor) {
+      return String(valor || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    window.addEventListener("load", () => {
+      setTimeout(() => map.invalidateSize(), 300);
+    });
+  </script>
 </body>
 </html>
