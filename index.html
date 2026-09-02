@@ -3,24 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscripción Transporte Escolar - UE San Gabriel</title>
+    <title>Inscripción Transporte Escolar - Ruta 7</title>
     <!-- CSS de Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background-color: #f4f6f9; margin: 0; padding: 20px; }
-        .container { max-width: 650px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h2 { color: #1b365d; text-align: center; margin-bottom: 5px; }
-        p.subtitle { text-align: center; color: #555; font-size: 14px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        input[type="text"], input[type="tel"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
-        .section-title { background-color: #e9ecef; padding: 8px 12px; font-weight: bold; color: #1b365d; border-left: 4px solid #1b365d; margin-top: 20px; margin-bottom: 15px; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f4f4; margin: 0; padding: 20px; }
+        
+        .container { 
+            max-width: 650px; 
+            margin: 0 auto; 
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); 
+            border-top: 8px solid #ffcc00; /* Amarillo Bus Escolar */
+        }
+        
+        .header-title { text-align: center; margin-bottom: 20px; }
+        .header-title h2 { color: #111; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-title .badge-ruta { 
+            display: inline-block; 
+            background-color: #111111; 
+            color: #ffcc00; 
+            font-weight: bold; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            margin-top: 8px; 
+            font-size: 14px;
+        }
+        p.subtitle { text-align: center; color: #555; font-size: 14px; margin-top: 5px; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #111; font-size: 14px; }
+        
+        input[type="text"], input[type="tel"], select, textarea { 
+            width: 100%; 
+            padding: 11px; 
+            border: 2px solid #ccc; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            transition: all 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #ffcc00; outline: none; }
+        
+        /* Estilos para campos bloqueados */
+        input:disabled, select:disabled, textarea:disabled {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .section-title { 
+            background-color: #111111; 
+            padding: 10px 14px; 
+            font-weight: bold; 
+            color: #ffcc00; 
+            border-radius: 4px; 
+            margin-top: 25px; 
+            margin-bottom: 18px; 
+            font-size: 15px;
+            text-transform: uppercase;
+        }
         
         .map-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
-        #map { width: 100%; height: 320px; border-radius: 4px; border: 1px solid #ccc; z-index: 1; }
-        .map-instruction { font-size: 12px; color: #666; margin-bottom: 8px; }
+        #map { width: 100%; height: 320px; border-radius: 6px; border: 2px solid #111; z-index: 1; }
+        .map-instruction { font-size: 13px; color: #333; margin-bottom: 8px; font-weight: 500; }
         
+        /* Capa para deshabilitar interacción con el mapa cuando está bloqueado */
+        .map-disabled-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(233, 236, 239, 0.6);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+            border-radius: 6px;
+        }
+
+        /* Animación para el botón de Guardar Ubicación */
+        @keyframes latido-alerta {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 0 12px rgba(40, 167, 69, 0); }
+            100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
         .btn-confirmar-pin {
             display: none;
             position: absolute;
@@ -30,64 +101,82 @@
             z-index: 1000;
             background-color: #28a745;
             color: white;
-            border: none;
-            padding: 10px 18px;
-            font-size: 14px;
+            border: 2px solid #ffffff;
+            padding: 12px 22px;
+            font-size: 15px;
             font-weight: bold;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: background-color 0.2s, transform 0.2s;
+            animation: latido-alerta 1.5s infinite;
         }
-        .btn-confirmar-pin:hover { background-color: #218838; transform: translateX(-50%) scale(1.05); }
         
-        .status-busqueda { font-size: 13px; color: #1b365d; font-weight: bold; margin-top: 6px; }
-        button.btn-submit { width: 100%; background-color: #1b365d; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px; }
-        button.btn-submit:hover { background-color: #12243e; }
-        button.btn-submit:disabled { background-color: #888888; cursor: not-allowed; }
-        .mensaje-exito { display: none; background-color: #d4edda; color: #155724; padding: 15px; border-radius: 4px; text-align: center; font-weight: bold; margin-top: 15px; }
+        .status-busqueda { font-size: 13px; font-weight: bold; margin-top: 6px; }
+        
+        button.btn-submit { 
+            width: 100%; 
+            background-color: #ffcc00; 
+            color: #111111; 
+            border: 2px solid #111111; 
+            padding: 14px; 
+            font-size: 17px; 
+            font-weight: bold; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            text-transform: uppercase;
+            transition: background 0.3s;
+        }
+        button.btn-submit:hover { background-color: #e6b800; }
+        button.btn-submit:disabled { background-color: #cccccc; border-color: #888888; color: #666666; cursor: not-allowed; }
+        
+        .mensaje-exito { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 6px; text-align: center; font-weight: bold; margin-top: 15px; border: 2px solid #28a745; }
+        .error-msg { color: #dc3545; font-size: 12px; margin-top: 4px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Registro de Recorrido Escolar</h2>
+    <div class="header-title">
+        <h2>Inscripción Transporte Escolar</h2>
+        <span class="badge-ruta">RUTA 7</span>
+    </div>
     <p class="subtitle">Unidad Educativa San Gabriel</p>
     
     <form id="formulario-registro">
         
         <div class="section-title">1. Datos del Estudiante</div>
         <div class="form-group">
-            <label for="nombres_estudiante">Nombres y Apellidos del Estudiante:</label>
-            <input type="text" id="nombres_estudiante" name="nombres_estudiante" required>
+            <label for="nombres_estudiante">Nombres y Apellidos del Estudiante *</label>
+            <input type="text" id="nombres_estudiante" name="nombres_estudiante" required placeholder="Ej. Juan Carlos Pérez">
         </div>
         <div class="form-group">
-            <label for="nivel">Nivel Educativo:</label>
-            <select id="nivel" name="nivel" required>
+            <label for="nivel">Nivel Educativo *</label>
+            <select id="nivel" name="nivel" required disabled>
                 <option value="">Seleccione una opción</option>
                 <option value="Inicial">Inicial</option>
                 <option value="Educacion Basica">Educación General Básica</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="grado">Grado / Año de EGB:</label>
-            <input type="text" id="grado" name="grado" placeholder="Ej. Inicial 2, 3ro EGB, etc." required>
+            <label for="grado">Grado / Año de EGB *</label>
+            <input type="text" id="grado" name="grado" placeholder="Ej. Inicial 2, 3ro EGB, etc." required disabled>
         </div>
 
         <div class="section-title">2. Datos del Representante</div>
         <div class="form-group">
-            <label for="nombre_representante">Nombre del Representante Legal:</label>
-            <input type="text" id="nombre_representante" name="nombre_representante" required>
+            <label for="nombre_representante">Nombre del Representante Legal *</label>
+            <input type="text" id="nombre_representante" name="nombre_representante" required placeholder="Ej. María López" disabled>
         </div>
         <div class="form-group">
-            <label for="telefono">Teléfono / WhatsApp de Contacto:</label>
-            <input type="tel" id="telefono" name="telefono" required>
+            <label for="telefono">Teléfono / WhatsApp de Contacto *</label>
+            <input type="tel" id="telefono" name="telefono" maxlength="10" placeholder="Ej. 0991234567" required pattern="09[0-9]{8}" disabled>
+            <span id="tel-error" class="error-msg">Debe ingresar un número celular válido de 10 dígitos (ej. 0991234567).</span>
         </div>
 
-        <div class="section-title">3. Dirección y Ubicación</div>
+        <div class="section-title">3. Dirección y Ubicación (Ruta 7)</div>
         <div class="form-group">
-            <label for="sector">Sector:</label>
-            <select id="sector" name="sector" required>
+            <label for="sector">Sector *</label>
+            <select id="sector" name="sector" required disabled>
                 <option value="">Seleccione un sector</option>
                 <option value="Ciudad Jardín">Ciudad Jardín</option>
                 <option value="Venecia">Venecia</option>
@@ -100,52 +189,53 @@
         </div>
 
         <div class="form-group">
-            <label>Ubicación Geográfica de la Casa:</label>
-            <p class="map-instruction">Mueve el PIN sobre tu casa y presiona el botón verde <strong>"Guardar Ubicación"</strong>:</p>
+            <label>Ubicación Geográfica en el Mapa *</label>
+            <p class="map-instruction">Mueve el PIN sobre tu casa y presiona el botón verde parpadeante <strong>"Guardar Ubicación Exacta"</strong>:</p>
             
-            <div class="map-wrapper">
+            <div class="map-wrapper" id="map-wrapper">
+                <div id="map-overlay" class="map-disabled-overlay">Completa los datos anteriores para activar el mapa</div>
                 <div id="map"></div>
-                <button type="button" id="btn-confirmar-pin" class="btn-confirmar-pin">📍 Guardar Ubicación</button>
+                <button type="button" id="btn-confirmar-pin" class="btn-confirmar-pin">📍 GUARDAR UBICACIÓN EXACTA</button>
             </div>
             
             <div id="status-busqueda" class="status-busqueda"></div>
-            <!-- Campo Oculto para Guardar el Link con las Coordenadas -->
+            <!-- Campo Oculto Obligatorio para Coordenadas -->
             <input type="hidden" id="url_maps" name="url_maps" required>
         </div>
 
         <div class="form-group">
-            <label for="calle_principal">Calle Principal:</label>
-            <input type="text" id="calle_principal" name="calle_principal" placeholder="Se autocompleta con el mapa o escribe manualmente" required>
+            <label for="calle_principal">Calle Principal *</label>
+            <input type="text" id="calle_principal" name="calle_principal" placeholder="Se llena al guardar mapa o escribe manualmente" required disabled>
         </div>
         <div class="form-group">
-            <label for="calle_secundaria">Calle Secundaria:</label>
-            <input type="text" id="calle_secundaria" name="calle_secundaria" placeholder="Se autocompleta con el mapa o escribe manualmente" required>
+            <label for="calle_secundaria">Calle Secundaria *</label>
+            <input type="text" id="calle_secundaria" name="calle_secundaria" placeholder="Escribe la calle secundaria" required disabled>
         </div>
         <div class="form-group">
-            <label for="numero_casa">Número de Casa / Lote:</label>
-            <input type="text" id="numero_casa" name="numero_casa" placeholder="Ej. N12-34 / Lote 5" required>
-        </div>
-
-        <div class="form-group">
-            <label for="referencia">Referencia Adicional (Opcional):</label>
-            <textarea id="referencia" name="referencia" rows="2" placeholder="Frente a la tienda, portón blanco, etc."></textarea>
+            <label for="numero_casa">Número de Casa / Lote *</label>
+            <input type="text" id="numero_casa" name="numero_casa" placeholder="Ej. N12-34 / Lote 5" required disabled>
         </div>
 
         <div class="form-group">
-            <label for="tipo_servicio">Tipo de Servicio Solicitado:</label>
-            <select id="tipo_servicio" name="tipo_servicio" required>
-                <option value="">Seleccione el tipo de servicio</option>
-                <option value="Completo">Completo (Ida y Vuelta)</option>
-                <option value="Solo Ida">Solo Ida (Mañana)</option>
-                <option value="Solo Vuelta">Solo Vuelta (Tarde)</option>
+            <label for="referencia">Referencia Adicional *</label>
+            <textarea id="referencia" name="referencia" rows="2" placeholder="Ej. Frente a la tienda, portón blanco, etc." required disabled></textarea>
+        </div>
+
+        <div class="section-title">4. Horario del Servicio</div>
+        <div class="form-group">
+            <label for="horario_servicio">Horario Requerido *</label>
+            <select id="horario_servicio" name="horario_servicio" required disabled>
+                <option value="">Seleccione el horario</option>
+                <option value="Matutino (Mañana)">Matutino (Mañana)</option>
+                <option value="Vespertino (Tarde)">Vespertino (Tarde)</option>
             </select>
         </div>
 
-        <button type="submit" id="btn-enviar" class="btn-submit">Enviar Inscripción</button>
+        <button type="submit" id="btn-enviar" class="btn-submit" disabled>Enviar Inscripción - Ruta 7</button>
     </form>
 
     <div id="mensaje-exito" class="mensaje-exito">
-        ¡Inscripción realizada con éxito! La información se ha guardado en la hoja de registro.
+        ¡Inscripción realizada con éxito para la Ruta 7! La información se ha guardado en la hoja de registro.
     </div>
 </div>
 
@@ -155,7 +245,7 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqwiY6axQqd03UpgTv_Z9qa_6a04oI9nJ8q4kuOJDu3yZ4odUiELroR3Kj-d12WcCU/exec";
 
-    // Coordenadas configuradas de tus sectores
+    // Coordenadas fijas de la Ruta 7
     const coordenadasSectores = {
         "Ciudad Jardín": [-0.334591, -78.528823],
         "Venecia": [-0.332753, -78.542990],
@@ -181,97 +271,149 @@
 
     const btnConfirmar = document.getElementById('btn-confirmar-pin');
     const statusDiv = document.getElementById('status-busqueda');
+    const inputUrlMaps = document.getElementById('url_maps');
+
+    // REFERENCIAS DE CAMPOS PARA EL DESBLOQUEO PASO A PASO
+    const campoNombres = document.getElementById('nombres_estudiante');
+    const campoNivel = document.getElementById('nivel');
+    const campoGrado = document.getElementById('grado');
+    const campoRepresentante = document.getElementById('nombre_representante');
+    const campoTelefono = document.getElementById('telefono');
+    const campoSector = document.getElementById('sector');
+    const mapOverlay = document.getElementById('map-overlay');
+    const campoCallePrin = document.getElementById('calle_principal');
+    const campoCalleSec = document.getElementById('calle_secundaria');
+    const campoNumCasa = document.getElementById('numero_casa');
+    const campoReferencia = document.getElementById('referencia');
+    const campoHorario = document.getElementById('horario_servicio');
+    const btnEnviar = document.getElementById('btn-enviar');
+
+    // LÓGICA DE DESBLOQUEO SECUENCIAL
+    campoNombres.addEventListener('input', function() {
+        campoNivel.disabled = this.value.trim() === "";
+    });
+
+    campoNivel.addEventListener('change', function() {
+        campoGrado.disabled = this.value === "";
+    });
+
+    campoGrado.addEventListener('input', function() {
+        campoRepresentante.disabled = this.value.trim() === "";
+    });
+
+    campoRepresentante.addEventListener('input', function() {
+        campoTelefono.disabled = this.value.trim() === "";
+    });
+
+    campoTelefono.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        const esValido = this.value.length === 10 && this.value.startsWith("09");
+        document.getElementById('tel-error').style.display = esValido || this.value === "" ? 'none' : 'block';
+        campoSector.disabled = !esValido;
+    });
+
+    campoSector.addEventListener('change', function() {
+        if (this.value !== "") {
+            mapOverlay.style.display = 'none'; // Activa el mapa
+            const coords = coordenadasSectores[this.value];
+            if (coords) {
+                map.flyTo(coords, 17);
+                marker.setLatLng(coords);
+                mostrarBotonGuardar(coords[0], coords[1]);
+            }
+        } else {
+            mapOverlay.style.display = 'flex';
+        }
+    });
 
     function mostrarBotonGuardar(lat, lng) {
         coordenadasPendientes = { lat: parseFloat(lat), lng: parseFloat(lng) };
         btnConfirmar.style.display = 'block';
-        statusDiv.innerText = "⚠️ Tienes un nuevo punto marcado. Haz clic en 'Guardar Ubicación'.";
-        statusDiv.style.color = "#d9534f";
+        inputUrlMaps.value = ""; 
+        statusDiv.innerText = "⚠️ Tienes un punto marcado. DEBES hacer clic en 'GUARDAR UBICACIÓN EXACTA'.";
+        statusDiv.style.color = "#dc3545";
     }
 
-    // Al cambiar de sector en el selector
-    document.getElementById('sector').addEventListener('change', function() {
-        const sectorSeleccionado = this.value;
-        if (coordenadasSectores[sectorSeleccionado]) {
-            const coords = coordenadasSectores[sectorSeleccionado];
-            map.flyTo(coords, 17);
-            marker.setLatLng(coords);
-            mostrarBotonGuardar(coords[0], coords[1]);
-        }
-    });
-
-    // Mover PIN arrastrando
     marker.on('dragend', function () {
         const pos = marker.getLatLng();
         mostrarBotonGuardar(pos.lat, pos.lng);
     });
 
-    // Hacer clic directo en el mapa
     map.on('click', function (e) {
         marker.setLatLng(e.latlng);
         mostrarBotonGuardar(e.latlng.lat, e.latlng.lng);
     });
 
-    // ACCIÓN DEL BOTÓN "GUARDAR UBICACIÓN"
+    // GUARDAR UBICACIÓN Y DESBLOQUEAR CAMPOS DE DIRECCIÓN
     btnConfirmar.addEventListener('click', function() {
         const lat = coordenadasPendientes.lat.toFixed(6);
         const lng = coordenadasPendientes.lng.toFixed(6);
         
-        // 1. GUARDA LAS COORDENADAS OBLIGATORIAMENTE
-        document.getElementById('url_maps').value = `https://www.google.com/maps?q=${lat},${lng}`;
+        inputUrlMaps.value = `https://www.google.com/maps?q=${lat},${lng}`;
         
-        statusDiv.innerText = "🔍 Buscando nombre de calles en el mapa...";
-        statusDiv.style.color = "#1b365d";
+        statusDiv.innerText = "🔍 Buscando calle principal en el mapa...";
+        statusDiv.style.color = "#111111";
 
-        // 2. BUSCAR INFORMACIÓN DE LA DIRECCIÓN
         fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
             .then(response => response.json())
             .then(data => {
                 if (data && data.address) {
                     const addr = data.address;
-                    
-                    // Asignar Calle Principal
-                    const callePrincipal = addr.road || addr.pedestrian || addr.path || addr.suburb || "";
-                    if (callePrincipal) {
-                        document.getElementById('calle_principal').value = callePrincipal;
-                    }
-
-                    // Asignar Calle Secundaria (Intenta obtener barrio, pasaje o sector secundario)
-                    const calleSecundaria = addr.neighbourhood || addr.residential || addr.suburb || addr.quarter || "";
-                    if (calleSecundaria && calleSecundaria !== callePrincipal) {
-                        document.getElementById('calle_secundaria').value = calleSecundaria;
-                    }
-
-                    // Asignar Número de casa si existe
-                    if (addr.house_number) {
-                        document.getElementById('numero_casa').value = addr.house_number;
-                    }
+                    const callePrin = addr.road || addr.pedestrian || addr.path || "";
+                    if (callePrin) campoCallePrin.value = callePrin;
+                    if (addr.house_number) campoNumCasa.value = addr.house_number;
                 }
                 
-                btnConfirmar.style.display = 'none';
-                statusDiv.innerText = `✅ Ubicación guardada (${lat}, ${lng}). Revisa o completa los datos si hace falta.`;
-                statusDiv.style.color = "#28a745";
+                finalizarGuardadoMapa(lat, lng);
             })
             .catch(() => {
-                btnConfirmar.style.display = 'none';
-                statusDiv.innerText = `✅ Ubicación guardada (${lat}, ${lng}). Escribe las calles manualmente si no se autocompletaron.`;
-                statusDiv.style.color = "#28a745";
+                finalizarGuardadoMapa(lat, lng);
             });
+    });
+
+    function finalizarGuardadoMapa(lat, lng) {
+        btnConfirmar.style.display = 'none';
+        statusDiv.innerText = `✅ Ubicación guardada con éxito (${lat}, ${lng}).`;
+        statusDiv.style.color = "#28a745";
+
+        // Desbloquea la calle principal y secundaria
+        campoCallePrin.disabled = false;
+        campoCalleSec.disabled = false;
+    }
+
+    campoCallePrin.addEventListener('input', function() {
+        // Mantiene la calle secundaria disponible
+        campoCalleSec.disabled = false;
+    });
+
+    campoCalleSec.addEventListener('input', function() {
+        campoNumCasa.disabled = this.value.trim() === "";
+    });
+
+    campoNumCasa.addEventListener('input', function() {
+        campoReferencia.disabled = this.value.trim() === "";
+    });
+
+    campoReferencia.addEventListener('input', function() {
+        campoHorario.disabled = this.value.trim() === "";
+    });
+
+    campoHorario.addEventListener('change', function() {
+        btnEnviar.disabled = this.value === "";
     });
 
     // ENVÍO DEL FORMULARIO
     document.getElementById('formulario-registro').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Validar que se hayan guardado las coordenadas
-        if (!document.getElementById('url_maps').value) {
-            alert("Por favor, marca tu casa en el mapa y haz clic en el botón verde 'Guardar Ubicación'.");
+        if (!inputUrlMaps.value) {
+            alert("⚠️ Bloqueo de seguridad: No has guardado la ubicación del mapa. Haz clic en el botón verde 'GUARDAR UBICACIÓN EXACTA'.");
             return;
         }
 
         const btn = document.getElementById('btn-enviar');
         btn.disabled = true;
-        btn.innerText = "Guardando inscripción...";
+        btn.innerText = "Enviando Registro...";
 
         const formData = new FormData(this);
 
@@ -284,9 +426,9 @@
             document.getElementById('mensaje-exito').style.display = 'block';
         })
         .catch(error => {
-            alert('Ocurrió un error al enviar el formulario. Inténtalo de nuevo.');
+            alert('Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo.');
             btn.disabled = false;
-            btn.innerText = "Enviar Inscripción";
+            btn.innerText = "Enviar Inscripción - Ruta 7";
         });
     });
 </script>
