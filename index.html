@@ -1,464 +1,449 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscripción Transporte Escolar - Ruta 7</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción Transporte Escolar - Ruta 7</title>
+    <!-- CSS de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f4f4; margin: 0; padding: 20px; }
+        
+        .container { 
+            max-width: 650px; 
+            margin: 0 auto; 
+            background: #ffffff; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); 
+            border-top: 8px solid #ffcc00;
+        }
+        
+        .header-title { text-align: center; margin-bottom: 20px; }
+        .header-title h2 { color: #111; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-title .badge-ruta { 
+            display: inline-block; 
+            background-color: #111111; 
+            color: #ffcc00; 
+            font-weight: bold; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            margin-top: 8px; 
+            font-size: 14px;
+        }
+        p.subtitle { text-align: center; color: #555; font-size: 14px; margin-top: 5px; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #111; font-size: 14px; }
+        
+        /* Forzar texto en MAYÚSCULAS */
+        input[type="text"], textarea { 
+            text-transform: uppercase; 
+        }
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+        input[type="text"], input[type="tel"], select, textarea { 
+            width: 100%; 
+            padding: 11px; 
+            border: 2px solid #ccc; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            transition: all 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #ffcc00; outline: none; }
+        
+        input:disabled, select:disabled, textarea:disabled {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
 
-  <style>
-    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .section-title { 
+            background-color: #111111; 
+            padding: 10px 14px; 
+            font-weight: bold; 
+            color: #ffcc00; 
+            border-radius: 4px; 
+            margin-top: 25px; 
+            margin-bottom: 18px; 
+            font-size: 15px;
+            text-transform: uppercase;
+        }
+        
+        .map-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
+        #map { width: 100%; height: 320px; border-radius: 6px; border: 2px solid #111; z-index: 1; }
+        .map-instruction { font-size: 13px; color: #333; margin-bottom: 8px; font-weight: 500; }
+        
+        .map-disabled-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(233, 236, 239, 0.6);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+            border-radius: 6px;
+        }
 
-    body {
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
+        @keyframes latido-alerta {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 0 12px rgba(40, 167, 69, 0); }
+            100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
 
-    .container {
-      max-width: 650px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-      border-top: 8px solid #ffcc00;
-    }
-
-    .header-title { text-align: center; margin-bottom: 20px; }
-
-    .header-title h2 {
-      color: #111;
-      margin: 0;
-      font-size: 24px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .badge-ruta {
-      display: inline-block;
-      background-color: #111111;
-      color: #ffcc00;
-      font-weight: bold;
-      padding: 5px 15px;
-      border-radius: 20px;
-      margin-top: 8px;
-      font-size: 14px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #555;
-      font-size: 14px;
-      margin-top: 5px;
-      margin-bottom: 20px;
-    }
-
-    .form-group { margin-bottom: 18px; }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #111;
-      font-size: 14px;
-    }
-
-    input[type="text"], textarea {
-      text-transform: uppercase;
-    }
-
-    input[type="text"], input[type="tel"], select, textarea {
-      width: 100%;
-      padding: 11px;
-      border: 2px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: #ffcc00;
-      outline: none;
-    }
-
-    input:disabled, select:disabled, textarea:disabled {
-      background-color: #e9ecef;
-      border-color: #ced4da;
-      color: #6c757d;
-      cursor: not-allowed;
-    }
-
-    .section-title {
-      background-color: #111111;
-      padding: 10px 14px;
-      font-weight: bold;
-      color: #ffcc00;
-      border-radius: 4px;
-      margin-top: 25px;
-      margin-bottom: 18px;
-      font-size: 15px;
-      text-transform: uppercase;
-    }
-
-    .map-wrapper {
-      position: relative;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    #map {
-      width: 100%;
-      height: 320px;
-      border-radius: 6px;
-      border: 2px solid #111;
-      z-index: 1;
-    }
-
-    .map-instruction {
-      font-size: 13px;
-      color: #333;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .map-disabled-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(233, 236, 239, 0.6);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: #333;
-      border-radius: 6px;
-      text-align: center;
-      padding: 20px;
-    }
-
-    @keyframes latido-alerta {
-      0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-      70% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 0 12px rgba(40, 167, 69, 0); }
-      100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-    }
-
-    .btn-confirmar-pin {
-      display: none;
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      background-color: #28a745;
-      color: white;
-      border: 2px solid #ffffff;
-      padding: 12px 22px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      animation: latido-alerta 1.5s infinite;
-    }
-
-    .status-busqueda {
-      font-size: 13px;
-      font-weight: bold;
-      margin-top: 6px;
-    }
-
-    .btn-submit {
-      width: 100%;
-      background-color: #ffcc00;
-      color: #111111;
-      border: 2px solid #111111;
-      padding: 14px;
-      font-size: 17px;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 20px;
-      text-transform: uppercase;
-    }
-
-    .btn-submit:hover { background-color: #e6b800; }
-
-    .btn-submit:disabled {
-      background-color: #cccccc;
-      border-color: #888888;
-      color: #666666;
-      cursor: not-allowed;
-    }
-
-    .mensaje-exito {
-      display: none;
-      background-color: #d4edda;
-      color: #155724;
-      padding: 20px;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: bold;
-      margin-top: 15px;
-      border: 2px solid #28a745;
-    }
-
-    .error-msg {
-      color: #dc3545;
-      font-size: 12px;
-      margin-top: 4px;
-      display: none;
-    }
-  </style>
+        .btn-confirmar-pin {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: #28a745;
+            color: white;
+            border: 2px solid #ffffff;
+            padding: 12px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            animation: latido-alerta 1.5s infinite;
+        }
+        
+        .status-busqueda { font-size: 13px; font-weight: bold; margin-top: 6px; }
+        
+        button.btn-submit { 
+            width: 100%; 
+            background-color: #ffcc00; 
+            color: #111111; 
+            border: 2px solid #111111; 
+            padding: 14px; 
+            font-size: 17px; 
+            font-weight: bold; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            text-transform: uppercase;
+            transition: background 0.3s;
+        }
+        button.btn-submit:hover { background-color: #e6b800; }
+        button.btn-submit:disabled { background-color: #cccccc; border-color: #888888; color: #666666; cursor: not-allowed; }
+        
+        .mensaje-exito { display: none; background-color: #d4edda; color: #155724; padding: 20px; border-radius: 6px; text-align: center; font-weight: bold; margin-top: 15px; border: 2px solid #28a745; }
+        .error-msg { color: #dc3545; font-size: 12px; margin-top: 4px; display: none; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
-  <div class="header-title">
-    <h2>Inscripción Transporte Escolar</h2>
-    <span class="badge-ruta">RUTA 7</span>
-  </div>
-
-  <p class="subtitle">Unidad Educativa San Gabriel</p>
-
-  <form id="formulario-registro" method="POST" target="envio_oculto">
-    <div class="section-title">1. Datos del Estudiante</div>
-
-    <div class="form-group">
-      <label for="nombres_estudiante">Nombres y Apellidos del Estudiante *</label>
-      <input type="text" id="nombres_estudiante" name="nombres_estudiante" required placeholder="EJ. JUAN CARLOS PÉREZ">
+    <div class="header-title">
+        <h2>Inscripción Transporte Escolar</h2>
+        <span class="badge-ruta">RUTA 7</span>
     </div>
+    <p class="subtitle">Unidad Educativa San Gabriel</p>
+    
+    <form id="formulario-registro">
+        
+        <div class="section-title">1. Datos del Estudiante</div>
+        <div class="form-group">
+            <label for="nombres_estudiante">Nombres y Apellidos del Estudiante *</label>
+            <input type="text" id="nombres_estudiante" name="nombres_estudiante" required placeholder="EJ. JUAN CARLOS PÉREZ">
+        </div>
+        <div class="form-group">
+            <label for="nivel">Nivel Educativo *</label>
+            <select id="nivel" name="nivel" required disabled>
+                <option value="">Seleccione una opción</option>
+                <option value="INICIAL">INICIAL</option>
+                <option value="EDUCACION BASICA">EDUCACIÓN GENERAL BÁSICA</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="grado">Grado / Año de EGB *</label>
+            <input type="text" id="grado" name="grado" placeholder="EJ. INICIAL 2, 3RO EGB, ETC." required disabled>
+        </div>
 
-    <div class="form-group">
-      <label for="nivel">Nivel Educativo *</label>
-      <select id="nivel" name="nivel" required disabled>
-        <option value="">Seleccione una opción</option>
-        <option value="INICIAL">INICIAL</option>
-        <option value="EDUCACION BASICA">EDUCACIÓN GENERAL BÁSICA</option>
-      </select>
+        <div class="section-title">2. Datos del Representante</div>
+        <div class="form-group">
+            <label for="nombre_representante">Nombre del Representante Legal *</label>
+            <input type="text" id="nombre_representante" name="nombre_representante" required placeholder="EJ. MARÍA LÓPEZ" disabled>
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono / WhatsApp de Contacto *</label>
+            <input type="tel" id="telefono" name="telefono" maxlength="10" placeholder="EJ. 0991234567" required pattern="09[0-9]{8}" disabled>
+            <span id="tel-error" class="error-msg">Debe ingresar un número celular válido de 10 dígitos (ej. 0991234567).</span>
+        </div>
+
+        <div class="section-title">3. Dirección y Ubicación (Ruta 7)</div>
+        <div class="form-group">
+            <label for="sector">Sector *</label>
+            <select id="sector" name="sector" required disabled>
+                <option value="">Seleccione un sector</option>
+                <option value="CIUDAD JARDIN">CIUDAD JARDÍN</option>
+                <option value="VENECIA">VENECIA</option>
+                <option value="SANTO TOMAS 1">SANTO TOMÁS 1</option>
+                <option value="SANTO TOMAS 2">SANTO TOMÁS 2</option>
+                <option value="CAUPICHO">CAUPICHO</option>
+                <option value="BEATERIO">BEATERIO</option>
+                <option value="LA BRETAÑA">LA BRETAÑA</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Ubicación Geográfica en el Mapa *</label>
+            <p class="map-instruction">Mueve el PIN sobre tu casa y presiona el botón verde parpadeante <strong>"Guardar Ubicación Exacta"</strong>:</p>
+            
+            <div class="map-wrapper" id="map-wrapper">
+                <div id="map-overlay" class="map-disabled-overlay">Completa los datos anteriores para activar el mapa</div>
+                <div id="map"></div>
+                <button type="button" id="btn-confirmar-pin" class="btn-confirmar-pin">📍 GUARDAR UBICACIÓN EXACTA</button>
+            </div>
+            
+            <div id="status-busqueda" class="status-busqueda"></div>
+            <input type="hidden" id="url_maps" name="url_maps" required>
+        </div>
+
+        <div class="form-group">
+            <label for="calle_principal">Calle Principal *</label>
+            <input type="text" id="calle_principal" name="calle_principal" placeholder="SE LLENA AL GUARDAR MAPA O ESCRIBE MANUALMENTE" required disabled>
+        </div>
+        <div class="form-group">
+            <label for="calle_secundaria">Calle Secundaria *</label>
+            <input type="text" id="calle_secundaria" name="calle_secundaria" placeholder="ESCRIBE LA CALLE SECUNDARIA" required disabled>
+        </div>
+        <div class="form-group">
+            <label for="numero_casa">Número de Casa / Lote *</label>
+            <input type="text" id="numero_casa" name="numero_casa" placeholder="EJ. N12-34 / LOTE 5" required disabled>
+        </div>
+
+        <div class="form-group">
+            <label for="referencia">Referencia Adicional *</label>
+            <textarea id="referencia" name="referencia" rows="2" placeholder="EJ. FRENTE A LA TIENDA, PORTÓN BLANCO, ETC." required disabled></textarea>
+        </div>
+
+        <div class="section-title">4. Horario del Servicio</div>
+        <div class="form-group">
+            <label for="horario_servicio">Horario Requerido *</label>
+            <select id="horario_servicio" name="horario_servicio" required disabled>
+                <option value="">Seleccione el horario</option>
+                <option value="MATUTINO (MAÑANA)">MATUTINO (MAÑANA)</option>
+                <option value="VESPERTINO (TARDE)">VESPERTINO (TARDE)</option>
+            </select>
+        </div>
+
+        <button type="submit" id="btn-enviar" class="btn-submit" disabled>Enviar Inscripción - Ruta 7</button>
+    </form>
+
+    <div id="mensaje-exito" class="mensaje-exito">
+        ¡Inscripción realizada con éxito para la Ruta 7! La información se ha guardado en la hoja de registro.
     </div>
-
-    <div class="form-group">
-      <label for="grado">Grado / Año de EGB *</label>
-      <input type="text" id="grado" name="grado" placeholder="EJ. INICIAL 2 A, 3RO B, ETC." required disabled>
-    </div>
-
-    <div class="section-title">2. Datos del Representante</div>
-
-    <div class="form-group">
-      <label for="nombre_representante">Nombre del Representante Legal *</label>
-      <input type="text" id="nombre_representante" name="nombre_representante" required placeholder="EJ. MARÍA LÓPEZ" disabled>
-    </div>
-
-    <div class="form-group">
-      <label for="telefono">Teléfono / WhatsApp de Contacto *</label>
-      <input type="tel" id="telefono" name="telefono" maxlength="10" placeholder="EJ. 0991234567" required pattern="09[0-9]{8}" disabled>
-      <span id="tel-error" class="error-msg">Debe ingresar un celular válido de 10 dígitos, ejemplo 0991234567.</span>
-    </div>
-
-    <div class="section-title">3. Dirección y Ubicación</div>
-
-    <div class="form-group">
-      <label for="sector">Sector *</label>
-      <select id="sector" name="sector" required disabled>
-        <option value="">Seleccione un sector</option>
-        <option value="CIUDAD JARDIN">CIUDAD JARDÍN</option>
-        <option value="VENECIA">VENECIA</option>
-        <option value="SANTO TOMAS 1">SANTO TOMÁS 1</option>
-        <option value="SANTO TOMAS 2">SANTO TOMÁS 2</option>
-        <option value="CAUPICHO">CAUPICHO</option>
-        <option value="BEATERIO">BEATERIO</option>
-        <option value="LA BRETAÑA">LA BRETAÑA</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Ubicación Geográfica en el Mapa *</label>
-      <p class="map-instruction">
-        Mueve el PIN sobre tu casa y presiona el botón verde “Guardar Ubicación Exacta”.
-      </p>
-
-      <div class="map-wrapper">
-        <div id="map-overlay" class="map-disabled-overlay">Completa los datos anteriores para activar el mapa</div>
-        <div id="map"></div>
-        <button type="button" id="btn-confirmar-pin" class="btn-confirmar-pin">📍 GUARDAR UBICACIÓN EXACTA</button>
-      </div>
-
-      <div id="status-busqueda" class="status-busqueda"></div>
-      <input type="hidden" id="url_maps" name="url_maps" required>
-    </div>
-
-    <div class="form-group">
-      <label for="calle_principal">Calle Principal *</label>
-      <input type="text" id="calle_principal" name="calle_principal" required disabled>
-    </div>
-
-    <div class="form-group">
-      <label for="calle_secundaria">Calle Secundaria *</label>
-      <input type="text" id="calle_secundaria" name="calle_secundaria" required disabled>
-    </div>
-
-    <div class="form-group">
-      <label for="numero_casa">Número de Casa / Lote *</label>
-      <input type="text" id="numero_casa" name="numero_casa" required disabled>
-    </div>
-
-    <div class="form-group">
-      <label for="referencia">Referencia Adicional *</label>
-      <textarea id="referencia" name="referencia" rows="2" required disabled></textarea>
-    </div>
-
-    <div class="section-title">4. Horario del Servicio</div>
-
-    <div class="form-group">
-      <label for="horario_servicio">Horario Requerido *</label>
-      <select id="horario_servicio" name="horario_servicio" required disabled>
-        <option value="">Seleccione el horario</option>
-        <option value="MATUTINO">MATUTINO</option>
-        <option value="VESPERTINO">VESPERTINO</option>
-      </select>
-    </div>
-
-    <button type="submit" id="btn-enviar" class="btn-submit" disabled>Enviar Inscripción - Ruta 7</button>
-  </form>
-
-  <iframe name="envio_oculto" style="display:none;"></iframe>
-
-  <div id="mensaje-exito" class="mensaje-exito">
-    ¡Inscripción enviada! Revisa tu Google Sheet para confirmar el registro.
-  </div>
 </div>
 
+<!-- JS de Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbZGPjHlZfGfny-ba-XViaBfXk_rjoK1_ONdTCdPvO4oBUCURjCnFTvLAfDDkXSQVj/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC9S7bE9KpqVTL4DuneQC7LTZ5iggLg-P69PrYJ0eG8bsUkXPp_h78C-Yq2uZGDZK8/exec";
 
-  document.getElementById("formulario-registro").action = SCRIPT_URL;
+    const coordenadasSectores = {
+        "CIUDAD JARDIN": [-0.334591, -78.528823],
+        "VENECIA": [-0.332753, -78.542990],
+        "SANTO TOMAS 1": [-0.333682, -78.547079],
+        "SANTO TOMAS 2": [-0.337373, -78.542910],
+        "CAUPICHO": [-0.328020, -78.538705],
+        "BEATERIO": [-0.321569, -78.536778],
+        "LA BRETAÑA": [-0.313609, -78.544318]
+    };
 
-  const coordenadasSectores = {
-    "CIUDAD JARDIN": [-0.334591, -78.528823],
-    "VENECIA": [-0.332753, -78.542990],
-    "SANTO TOMAS 1": [-0.333682, -78.547079],
-    "SANTO TOMAS 2": [-0.337373, -78.542910],
-    "CAUPICHO": [-0.328020, -78.538705],
-    "BEATERIO": [-0.321569, -78.536778],
-    "LA BRETAÑA": [-0.313609, -78.544318]
-  };
+    const latInicial = -0.334591;
+    const lngInicial = -78.528823;
 
-  const map = L.map("map").setView([-0.334591, -78.528823], 15);
+    const map = L.map('map').setView([latInicial, lngInicial], 15);
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "© OpenStreetMap"
-  }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
 
-  const marker = L.marker([-0.334591, -78.528823], { draggable: true }).addTo(map);
+    const marker = L.marker([latInicial, lngInicial], { draggable: true }).addTo(map);
+    let coordenadasPendientes = { lat: latInicial, lng: lngInicial };
 
-  let coordenadasPendientes = { lat: -0.334591, lng: -78.528823 };
+    const btnConfirmar = document.getElementById('btn-confirmar-pin');
+    const statusDiv = document.getElementById('status-busqueda');
+    const inputUrlMaps = document.getElementById('url_maps');
 
-  const nombres = document.getElementById("nombres_estudiante");
-  const nivel = document.getElementById("nivel");
-  const grado = document.getElementById("grado");
-  const representante = document.getElementById("nombre_representante");
-  const telefono = document.getElementById("telefono");
-  const sector = document.getElementById("sector");
-  const overlay = document.getElementById("map-overlay");
-  const btnPin = document.getElementById("btn-confirmar-pin");
-  const statusBusqueda = document.getElementById("status-busqueda");
-  const urlMaps = document.getElementById("url_maps");
-  const callePrincipal = document.getElementById("calle_principal");
-  const calleSecundaria = document.getElementById("calle_secundaria");
-  const numeroCasa = document.getElementById("numero_casa");
-  const referencia = document.getElementById("referencia");
-  const horario = document.getElementById("horario_servicio");
-  const btnEnviar = document.getElementById("btn-enviar");
+    const campoNombres = document.getElementById('nombres_estudiante');
+    const campoNivel = document.getElementById('nivel');
+    const campoGrado = document.getElementById('grado');
+    const campoRepresentante = document.getElementById('nombre_representante');
+    const campoTelefono = document.getElementById('telefono');
+    const campoSector = document.getElementById('sector');
+    const mapOverlay = document.getElementById('map-overlay');
+    const campoCallePrin = document.getElementById('calle_principal');
+    const campoCalleSec = document.getElementById('calle_secundaria');
+    const campoNumCasa = document.getElementById('numero_casa');
+    const campoReferencia = document.getElementById('referencia');
+    const campoHorario = document.getElementById('horario_servicio');
+    const btnEnviar = document.getElementById('btn-enviar');
 
-  document.querySelectorAll('input[type="text"], textarea').forEach(input => {
-    input.addEventListener("input", function () {
-      this.value = this.value.toUpperCase();
+    // CONVERSIÓN EN TIEMPO REAL A MAYÚSCULAS
+    document.querySelectorAll('input[type="text"], textarea').forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
     });
-  });
 
-  nombres.addEventListener("input", () => nivel.disabled = nombres.value.trim() === "");
-  nivel.addEventListener("change", () => grado.disabled = nivel.value === "");
-  grado.addEventListener("input", () => representante.disabled = grado.value.trim() === "");
-  representante.addEventListener("input", () => telefono.disabled = representante.value.trim() === "");
+    // LÓGICA DE DESBLOQUEO SECUENCIAL
+    campoNombres.addEventListener('input', function() {
+        campoNivel.disabled = this.value.trim() === "";
+    });
 
-  telefono.addEventListener("input", function () {
-    this.value = this.value.replace(/[^0-9]/g, "");
-    const valido = this.value.length === 10 && this.value.startsWith("09");
-    document.getElementById("tel-error").style.display = valido || this.value === "" ? "none" : "block";
-    sector.disabled = !valido;
-  });
+    campoNivel.addEventListener('change', function() {
+        campoGrado.disabled = this.value === "";
+    });
 
-  sector.addEventListener("change", function () {
-    if (!this.value) return;
+    campoGrado.addEventListener('input', function() {
+        campoRepresentante.disabled = this.value.trim() === "";
+    });
 
-    overlay.style.display = "none";
-    const coords = coordenadasSectores[this.value];
+    campoRepresentante.addEventListener('input', function() {
+        campoTelefono.disabled = this.value.trim() === "";
+    });
 
-    if (coords) {
-      map.flyTo(coords, 17);
-      marker.setLatLng(coords);
-      mostrarBotonGuardar(coords[0], coords[1]);
-    }
-  });
+    campoTelefono.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        const esValido = this.value.length === 10 && this.value.startsWith("09");
+        document.getElementById('tel-error').style.display = esValido || this.value === "" ? 'none' : 'block';
+        campoSector.disabled = !esValido;
+    });
 
-  function mostrarBotonGuardar(lat, lng) {
-    coordenadasPendientes = { lat: Number(lat), lng: Number(lng) };
-    btnPin.style.display = "block";
-    urlMaps.value = "";
-    statusBusqueda.innerText = "Debes guardar la ubicación exacta.";
-    statusBusqueda.style.color = "#dc3545";
-  }
+    campoSector.addEventListener('change', function() {
+        if (this.value !== "") {
+            mapOverlay.style.display = 'none';
+            const coords = coordenadasSectores[this.value];
+            if (coords) {
+                map.flyTo(coords, 17);
+                marker.setLatLng(coords);
+                mostrarBotonGuardar(coords[0], coords[1]);
+            }
+        } else {
+            mapOverlay.style.display = 'flex';
+        }
+    });
 
-  marker.on("dragend", function () {
-    const pos = marker.getLatLng();
-    mostrarBotonGuardar(pos.lat, pos.lng);
-  });
-
-  map.on("click", function (e) {
-    marker.setLatLng(e.latlng);
-    mostrarBotonGuardar(e.latlng.lat, e.latlng.lng);
-  });
-
-  btnPin.addEventListener("click", function () {
-    const lat = coordenadasPendientes.lat.toFixed(6);
-    const lng = coordenadasPendientes.lng.toFixed(6);
-
-    urlMaps.value = `https://www.google.com/maps?q=${lat},${lng}`;
-    statusBusqueda.innerText = `Ubicación guardada: ${lat}, ${lng}`;
-    statusBusqueda.style.color = "#28a745";
-    btnPin.style.display = "none";
-
-    callePrincipal.disabled = false;
-    calleSecundaria.disabled = false;
-  });
-
-  calleSecundaria.addEventListener("input", () => numeroCasa.disabled = calleSecundaria.value.trim() === "");
-  numeroCasa.addEventListener("input", () => referencia.disabled = numeroCasa.value.trim() === "");
-  referencia.addEventListener("input", () => horario.disabled = referencia.value.trim() === "");
-  horario.addEventListener("change", () => btnEnviar.disabled = horario.value === "");
-
-  document.getElementById("formulario-registro").addEventListener("submit", function (e) {
-    if (!urlMaps.value) {
-      e.preventDefault();
-      alert("Primero debes guardar la ubicación exacta.");
-      return;
+    function mostrarBotonGuardar(lat, lng) {
+        coordenadasPendientes = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        btnConfirmar.style.display = 'block';
+        inputUrlMaps.value = ""; 
+        statusDiv.innerText = "⚠️ Tienes un punto marcado. DEBES hacer clic en 'GUARDAR UBICACIÓN EXACTA'.";
+        statusDiv.style.color = "#dc3545";
     }
 
-    btnEnviar.disabled = true;
-    btnEnviar.innerText = "ENVIANDO...";
+    marker.on('dragend', function () {
+        const pos = marker.getLatLng();
+        mostrarBotonGuardar(pos.lat, pos.lng);
+    });
 
-    setTimeout(() => {
-      document.getElementById("formulario-registro").style.display = "none";
-      document.getElementById("mensaje-exito").style.display = "block";
-    }, 1200);
-  });
+    map.on('click', function (e) {
+        marker.setLatLng(e.latlng);
+        mostrarBotonGuardar(e.latlng.lat, e.latlng.lng);
+    });
+
+    btnConfirmar.addEventListener('click', function() {
+        const lat = coordenadasPendientes.lat.toFixed(6);
+        const lng = coordenadasPendientes.lng.toFixed(6);
+        
+        inputUrlMaps.value = `https://www.google.com/maps?q=${lat},${lng}`;
+        
+        statusDiv.innerText = "🔍 Buscando calle principal en el mapa...";
+        statusDiv.style.color = "#111111";
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.address) {
+                    const addr = data.address;
+                    const callePrin = addr.road || addr.pedestrian || addr.path || "";
+                    if (callePrin) campoCallePrin.value = callePrin.toUpperCase();
+                    if (addr.house_number) campoNumCasa.value = addr.house_number.toUpperCase();
+                }
+                finalizarGuardadoMapa(lat, lng);
+            })
+            .catch(() => {
+                finalizarGuardadoMapa(lat, lng);
+            });
+    });
+
+    function finalizarGuardadoMapa(lat, lng) {
+        btnConfirmar.style.display = 'none';
+        statusDiv.innerText = `✅ Ubicación guardada con éxito (${lat}, ${lng}).`;
+        statusDiv.style.color = "#28a745";
+
+        campoCallePrin.disabled = false;
+        campoCalleSec.disabled = false;
+    }
+
+    campoCallePrin.addEventListener('input', function() {
+        campoCalleSec.disabled = false;
+    });
+
+    campoCalleSec.addEventListener('input', function() {
+        campoNumCasa.disabled = this.value.trim() === "";
+    });
+
+    campoNumCasa.addEventListener('input', function() {
+        campoReferencia.disabled = this.value.trim() === "";
+    });
+
+    campoReferencia.addEventListener('input', function() {
+        campoHorario.disabled = this.value.trim() === "";
+    });
+
+    campoHorario.addEventListener('change', function() {
+        btnEnviar.disabled = this.value === "";
+    });
+
+    // ENVÍO DE DATOS EN FORMATO URL-ENCODED (RECOMENDADO PARA GOOGLE APPS SCRIPT)
+    document.getElementById('formulario-registro').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (!inputUrlMaps.value) {
+            alert("⚠️ Bloqueo de seguridad: No has guardado la ubicación del mapa. Haz clic en el botón verde 'GUARDAR UBICACIÓN EXACTA'.");
+            return;
+        }
+
+        const btn = document.getElementById('btn-enviar');
+        btn.disabled = true;
+        btn.innerText = "ENVIANDO REGISTRO...";
+
+        // Convertir texto a mayúsculas
+        document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+            el.value = el.value.toUpperCase();
+        });
+
+        // Convertir FormData a URLSearchParams
+        const formData = new FormData(this);
+        const searchParams = new URLSearchParams(formData);
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: searchParams.toString()
+        })
+        .then(() => {
+            document.getElementById('formulario-registro').style.display = 'none';
+            document.getElementById('mensaje-exito').style.display = 'block';
+        })
+        .catch(error => {
+            alert('Ocurrió un error al enviar el formulario. Por favor, inténtalo de nuevo.');
+            btn.disabled = false;
+            btn.innerText = "ENVIAR INSCRIPCIÓN - RUTA 7";
+        });
+    });
 </script>
 
 </body>
