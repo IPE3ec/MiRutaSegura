@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscripción Transporte Escolar - UE San Gabriel</title>
+    <!-- CSS del mapa gratuito Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
@@ -88,7 +89,7 @@
 
         <div class="form-group">
             <label>Ubicación de Domicilio:</label>
-            <p class="map-instruction">Haz clic o arrastra el marcador azul hacia la ubicación exacta de tu casa:</p>
+            <p class="map-instruction">Al seleccionar el sector, el mapa se enfocará automáticamente. Ajusta el PIN sobre la puerta de tu casa:</p>
             <div id="map"></div>
             <input type="hidden" id="url_maps" name="url_maps">
         </div>
@@ -116,17 +117,29 @@
     </div>
 </div>
 
+<!-- JS del mapa gratuito Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqwiY6axQqd03UpgTv_Z9qa_6a04oI9nJ8q4kuOJDu3yZ4odUiELroR3Kj-d12WcCU/exec";
 
-    // Coordenadas iniciales (Sur de Quito: Caupicho / Beaterio)
+    // Coordenadas aproximadas de los sectores en el Sur de Quito
+    const coordenadasSectores = {
+        "Ciudad Jardín": [-0.3235, -78.5390],
+        "Venecia": [-0.3180, -78.5410],
+        "Santo Tomás 1": [-0.3260, -78.5440],
+        "Santo Tomás 2": [-0.3290, -78.5460],
+        "Caupicho": [-0.3120, -78.5350],
+        "Beaterio": [-0.3340, -78.5420],
+        "La Bretaña": [-0.3400, -78.5450]
+    };
+
+    // Coordenada por defecto (Centro del área sur)
     const latInicial = -0.3200;
     const lngInicial = -78.5400;
 
     // Inicialización del mapa
-    const map = L.map('map').setView([latInicial, lngInicial], 15);
+    const map = L.map('map').setView([latInicial, lngInicial], 14);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -136,24 +149,39 @@
     // Marcador arrastrable
     const marker = L.marker([latInicial, lngInicial], { draggable: true }).addTo(map);
 
-    // Generar enlace directo a Google Maps para el conductor
+    // Actualiza la URL para Google Sheets
     function actualizarEnlace(lat, lng) {
         document.getElementById('url_maps').value = `https://www.google.com/maps?q=${lat},${lng}`;
     }
 
     actualizarEnlace(latInicial, lngInicial);
 
+    // Evento al cambiar el selector de sector
+    document.getElementById('sector').addEventListener('change', function() {
+        const sectorSeleccionado = this.value;
+        if (coordenadasSectores[sectorSeleccionado]) {
+            const coords = coordenadasSectores[sectorSeleccionado];
+            
+            // Mueve el mapa y el marcador con animación
+            map.flyTo(coords, 16);
+            marker.setLatLng(coords);
+            actualizarEnlace(coords[0], coords[1]);
+        }
+    });
+
+    // Evento al arrastrar el marcador
     marker.on('dragend', function () {
         const position = marker.getLatLng();
         actualizarEnlace(position.lat, position.lng);
     });
 
+    // Evento al hacer clic en el mapa
     map.on('click', function (e) {
         marker.setLatLng(e.latlng);
         actualizarEnlace(e.latlng.lat, e.latlng.lng);
     });
 
-    // Envío de datos a Google Sheets
+    // Envío del formulario
     document.getElementById('formulario-registro').addEventListener('submit', function(e) {
         e.preventDefault();
         
