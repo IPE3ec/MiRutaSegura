@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscripción Transporte Escolar - UE San Gabriel</title>
-    <!-- CSS del mapa gratuito Leaflet -->
+    <!-- CSS de Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
@@ -16,8 +16,9 @@
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
         input[type="text"], input[type="tel"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
         .section-title { background-color: #e9ecef; padding: 8px 12px; font-weight: bold; color: #1b365d; border-left: 4px solid #1b365d; margin-top: 20px; margin-bottom: 15px; }
-        #map { width: 100%; height: 280px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 10px; z-index: 1; }
+        #map { width: 100%; height: 300px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 10px; z-index: 1; }
         .map-instruction { font-size: 12px; color: #666; margin-bottom: 8px; }
+        .status-busqueda { font-size: 12px; color: #1b365d; font-weight: bold; margin-top: 4px; }
         button { width: 100%; background-color: #1b365d; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px; }
         button:hover { background-color: #12243e; }
         button:disabled { background-color: #888888; cursor: not-allowed; }
@@ -76,11 +77,11 @@
         </div>
         <div class="form-group">
             <label for="calle_principal">Calle Principal:</label>
-            <input type="text" id="calle_principal" name="calle_principal" required>
+            <input type="text" id="calle_principal" name="calle_principal" placeholder="Ej. Av. Maldonado / Calle A" required>
         </div>
         <div class="form-group">
             <label for="calle_secundaria">Calle Secundaria:</label>
-            <input type="text" id="calle_secundaria" name="calle_secundaria" required>
+            <input type="text" id="calle_secundaria" name="calle_secundaria" placeholder="Ej. Calle S/N / Pasaje B" required>
         </div>
         <div class="form-group">
             <label for="numero_casa">Número de Casa / Lote:</label>
@@ -88,8 +89,9 @@
         </div>
 
         <div class="form-group">
-            <label>Ubicación de Domicilio:</label>
-            <p class="map-instruction">Al seleccionar el sector, el mapa se enfocará automáticamente. Ajusta el PIN sobre la puerta de tu casa:</p>
+            <label>Ubicación Geográfica de la Casa:</label>
+            <p class="map-instruction">Al llenar las calles, el mapa ubicará la intersección. <strong>Si tu casa está un poco más allá o acá, arrastra el PIN azul directamente sobre tu puerta:</strong></p>
+            <div id="status-busqueda" class="status-busqueda"></div>
             <div id="map"></div>
             <input type="hidden" id="url_maps" name="url_maps">
         </div>
@@ -117,68 +119,88 @@
     </div>
 </div>
 
-<!-- JS del mapa gratuito Leaflet -->
+<!-- JS de Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqwiY6axQqd03UpgTv_Z9qa_6a04oI9nJ8q4kuOJDu3yZ4odUiELroR3Kj-d12WcCU/exec";
 
-    // Coordenadas aproximadas de los sectores en el Sur de Quito
-    const coordenadasSectores = {
-        "Ciudad Jardín": [-0.3235, -78.5390],
-        "Venecia": [-0.3180, -78.5410],
-        "Santo Tomás 1": [-0.3260, -78.5440],
-        "Santo Tomás 2": [-0.3290, -78.5460],
-        "Caupicho": [-0.3120, -78.5350],
-        "Beaterio": [-0.3340, -78.5420],
-        "La Bretaña": [-0.3400, -78.5450]
-    };
-
-    // Coordenada por defecto (Centro del área sur)
+    // Coordenadas iniciales (Sur de Quito)
     const latInicial = -0.3200;
     const lngInicial = -78.5400;
 
-    // Inicialización del mapa
-    const map = L.map('map').setView([latInicial, lngInicial], 14);
+    const map = L.map('map').setView([latInicial, lngInicial], 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Marcador arrastrable
     const marker = L.marker([latInicial, lngInicial], { draggable: true }).addTo(map);
 
-    // Actualiza la URL para Google Sheets
     function actualizarEnlace(lat, lng) {
         document.getElementById('url_maps').value = `https://www.google.com/maps?q=${lat},${lng}`;
     }
 
     actualizarEnlace(latInicial, lngInicial);
 
-    // Evento al cambiar el selector de sector
-    document.getElementById('sector').addEventListener('change', function() {
-        const sectorSeleccionado = this.value;
-        if (coordenadasSectores[sectorSeleccionado]) {
-            const coords = coordenadasSectores[sectorSeleccionado];
-            
-            // Mueve el mapa y el marcador con animación
-            map.flyTo(coords, 16);
-            marker.setLatLng(coords);
-            actualizarEnlace(coords[0], coords[1]);
-        }
-    });
+    // Función para buscar la dirección exacta automáticamente
+    let timerBusqueda;
+    function buscarDireccionEnMapa() {
+        const sector = document.getElementById('sector').value;
+        const callePrincipal = document.getElementById('calle_principal').value.trim();
+        const calleSecundaria = document.getElementById('calle_secundaria').value.trim();
+        const statusDiv = document.getElementById('status-busqueda');
 
-    // Evento al arrastrar el marcador
+        if (!sector && !callePrincipal) return;
+
+        // Construir la consulta de búsqueda centrada en Quito, Ecuador
+        let consulta = `${callePrincipal} ${calleSecundaria} ${sector} Quito Ecuador`.trim();
+
+        statusDiv.innerText = "Buscando dirección en el mapa...";
+
+        // Petición al buscador de OpenStreetMap (Nominatim)
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+
+                    map.flyTo([lat, lon], 17);
+                    marker.setLatLng([lat, lon]);
+                    actualizarEnlace(lat, lon);
+                    statusDiv.innerText = "📍 Ubicación localizada. Arrastra el PIN si deseas ajustar el punto exacto.";
+                } else {
+                    statusDiv.innerText = "📍 No se halló la intersección exacta. Puedes mover el PIN manualmente en el mapa.";
+                }
+            })
+            .catch(() => {
+                statusDiv.innerText = "";
+            });
+    }
+
+    // Escuchar cambios en los campos de dirección con retraso para no saturar
+    function programarBusqueda() {
+        clearTimeout(timerBusqueda);
+        timerBusqueda = setTimeout(buscarDireccionEnMapa, 1000);
+    }
+
+    document.getElementById('sector').addEventListener('change', buscarDireccionEnMapa);
+    document.getElementById('calle_principal').addEventListener('input', programarBusqueda);
+    document.getElementById('calle_secundaria').addEventListener('input', programarBusqueda);
+
+    // Permitir mover el PIN manualmente y actualizar las coordenadas inmediatamente
     marker.on('dragend', function () {
         const position = marker.getLatLng();
         actualizarEnlace(position.lat, position.lng);
+        document.getElementById('status-busqueda').innerText = "📍 Punto ajustado manualmente.";
     });
 
-    // Evento al hacer clic en el mapa
     map.on('click', function (e) {
         marker.setLatLng(e.latlng);
         actualizarEnlace(e.latlng.lat, e.latlng.lng);
+        document.getElementById('status-busqueda').innerText = "📍 Punto ajustado manualmente.";
     });
 
     // Envío del formulario
