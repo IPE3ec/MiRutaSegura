@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Conductor - Ruta 7 (Unidad Educativa San Gabriel)</title>
+    <title>Monitoreo y Ruta Vial - San Gabriel</title>
     
-    <!-- Evitar advertencia 404 de favicon.ico en la consola -->
+    <!-- Silenciar advertencia de favicon -->
     <link rel="icon" href="data:,">
 
     <!-- Leaflet CSS -->
@@ -13,100 +13,105 @@
 
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f2f5; margin: 0; padding: 20px; }
+        body { margin: 0; padding: 0; background-color: #f0f2f5; }
         
-        .header {
+        #map-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Panel flotante de control */
+        .panel-control {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            width: 320px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-panel {
             background-color: #111;
             color: #ffcc00;
-            padding: 15px 20px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-        .header h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
-        .badge { background: #ffcc00; color: #111; padding: 4px 12px; border-radius: 12px; font-weight: bold; font-size: 14px; }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .grid-container { grid-template-columns: 1fr; }
-        }
-
-        .panel-lateral {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
         }
 
         .btn {
-            padding: 12px;
+            width: 100%;
+            padding: 11px;
             border: none;
             border-radius: 6px;
             font-weight: bold;
+            font-size: 13px;
             cursor: pointer;
             text-transform: uppercase;
-            font-size: 13px;
-            transition: 0.3s;
+            transition: 0.2s;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-cargar { background-color: #111; color: #ffcc00; }
         .btn-cargar:hover { background-color: #333; }
 
-        .btn-ruta { background-color: #28a745; color: white; }
-        .btn-ruta:hover { background-color: #218838; }
+        .btn-trazar { background-color: #28a745; color: white; }
+        .btn-trazar:hover { background-color: #218838; }
+        .btn-trazar:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        .lista-estudiantes {
+        .resumen {
+            background-color: #e8f4f8;
+            border: 1px solid #b8daff;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .lista-alumnos {
             overflow-y: auto;
             flex-grow: 1;
             border-top: 1px solid #eee;
-            padding-top: 10px;
+            padding-top: 8px;
+            margin-top: 5px;
         }
 
-        .card-estudiante {
+        .card-alumno {
             background: #f8f9fa;
-            border-left: 5px solid #ffcc00;
-            padding: 12px;
-            margin-bottom: 10px;
+            border-left: 4px solid #ffcc00;
+            padding: 8px 10px;
+            margin-bottom: 8px;
             border-radius: 4px;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
-        .card-estudiante:hover { background: #e9ecef; }
-        .card-estudiante strong { color: #111; display: block; font-size: 14px; }
-        .card-estudiante .sector { font-weight: bold; color: #0056b3; }
+        .card-alumno:hover { background: #e9ecef; }
+        .card-alumno strong { display: block; color: #111; }
+        .card-sin-coords { border-left-color: #dc3545; color: #666; }
 
-        #map {
-            width: 100%;
-            height: 80vh;
-            border-radius: 8px;
-            border: 2px solid #111;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
+        /* Estilo de marcadores numerados */
         .numbered-icon {
             background-color: #ffcc00;
             color: #111;
@@ -115,62 +120,46 @@
             font-weight: bold;
             text-align: center;
             line-height: 26px;
-            font-size: 13px;
+            font-size: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-        }
-
-        .resumen-ruta {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border: 1px solid #b8daff;
-            border-radius: 6px;
-            font-size: 13px;
-            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Monitoreo de Registro y Ruta - RUTA 7</h1>
-    <span class="badge">SAN GABRIEL</span>
-</div>
+<div id="map-container">
+    <div class="panel-control">
+        <div class="header-panel">RUTA 7 - SAN GABRIEL</div>
+        
+        <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">🔄 Cargar Estudiantes</button>
+        <button class="btn btn-trazar" id="btn-trazar" onclick="generarRutaOptima()" disabled>🚗 Trazar Ruta Óptima</button>
 
-<div class="grid-container">
-    <!-- Panel Izquierdo: Acciones y Lista -->
-    <div class="panel-lateral">
-        <div class="actions">
-            <button class="btn btn-cargar" onclick="cargarEstudiantes()">🔄 Cargar / Actualizar Registros</button>
-            <button class="btn btn-ruta" id="btn-generar-ruta" onclick="generarRutaOptima()" disabled>🚗 Generar Ruta Óptima</button>
+        <div id="resumen" class="resumen"></div>
+
+        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">
+            Inscritos: <span id="cant-alumnos">0</span>
         </div>
 
-        <div id="resumen-ruta" class="resumen-ruta"></div>
-
-        <h3>Inscritos (<span id="cant-estudiantes">0</span>)</h3>
-        <div class="lista-estudiantes" id="contenedor-lista">
-            <p style="color: #666; font-size: 13px; text-align: center;">Haz clic en "Cargar / Actualizar Registros" para ver los alumnos registrados.</p>
+        <div class="lista-alumnos" id="lista-alumnos">
+            <p style="text-align: center; color: #777; font-size: 12px;">Haz clic en "Cargar Estudiantes" para obtener los puntos desde Google Sheets.</p>
         </div>
     </div>
 
-    <!-- Panel Derecho: Mapa -->
-    <div>
-        <div id="map"></div>
-    </div>
+    <div id="map"></div>
 </div>
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    // Dirección Web App de Google Apps Script
+    // Enlace directo a tu Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxw6VjmBzYEGrykyyOX0enC6rzSCwIdX1WiOCU3qGHKFPgzLZY0Ama_Eyoq-R75RZMK/exec";
 
     let estudiantesData = [];
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
 
-    // Inicializar el mapa centrado en Quito
+    // Inicializar mapa centrado en Quito
     const map = L.map('map').setView([-0.25, -78.52], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -180,116 +169,98 @@
 
     marcadoresGroup.addTo(map);
 
-    // 1. OBTENER REGISTROS DESDE GOOGLE SHEETS (Manejo optimizado de CORS)
-    function cargarEstudiantes() {
-        const contenedor = document.getElementById('contenedor-lista');
-        contenedor.innerHTML = "<p style='text-align:center;'>⏳ Cargando datos desde Google Sheets...</p>";
+    // 1. OBTENER DATOS DESDE GOOGLE SHEETS
+    function cargarDatosDesdeGoogle() {
+        const contenedor = document.getElementById('lista-alumnos');
+        contenedor.innerHTML = "<p style='text-align:center;'>⏳ Leyendo Google Sheets...</p>";
 
         fetch(SCRIPT_URL, {
             method: "GET",
             mode: "cors",
             redirect: "follow",
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8"
-            }
+            headers: { "Content-Type": "text/plain;charset=utf-8" }
         })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`Error HTTP: ${res.status}`);
-            }
-            return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
-            console.log("Datos recibidos correctamente:", data);
-            
             estudiantesData = Array.isArray(data) ? data : [];
-            document.getElementById('cant-estudiantes').innerText = estudiantesData.length;
+            document.getElementById('cant-alumnos').innerText = estudiantesData.length;
 
             if (estudiantesData.length > 0) {
-                document.getElementById('btn-generar-ruta').disabled = false;
+                document.getElementById('btn-trazar').disabled = false;
             } else {
-                document.getElementById('btn-generar-ruta').disabled = true;
+                document.getElementById('btn-trazar').disabled = true;
             }
 
-            renderizarListaYMapa();
+            renderizarMapaYLista();
         })
         .catch(err => {
-            console.error("Error al cargar datos:", err);
-            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error al cargar los registros. Revisa los permisos de la Web App en Google Apps Script.</p>";
+            console.error("Error al obtener los datos:", err);
+            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error de conexión al leer los datos.</p>";
         });
     }
 
-    // 2. MOSTRAR LISTA Y MARCADORES EN EL MAPA
-    function renderizarListaYMapa() {
-        const contenedor = document.getElementById('contenedor-lista');
+    // 2. MOSTRAR MARCADORES Y TARJETAS
+    function renderizarMapaYLista() {
+        const contenedor = document.getElementById('lista-alumnos');
         contenedor.innerHTML = "";
         marcadoresGroup.clearLayers();
         if (rutaLayer) map.removeLayer(rutaLayer);
 
         const bounds = [];
-        let contUbicados = 0;
+        let contadorPuntos = 0;
 
-        estudiantesData.forEach((est, index) => {
-            // Mapeo flexible de claves
-            const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${index + 1}`;
+        estudiantesData.forEach((est, idx) => {
+            // Adaptador para reconocer cualquier nombre de columna en Sheets
+            const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${idx + 1}`;
             const urlMaps = est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "";
+            const telefono = est.telefono || 'Sin número';
             const sector = est.sector || 'Sin sector';
-            const callePrin = est.calleprincipal || '';
-            const calleSec = est.callesecundaria || '';
-            const numCasa = est.nrocasalote || est.numerocasa || '';
-            const telefono = est.telefono || 'Sin teléfono';
-            const horario = est.tipodeservicio || est.horarioservicio || '';
 
             const coords = extraerCoordenadas(urlMaps);
 
             if (coords) {
-                contUbicados++;
+                contadorPuntos++;
                 est.lat = coords.lat;
                 est.lng = coords.lng;
                 bounds.push([coords.lat, coords.lng]);
 
-                // Marcador Numerado
-                const customIcon = L.divIcon({
+                // Crear ícono numerado
+                const icon = L.divIcon({
                     className: 'numbered-icon',
-                    html: contUbicados,
-                    iconSize: [28, 28],
-                    iconAnchor: [14, 14]
+                    html: contadorPuntos,
+                    iconSize: [26, 26],
+                    iconAnchor: [13, 13]
                 });
 
-                const marker = L.marker([coords.lat, coords.lng], { icon: customIcon });
+                const marker = L.marker([coords.lat, coords.lng], { icon: icon });
                 marker.bindPopup(`
-                    <strong>#${contUbicados} - ${nombre}</strong><br>
+                    <strong>#${contadorPuntos} ${nombre}</strong><br>
                     <b>Sector:</b> ${sector}<br>
-                    <b>Dirección:</b> ${callePrin} ${calleSec}<br>
                     <b>Teléfono:</b> <a href="https://wa.me/593${telefono.toString().replace(/^0/, '')}" target="_blank">${telefono}</a>
                 `);
                 marcadoresGroup.addLayer(marker);
 
-                // Tarjeta Lateral
+                // Crear tarjeta en la lista lateral
                 const card = document.createElement('div');
-                card.className = 'card-estudiante';
+                card.className = 'card-alumno';
                 card.innerHTML = `
-                    <strong>#${contUbicados} ${nombre}</strong>
-                    <span class="sector">${sector}</span>
-                    <div>📍 ${callePrin} ${numCasa}</div>
-                    <div>📞 ${telefono} ${horario ? '| ⏰ ' + horario : ''}</div>
+                    <strong>#${contadorPuntos} ${nombre}</strong>
+                    <div>📍 ${sector}</div>
+                    <div>📞 ${telefono}</div>
                 `;
-
                 card.onclick = () => {
                     map.flyTo([coords.lat, coords.lng], 16);
                     marker.openPopup();
                 };
-
                 contenedor.appendChild(card);
+
             } else {
-                // Registro sin coordenadas reconocibles
+                // Alumno sin coordenadas válidas
                 const card = document.createElement('div');
-                card.className = 'card-estudiante';
-                card.style.borderLeftColor = '#dc3545';
+                card.className = 'card-alumno card-sin-coords';
                 card.innerHTML = `
                     <strong>⚠️ ${nombre}</strong>
-                    <span style="color:#dc3545;">Sin ubicación en el mapa</span>
-                    <div>📞 ${telefono}</div>
+                    <div>Sin ubicación en mapa</div>
                 `;
                 contenedor.appendChild(card);
             }
@@ -300,33 +271,31 @@
         }
     }
 
-    // Extractor de latitud y longitud desde cualquier URL o cadena
+    // Extractor de latitud y longitud desde cualquier enlace o texto
     function extraerCoordenadas(texto) {
         if (!texto) return null;
-        
         const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
         const match = texto.toString().match(regex);
-        
         if (match) {
-            return { 
-                lat: parseFloat(match[1]), 
-                lng: parseFloat(match[2]) 
-            };
+            return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
         }
         return null;
     }
 
-    // 3. TRAZADO VIAL CON OSRM
+    // 3. TRAZADO VIAL CON MOTOR OSRM
     function generarRutaOptima() {
         const puntosValidos = estudiantesData.filter(e => e.lat && e.lng);
-        if (puntosValidos.length === 0) return;
+        if (puntosValidos.length < 2) {
+            alert("Se necesitan al menos 2 puntos con ubicación para trazar una ruta.");
+            return;
+        }
 
-        const btn = document.getElementById('btn-generar-ruta');
-        btn.innerText = "⏳ Trazando Ruta...";
+        const btn = document.getElementById('btn-trazar');
+        btn.innerText = "⏳ Calculando...";
         btn.disabled = true;
 
-        const waypoints = puntosValidos.map(e => `${e.lng},${e.lat}`);
-        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints.join(';')}?overview=full&geometries=geojson`;
+        const waypoints = puntosValidos.map(e => `${e.lng},${e.lat}`).join(';');
+        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson`;
 
         fetch(osrmUrl)
             .then(res => res.json())
@@ -336,35 +305,37 @@
 
                     if (rutaLayer) map.removeLayer(rutaLayer);
 
+                    // Dibujar la trayectoria vial
                     rutaLayer = L.geoJSON(route.geometry, {
                         style: {
                             color: '#0066ff',
                             weight: 5,
-                            opacity: 0.8
+                            opacity: 0.85
                         }
                     }).addTo(map);
 
                     map.fitBounds(rutaLayer.getBounds(), { padding: [40, 40] });
 
-                    const distanciaKm = (route.distance / 1000).toFixed(2);
-                    const tiempoMin = Math.round(route.duration / 60);
+                    // Mostrar resumen del cálculo
+                    const km = (route.distance / 1000).toFixed(2);
+                    const min = Math.round(route.duration / 60);
 
-                    const divResumen = document.getElementById('resumen-ruta');
-                    divResumen.style.display = "block";
+                    const divResumen = document.getElementById('resumen');
+                    divResumen.style.display = 'block';
                     divResumen.innerHTML = `
-                        <strong>📍 Resumen del Recorrido:</strong><br>
-                        • Paradas: ${puntosValidos.length} puntos<br>
-                        • Distancia aprox: <b>${distanciaKm} km</b><br>
-                        • Tiempo estimado: <b>${tiempoMin} minutos</b>
+                        <b>📍 Resumen de Ruta:</b><br>
+                        • Paradas: <b>${puntosValidos.length}</b><br>
+                        • Distancia: <b>${km} km</b><br>
+                        • Tiempo estim.: <b>${min} min</b>
                     `;
                 }
-                btn.innerText = "🚗 Generar Ruta Óptima";
+                btn.innerText = "🚗 Trazar Ruta Óptima";
                 btn.disabled = false;
             })
             .catch(err => {
-                console.error("Error al calcular la ruta:", err);
-                alert("No se pudo obtener el trazado de la ruta.");
-                btn.innerText = "🚗 Generar Ruta Óptima";
+                console.error("Error trazando la ruta:", err);
+                alert("Ocurrió un error al calcular la ruta vial.");
+                btn.innerText = "🚗 Trazar Ruta Óptima";
                 btn.disabled = false;
             });
     }
