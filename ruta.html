@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Conductor - Ruta 7 (Unidad Educativa San Gabriel)</title>
+    
+    <!-- Evitar advertencia 404 de favicon.ico en la consola -->
+    <link rel="icon" href="data:,">
+
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f0f2f5; margin: 0; padding: 20px; }
@@ -158,14 +163,14 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    // Tu URL de Google Apps Script
+    // Dirección Web App de Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxw6VjmBzYEGrykyyOX0enC6rzSCwIdX1WiOCU3qGHKFPgzLZY0Ama_Eyoq-R75RZMK/exec";
 
     let estudiantesData = [];
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
 
-    // Inicializar el mapa centrado en Quito/Sur
+    // Inicializar el mapa centrado en Quito
     const map = L.map('map').setView([-0.25, -78.52], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -175,20 +180,28 @@
 
     marcadoresGroup.addTo(map);
 
-    // 1. OBTENER REGISTROS (Manejando redirección de Google con redirect: "follow")
+    // 1. OBTENER REGISTROS DESDE GOOGLE SHEETS (Manejo optimizado de CORS)
     function cargarEstudiantes() {
         const contenedor = document.getElementById('contenedor-lista');
         contenedor.innerHTML = "<p style='text-align:center;'>⏳ Cargando datos desde Google Sheets...</p>";
 
         fetch(SCRIPT_URL, {
             method: "GET",
-            redirect: "follow"
+            mode: "cors",
+            redirect: "follow",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            }
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Error HTTP: ${res.status}`);
+            }
+            return res.json();
+        })
         .then(data => {
-            console.log("Datos recibidos:", data);
+            console.log("Datos recibidos correctamente:", data);
             
-            // Validar si 'data' contiene la propiedad que buscamos
             estudiantesData = Array.isArray(data) ? data : [];
             document.getElementById('cant-estudiantes').innerText = estudiantesData.length;
 
@@ -202,11 +215,11 @@
         })
         .catch(err => {
             console.error("Error al cargar datos:", err);
-            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error al cargar los registros. Revisa la consola (F12).</p>";
+            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error al cargar los registros. Revisa los permisos de la Web App en Google Apps Script.</p>";
         });
     }
 
-    // 2. MOSTRAR LISTA Y PINES EN EL MAPA
+    // 2. MOSTRAR LISTA Y MARCADORES EN EL MAPA
     function renderizarListaYMapa() {
         const contenedor = document.getElementById('contenedor-lista');
         contenedor.innerHTML = "";
@@ -217,18 +230,17 @@
         let contUbicados = 0;
 
         estudiantesData.forEach((est, index) => {
-            // Se busca la propiedad que contenga las coordenadas / url de maps
-            const urlMaps = est.url_maps || est.url || est.ubicacion || "";
-            const coords = extraerCoordenadas(urlMaps);
-
-            // Obtener el nombre o usar un valor genérico si está vacío
-            const nombre = est.nombres_estudiante || est.nombre || `Estudiante #${index + 1}`;
+            // Mapeo flexible de claves
+            const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${index + 1}`;
+            const urlMaps = est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "";
             const sector = est.sector || 'Sin sector';
-            const callePrin = est.calle_principal || '';
-            const calleSec = est.calle_secundaria || '';
-            const numCasa = est.numero_casa || '';
+            const callePrin = est.calleprincipal || '';
+            const calleSec = est.callesecundaria || '';
+            const numCasa = est.nrocasalote || est.numerocasa || '';
             const telefono = est.telefono || 'Sin teléfono';
-            const horario = est.horario_servicio || '';
+            const horario = est.tipodeservicio || est.horarioservicio || '';
+
+            const coords = extraerCoordenadas(urlMaps);
 
             if (coords) {
                 contUbicados++;
@@ -236,7 +248,7 @@
                 est.lng = coords.lng;
                 bounds.push([coords.lat, coords.lng]);
 
-                // Crear Marcador Personalizado con Número
+                // Marcador Numerado
                 const customIcon = L.divIcon({
                     className: 'numbered-icon',
                     html: contUbicados,
@@ -253,7 +265,7 @@
                 `);
                 marcadoresGroup.addLayer(marker);
 
-                // Crear Card en la lista lateral
+                // Tarjeta Lateral
                 const card = document.createElement('div');
                 card.className = 'card-estudiante';
                 card.innerHTML = `
@@ -270,7 +282,7 @@
 
                 contenedor.appendChild(card);
             } else {
-                // Si no tiene ubicación válida en el mapa
+                // Registro sin coordenadas reconocibles
                 const card = document.createElement('div');
                 card.className = 'card-estudiante';
                 card.style.borderLeftColor = '#dc3545';
@@ -283,17 +295,15 @@
             }
         });
 
-        // Ajustar la vista del mapa para encuadrar todos los puntos
         if (bounds.length > 0) {
             map.fitBounds(bounds, { padding: [40, 40] });
         }
     }
 
-    // Extractor mejorado de coordenadas (acepta enlaces cortos, largos y texto "lat,lng")
+    // Extractor de latitud y longitud desde cualquier URL o cadena
     function extraerCoordenadas(texto) {
         if (!texto) return null;
         
-        // Buscar cualquier par numérico de coordenadas tipo -0.123456,-78.123456
         const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
         const match = texto.toString().match(regex);
         
@@ -306,7 +316,7 @@
         return null;
     }
 
-    // 3. GENERAR Y TRAZAR RUTA ÓPTIMA CON OSRM
+    // 3. TRAZADO VIAL CON OSRM
     function generarRutaOptima() {
         const puntosValidos = estudiantesData.filter(e => e.lat && e.lng);
         if (puntosValidos.length === 0) return;
@@ -315,9 +325,7 @@
         btn.innerText = "⏳ Trazando Ruta...";
         btn.disabled = true;
 
-        // Formatear coordenadas para OSRM: lon,lat;lon,lat;...
         const waypoints = puntosValidos.map(e => `${e.lng},${e.lat}`);
-
         const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints.join(';')}?overview=full&geometries=geojson`;
 
         fetch(osrmUrl)
@@ -328,7 +336,6 @@
 
                     if (rutaLayer) map.removeLayer(rutaLayer);
 
-                    // Dibujar la línea de la ruta
                     rutaLayer = L.geoJSON(route.geometry, {
                         style: {
                             color: '#0066ff',
@@ -339,7 +346,6 @@
 
                     map.fitBounds(rutaLayer.getBounds(), { padding: [40, 40] });
 
-                    // Mostrar métricas del recorrido
                     const distanciaKm = (route.distance / 1000).toFixed(2);
                     const tiempoMin = Math.round(route.duration / 60);
 
@@ -356,8 +362,8 @@
                 btn.disabled = false;
             })
             .catch(err => {
-                console.error("Error al calcular ruta:", err);
-                alert("No se pudo trazar el recorrido vial.");
+                console.error("Error al calcular la ruta:", err);
+                alert("No se pudo obtener el trazado de la ruta.");
                 btn.innerText = "🚗 Generar Ruta Óptima";
                 btn.disabled = false;
             });
