@@ -129,7 +129,7 @@
 
 <div class="header">
     <h1>Monitoreo de Registro y Ruta - RUTA 7</h1>
-    <span class="badge">SANGABRIEL</span>
+    <span class="badge">SAN GABRIEL</span>
 </div>
 
 <div class="grid-container">
@@ -154,22 +154,19 @@
     </div>
 </div>
 
-<!-- Leaflet y Leaflet-Routing-Machine JS -->
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    // URL del Google Apps Script
+    // Tu URL de Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGj3OlegIUjJZFztnaEHcZWTVAyAwglsgFl-0G73aaTxxXuIL26avi3uRyTGUFGcTXCQ/exec";
-
-    // Ubicación de la escuela (Punto de llegada)
-    const UBICACION_COLEGIO = [-0.300000, -78.520000]; // Ajusta la coordenada de la UE San Gabriel si es necesario
 
     let estudiantesData = [];
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
 
-    // Inicializar el mapa
-    const map = L.map('map').setView([-0.330000, -78.535000], 13);
+    // Inicializar el mapa centrado en Quito/Sur
+    const map = L.map('map').setView([-0.25, -78.52], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -178,29 +175,35 @@
 
     marcadoresGroup.addTo(map);
 
-    // 1. OBTENER REGISTROS DESDE GOOGLE SHEETS
+    // 1. OBTENER REGISTROS (Manejando redirección de Google con redirect: "follow")
     function cargarEstudiantes() {
         const contenedor = document.getElementById('contenedor-lista');
-        contenedor.innerHTML = "<p style='text-align:center;'>Cargando datos...</p>";
+        contenedor.innerHTML = "<p style='text-align:center;'>⏳ Cargando datos desde Google Sheets...</p>";
 
-        fetch(SCRIPT_URL)
-            .then(res => res.json())
-            .then(data => {
-                estudiantesData = data;
-                document.getElementById('cant-estudiantes').innerText = estudiantesData.length;
+        fetch(SCRIPT_URL, {
+            method: "GET",
+            redirect: "follow"
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Datos recibidos:", data);
+            
+            // Validar si 'data' contiene la propiedad que buscamos
+            estudiantesData = Array.isArray(data) ? data : [];
+            document.getElementById('cant-estudiantes').innerText = estudiantesData.length;
 
-                if (estudiantesData.length > 0) {
-                    document.getElementById('btn-generar-ruta').disabled = false;
-                } else {
-                    document.getElementById('btn-generar-ruta').disabled = true;
-                }
+            if (estudiantesData.length > 0) {
+                document.getElementById('btn-generar-ruta').disabled = false;
+            } else {
+                document.getElementById('btn-generar-ruta').disabled = true;
+            }
 
-                renderizarListaYMapa();
-            })
-            .catch(err => {
-                console.error("Error al cargar datos:", err);
-                contenedor.innerHTML = "<p style='color:red; text-align:center;'>Error al obtener la lista de inscritos. Verifica tu Web App de Apps Script.</p>";
-            });
+            renderizarListaYMapa();
+        })
+        .catch(err => {
+            console.error("Error al cargar datos:", err);
+            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error al cargar los registros. Revisa la consola (F12).</p>";
+        });
     }
 
     // 2. MOSTRAR LISTA Y PINES EN EL MAPA
@@ -211,85 +214,110 @@
         if (rutaLayer) map.removeLayer(rutaLayer);
 
         const bounds = [];
+        let contUbicados = 0;
 
         estudiantesData.forEach((est, index) => {
-            // Extraer Lat y Lng desde la URL de Google Maps
-            const coords = extraerCoordenadas(est.url_maps);
+            // Se busca la propiedad que contenga las coordenadas / url de maps
+            const urlMaps = est.url_maps || est.url || est.ubicacion || "";
+            const coords = extraerCoordenadas(urlMaps);
+
+            // Obtener el nombre o usar un valor genérico si está vacío
+            const nombre = est.nombres_estudiante || est.nombre || `Estudiante #${index + 1}`;
+            const sector = est.sector || 'Sin sector';
+            const callePrin = est.calle_principal || '';
+            const calleSec = est.calle_secundaria || '';
+            const numCasa = est.numero_casa || '';
+            const telefono = est.telefono || 'Sin teléfono';
+            const horario = est.horario_servicio || '';
 
             if (coords) {
+                contUbicados++;
                 est.lat = coords.lat;
                 est.lng = coords.lng;
                 bounds.push([coords.lat, coords.lng]);
 
-                // Crear Marcador Personalizado
+                // Crear Marcador Personalizado con Número
                 const customIcon = L.divIcon({
                     className: 'numbered-icon',
-                    html: index + 1,
+                    html: contUbicados,
                     iconSize: [28, 28],
                     iconAnchor: [14, 14]
                 });
 
                 const marker = L.marker([coords.lat, coords.lng], { icon: customIcon });
                 marker.bindPopup(`
-                    <strong>#${index + 1} - ${est.nombres_estudiante}</strong><br>
-                    <b>Grado:</b> ${est.grado}<br>
-                    <b>Sector:</b> ${est.sector}<br>
-                    <b>Dirección:</b> ${est.calle_principal} y ${est.calle_secundaria}<br>
-                    <b>Teléfono:</b> <a href="https://wa.me/593${est.telefono.substring(1)}" target="_blank">${est.telefono}</a>
+                    <strong>#${contUbicados} - ${nombre}</strong><br>
+                    <b>Sector:</b> ${sector}<br>
+                    <b>Dirección:</b> ${callePrin} ${calleSec}<br>
+                    <b>Teléfono:</b> <a href="https://wa.me/593${telefono.toString().replace(/^0/, '')}" target="_blank">${telefono}</a>
                 `);
                 marcadoresGroup.addLayer(marker);
 
-                // Crear Card para la lista lateral
+                // Crear Card en la lista lateral
                 const card = document.createElement('div');
                 card.className = 'card-estudiante';
                 card.innerHTML = `
-                    <strong>#${index + 1} ${est.nombres_estudiante}</strong>
-                    <span class="sector">${est.sector}</span>
-                    <div>📍 ${est.calle_principal} ${est.numero_casa}</div>
-                    <div>📞 ${est.telefono} | ⏰ ${est.horario_servicio}</div>
+                    <strong>#${contUbicados} ${nombre}</strong>
+                    <span class="sector">${sector}</span>
+                    <div>📍 ${callePrin} ${numCasa}</div>
+                    <div>📞 ${telefono} ${horario ? '| ⏰ ' + horario : ''}</div>
                 `;
 
                 card.onclick = () => {
-                    map.flyTo([coords.lat, coords.lng], 17);
+                    map.flyTo([coords.lat, coords.lng], 16);
                     marker.openPopup();
                 };
 
                 contenedor.appendChild(card);
+            } else {
+                // Si no tiene ubicación válida en el mapa
+                const card = document.createElement('div');
+                card.className = 'card-estudiante';
+                card.style.borderLeftColor = '#dc3545';
+                card.innerHTML = `
+                    <strong>⚠️ ${nombre}</strong>
+                    <span style="color:#dc3545;">Sin ubicación en el mapa</span>
+                    <div>📞 ${telefono}</div>
+                `;
+                contenedor.appendChild(card);
             }
         });
 
+        // Ajustar la vista del mapa para encuadrar todos los puntos
         if (bounds.length > 0) {
-            map.fitBounds(bounds, { padding: [30, 30] });
+            map.fitBounds(bounds, { padding: [40, 40] });
         }
     }
 
-    // Extractor de latitud y longitud desde la URL guardada
-    function extraerCoordenadas(url) {
-        if (!url) return null;
-        const regex = /q=(-?\d+\.\d+),(-?\d+\.\d+)/;
-        const match = url.match(regex);
+    // Extractor mejorado de coordenadas (acepta enlaces cortos, largos y texto "lat,lng")
+    function extraerCoordenadas(texto) {
+        if (!texto) return null;
+        
+        // Buscar cualquier par numérico de coordenadas tipo -0.123456,-78.123456
+        const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+        const match = texto.toString().match(regex);
+        
         if (match) {
-            return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+            return { 
+                lat: parseFloat(match[1]), 
+                lng: parseFloat(match[2]) 
+            };
         }
         return null;
     }
 
-    // 3. GENERAR Y TRAZAR LA RUTA ÓPTIMA VIAL CON OSRM
+    // 3. GENERAR Y TRAZAR RUTA ÓPTIMA CON OSRM
     function generarRutaOptima() {
-        if (estudiantesData.length === 0) return;
+        const puntosValidos = estudiantesData.filter(e => e.lat && e.lng);
+        if (puntosValidos.length === 0) return;
 
         const btn = document.getElementById('btn-generar-ruta');
         btn.innerText = "⏳ Trazando Ruta...";
         btn.disabled = true;
 
         // Formatear coordenadas para OSRM: lon,lat;lon,lat;...
-        const waypoints = estudiantesData
-            .filter(e => e.lat && e.lng)
-            .map(e => `${e.lng},${e.lat}`);
+        const waypoints = puntosValidos.map(e => `${e.lng},${e.lat}`);
 
-        if (waypoints.length === 0) return;
-
-        // Petición al servicio gratuito de OSRM
         const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints.join(';')}?overview=full&geometries=geojson`;
 
         fetch(osrmUrl)
@@ -297,13 +325,11 @@
             .then(data => {
                 if (data.routes && data.routes.length > 0) {
                     const route = data.routes[0];
-                    const geometry = route.geometry;
 
-                    // Eliminar ruta anterior si existe
                     if (rutaLayer) map.removeLayer(rutaLayer);
 
-                    // Dibujar el trazado en el mapa
-                    rutaLayer = L.geoJSON(geometry, {
+                    // Dibujar la línea de la ruta
+                    rutaLayer = L.geoJSON(route.geometry, {
                         style: {
                             color: '#0066ff',
                             weight: 5,
@@ -313,7 +339,7 @@
 
                     map.fitBounds(rutaLayer.getBounds(), { padding: [40, 40] });
 
-                    // Mostrar resumen del recorrido
+                    // Mostrar métricas del recorrido
                     const distanciaKm = (route.distance / 1000).toFixed(2);
                     const tiempoMin = Math.round(route.duration / 60);
 
@@ -321,7 +347,7 @@
                     divResumen.style.display = "block";
                     divResumen.innerHTML = `
                         <strong>📍 Resumen del Recorrido:</strong><br>
-                        • Paradas: ${waypoints.length} puntos<br>
+                        • Paradas: ${puntosValidos.length} puntos<br>
                         • Distancia aprox: <b>${distanciaKm} km</b><br>
                         • Tiempo estimado: <b>${tiempoMin} minutos</b>
                     `;
@@ -331,7 +357,7 @@
             })
             .catch(err => {
                 console.error("Error al calcular ruta:", err);
-                alert("No se pudo obtener el trazado vial de la ruta.");
+                alert("No se pudo trazar el recorrido vial.");
                 btn.innerText = "🚗 Generar Ruta Óptima";
                 btn.disabled = false;
             });
