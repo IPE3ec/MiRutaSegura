@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscripción Transporte Escolar - UE San Gabriel</title>
-    <!-- CSS de Leaflet -->
+    <!-- CSS de Leaflet (Mapa Gratuito) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
@@ -18,7 +18,7 @@
         .section-title { background-color: #e9ecef; padding: 8px 12px; font-weight: bold; color: #1b365d; border-left: 4px solid #1b365d; margin-top: 20px; margin-bottom: 15px; }
         #map { width: 100%; height: 300px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 10px; z-index: 1; }
         .map-instruction { font-size: 12px; color: #666; margin-bottom: 8px; }
-        .status-busqueda { font-size: 12px; color: #1b365d; font-weight: bold; margin-top: 4px; }
+        .status-busqueda { font-size: 12px; color: #1b365d; font-weight: bold; margin-top: 4px; margin-bottom: 8px; }
         button { width: 100%; background-color: #1b365d; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px; }
         button:hover { background-color: #12243e; }
         button:disabled { background-color: #888888; cursor: not-allowed; }
@@ -90,7 +90,7 @@
 
         <div class="form-group">
             <label>Ubicación Geográfica de la Casa:</label>
-            <p class="map-instruction">Al llenar las calles, el mapa ubicará la intersección. <strong>Si tu casa está un poco más allá o acá, arrastra el PIN azul directamente sobre tu puerta:</strong></p>
+            <p class="map-instruction">El mapa se enfocará en el sector seleccionado. <strong>Arrastra el PIN azul o haz clic directamente sobre la puerta de tu domicilio:</strong></p>
             <div id="status-busqueda" class="status-busqueda"></div>
             <div id="map"></div>
             <input type="hidden" id="url_maps" name="url_maps">
@@ -125,9 +125,20 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqwiY6axQqd03UpgTv_Z9qa_6a04oI9nJ8q4kuOJDu3yZ4odUiELroR3Kj-d12WcCU/exec";
 
-    // Coordenadas iniciales (Sur de Quito)
-    const latInicial = -0.3200;
-    const lngInicial = -78.5400;
+    // 📍 Coordenadas exactas configuradas para tus sectores
+    const coordenadasSectores = {
+        "Ciudad Jardín": [-0.334591, -78.528823],
+        "Venecia": [-0.332753, -78.542990],
+        "Santo Tomás 1": [-0.333682, -78.547079],
+        "Santo Tomás 2": [-0.337373, -78.542910],
+        "Caupicho": [-0.328020, -78.538705],
+        "Beaterio": [-0.321569, -78.536778],
+        "La Bretaña": [-0.313609, -78.544318]
+    };
+
+    // Coordenada inicial (Ciudad Jardín por defecto)
+    const latInicial = -0.334591;
+    const lngInicial = -78.528823;
 
     const map = L.map('map').setView([latInicial, lngInicial], 15);
 
@@ -144,66 +155,34 @@
 
     actualizarEnlace(latInicial, lngInicial);
 
-    // Función para buscar la dirección exacta automáticamente
-    let timerBusqueda;
-    function buscarDireccionEnMapa() {
-        const sector = document.getElementById('sector').value;
-        const callePrincipal = document.getElementById('calle_principal').value.trim();
-        const calleSecundaria = document.getElementById('calle_secundaria').value.trim();
+    // Mover el mapa al sector seleccionado por el usuario
+    document.getElementById('sector').addEventListener('change', function() {
+        const sectorSeleccionado = this.value;
         const statusDiv = document.getElementById('status-busqueda');
 
-        if (!sector && !callePrincipal) return;
+        if (coordenadasSectores[sectorSeleccionado]) {
+            const coords = coordenadasSectores[sectorSeleccionado];
+            map.flyTo(coords, 17); // Zoom cercano para precisión
+            marker.setLatLng(coords);
+            actualizarEnlace(coords[0], coords[1]);
+            statusDiv.innerText = `📍 Mapa enfocado en ${sectorSeleccionado}. Arrastra el PIN sobre la puerta de tu casa.`;
+        }
+    });
 
-        // Construir la consulta de búsqueda centrada en Quito, Ecuador
-        let consulta = `${callePrincipal} ${calleSecundaria} ${sector} Quito Ecuador`.trim();
-
-        statusDiv.innerText = "Buscando dirección en el mapa...";
-
-        // Petición al buscador de OpenStreetMap (Nominatim)
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.length > 0) {
-                    const lat = parseFloat(data[0].lat);
-                    const lon = parseFloat(data[0].lon);
-
-                    map.flyTo([lat, lon], 17);
-                    marker.setLatLng([lat, lon]);
-                    actualizarEnlace(lat, lon);
-                    statusDiv.innerText = "📍 Ubicación localizada. Arrastra el PIN si deseas ajustar el punto exacto.";
-                } else {
-                    statusDiv.innerText = "📍 No se halló la intersección exacta. Puedes mover el PIN manualmente en el mapa.";
-                }
-            })
-            .catch(() => {
-                statusDiv.innerText = "";
-            });
-    }
-
-    // Escuchar cambios en los campos de dirección con retraso para no saturar
-    function programarBusqueda() {
-        clearTimeout(timerBusqueda);
-        timerBusqueda = setTimeout(buscarDireccionEnMapa, 1000);
-    }
-
-    document.getElementById('sector').addEventListener('change', buscarDireccionEnMapa);
-    document.getElementById('calle_principal').addEventListener('input', programarBusqueda);
-    document.getElementById('calle_secundaria').addEventListener('input', programarBusqueda);
-
-    // Permitir mover el PIN manualmente y actualizar las coordenadas inmediatamente
+    // Permitir mover el PIN manualmente
     marker.on('dragend', function () {
         const position = marker.getLatLng();
         actualizarEnlace(position.lat, position.lng);
-        document.getElementById('status-busqueda').innerText = "📍 Punto ajustado manualmente.";
+        document.getElementById('status-busqueda').innerText = "📍 Ubicación exacta del domicilio ajustada.";
     });
 
     map.on('click', function (e) {
         marker.setLatLng(e.latlng);
         actualizarEnlace(e.latlng.lat, e.latlng.lng);
-        document.getElementById('status-busqueda').innerText = "📍 Punto ajustado manualmente.";
+        document.getElementById('status-busqueda').innerText = "📍 Ubicación exacta del domicilio ajustada.";
     });
 
-    // Envío del formulario
+    // Envío a Google Sheets
     document.getElementById('formulario-registro').addEventListener('submit', function(e) {
         e.preventDefault();
         
