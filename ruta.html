@@ -152,7 +152,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    // Enlace directo a tu Google Apps Script
+    // Enlace Web App de Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxw6VjmBzYEGrykyyOX0enC6rzSCwIdX1WiOCU3qGHKFPgzLZY0Ama_Eyoq-R75RZMK/exec";
 
     let estudiantesData = [];
@@ -169,19 +169,23 @@
 
     marcadoresGroup.addTo(map);
 
-    // 1. OBTENER DATOS DESDE GOOGLE SHEETS
+    // 1. OBTENER DATOS DESDE GOOGLE SHEETS (SIN ENCABEZADOS DE CORS MANUALES)
     function cargarDatosDesdeGoogle() {
         const contenedor = document.getElementById('lista-alumnos');
         contenedor.innerHTML = "<p style='text-align:center;'>⏳ Leyendo Google Sheets...</p>";
 
         fetch(SCRIPT_URL, {
             method: "GET",
-            mode: "cors",
-            redirect: "follow",
-            headers: { "Content-Type": "text/plain;charset=utf-8" }
+            redirect: "follow"
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Respuesta de red no válida");
+            }
+            return res.json();
+        })
         .then(data => {
+            console.log("Datos recibidos correctamente:", data);
             estudiantesData = Array.isArray(data) ? data : [];
             document.getElementById('cant-alumnos').innerText = estudiantesData.length;
 
@@ -195,7 +199,7 @@
         })
         .catch(err => {
             console.error("Error al obtener los datos:", err);
-            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error de conexión al leer los datos.</p>";
+            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error al leer datos. Si persiste, actualiza la implementación en Apps Script a 'Nueva versión'.</p>";
         });
     }
 
@@ -210,7 +214,7 @@
         let contadorPuntos = 0;
 
         estudiantesData.forEach((est, idx) => {
-            // Adaptador para reconocer cualquier nombre de columna en Sheets
+            // Mapeo flexible para leer diferentes encabezados de columna
             const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${idx + 1}`;
             const urlMaps = est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "";
             const telefono = est.telefono || 'Sin número';
@@ -224,7 +228,7 @@
                 est.lng = coords.lng;
                 bounds.push([coords.lat, coords.lng]);
 
-                // Crear ícono numerado
+                // Ícono numerado
                 const icon = L.divIcon({
                     className: 'numbered-icon',
                     html: contadorPuntos,
@@ -240,7 +244,7 @@
                 `);
                 marcadoresGroup.addLayer(marker);
 
-                // Crear tarjeta en la lista lateral
+                // Tarjeta en lista lateral
                 const card = document.createElement('div');
                 card.className = 'card-alumno';
                 card.innerHTML = `
@@ -255,12 +259,12 @@
                 contenedor.appendChild(card);
 
             } else {
-                // Alumno sin coordenadas válidas
+                // Registro sin coordenadas
                 const card = document.createElement('div');
                 card.className = 'card-alumno card-sin-coords';
                 card.innerHTML = `
                     <strong>⚠️ ${nombre}</strong>
-                    <div>Sin ubicación en mapa</div>
+                    <div>Sin ubicación válida</div>
                 `;
                 contenedor.appendChild(card);
             }
@@ -271,7 +275,7 @@
         }
     }
 
-    // Extractor de latitud y longitud desde cualquier enlace o texto
+    // Extraer latitud y longitud desde cualquier URL o texto
     function extraerCoordenadas(texto) {
         if (!texto) return null;
         const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
@@ -286,7 +290,7 @@
     function generarRutaOptima() {
         const puntosValidos = estudiantesData.filter(e => e.lat && e.lng);
         if (puntosValidos.length < 2) {
-            alert("Se necesitan al menos 2 puntos con ubicación para trazar una ruta.");
+            alert("Se necesitan al menos 2 puntos con ubicación para trazar la ruta.");
             return;
         }
 
@@ -305,7 +309,7 @@
 
                     if (rutaLayer) map.removeLayer(rutaLayer);
 
-                    // Dibujar la trayectoria vial
+                    // Trazo vial
                     rutaLayer = L.geoJSON(route.geometry, {
                         style: {
                             color: '#0066ff',
@@ -316,7 +320,7 @@
 
                     map.fitBounds(rutaLayer.getBounds(), { padding: [40, 40] });
 
-                    // Mostrar resumen del cálculo
+                    // Resumen
                     const km = (route.distance / 1000).toFixed(2);
                     const min = Math.round(route.duration / 60);
 
