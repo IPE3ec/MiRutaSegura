@@ -7,6 +7,7 @@
     <title>Listado de Estudiantes - Ruta 7</title>
 
     <style>
+
         * {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,71 +15,107 @@
 
         body {
             margin: 0;
-            background: #f4f4f4;
             padding: 20px;
+            background: #f3f4f6;
             color: #111;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1450px;
             margin: auto;
         }
+
+        /* =========================
+           ENCABEZADO
+        ========================== */
 
         .header {
             background: #111;
             color: white;
             padding: 25px;
-            border-radius: 12px;
+            border-radius: 14px;
             border-bottom: 8px solid #ffcc00;
             margin-bottom: 20px;
             text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,.15);
         }
 
         .header h1 {
             margin: 0;
             font-size: 28px;
+            letter-spacing: 1px;
         }
 
-        .header p {
-            color: #ffcc00;
-            margin-bottom: 0;
+        .ruta {
+            display: inline-block;
+            margin-top: 10px;
+            background: #ffcc00;
+            color: #111;
+            padding: 6px 18px;
+            border-radius: 20px;
             font-weight: bold;
         }
 
-        .panel {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,.12);
-            margin-bottom: 20px;
+        .subtitulo {
+            margin-top: 12px;
+            color: #ddd;
+            font-size: 14px;
         }
+
+        /* =========================
+           ESTADISTICAS
+        ========================== */
 
         .estadisticas {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
 
         .card {
-            background: #111;
-            color: white;
+            background: white;
+            border-radius: 12px;
             padding: 20px;
-            border-radius: 10px;
             text-align: center;
-            border-bottom: 5px solid #ffcc00;
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            border-top: 5px solid #ffcc00;
+        }
+
+        .card .titulo-card {
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
         .card .numero {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: bold;
-            color: #ffcc00;
+            margin-top: 8px;
+            color: #111;
+        }
+
+        /* =========================
+           PANEL FILTROS
+        ========================== */
+
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            margin-bottom: 20px;
+        }
+
+        .panel h3 {
+            margin-top: 0;
         }
 
         .filtros {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 12px;
         }
 
         input,
@@ -86,43 +123,51 @@
         button {
             width: 100%;
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 7px;
             font-size: 14px;
         }
 
         input,
         select {
-            border: 2px solid #ccc;
+            border: 2px solid #ddd;
+            background: white;
         }
 
         input:focus,
         select:focus {
-            outline: none;
             border-color: #ffcc00;
+            outline: none;
         }
 
         button {
             border: 2px solid #111;
             background: #ffcc00;
+            color: #111;
             font-weight: bold;
             cursor: pointer;
+            transition: .2s;
         }
 
         button:hover {
             background: #e6b800;
+            transform: translateY(-1px);
         }
 
+        /* =========================
+           TABLA
+        ========================== */
+
         .tabla-container {
-            overflow-x: auto;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,.12);
+            box-shadow: 0 4px 15px rgba(0,0,0,.12);
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1100px;
+            min-width: 1250px;
         }
 
         thead {
@@ -130,45 +175,136 @@
             color: #ffcc00;
         }
 
-        th,
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+        th {
+            padding: 14px 10px;
             text-align: left;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
             font-size: 13px;
         }
 
-        tr:hover {
+        tbody tr:hover {
             background: #fff9d9;
         }
 
-        .btn-mapa {
-            display: inline-block;
-            padding: 7px 10px;
-            background: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 12px;
+        .estudiante {
             font-weight: bold;
+        }
+
+        /* =========================
+           BOTONES
+        ========================== */
+
+        .btn-mapa {
+
+            display: inline-block;
+
+            background: #28a745;
+
+            color: white;
+
+            padding: 7px 10px;
+
+            border-radius: 6px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
         }
 
         .btn-mapa:hover {
+
             background: #218838;
+
         }
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 18px;
+
+        .btn-whatsapp {
+
+            display: inline-block;
+
+            background: #25D366;
+
+            color: white;
+
+            padding: 7px 10px;
+
+            border-radius: 6px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+
             font-weight: bold;
+
+            white-space: nowrap;
+
+        }
+
+
+        /* =========================
+           ESTADOS
+        ========================== */
+
+        .loading {
+
+            text-align: center;
+
+            padding: 50px;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+        }
+
+        .error {
+
+            text-align: center;
+
+            padding: 40px;
+
+            color: #dc3545;
+
+            font-weight: bold;
+
         }
 
         .sin-datos {
+
             text-align: center;
-            padding: 40px;
+
+            padding: 50px;
+
             color: #777;
+
+            font-size: 16px;
+
         }
+
+
+        .ultima-actualizacion {
+
+            text-align: right;
+
+            font-size: 12px;
+
+            color: #777;
+
+            margin-top: 10px;
+
+        }
+
 
         @media(max-width:600px) {
 
@@ -183,79 +319,136 @@
         }
 
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
+
+
+    <!-- =========================
+         ENCABEZADO
+    ========================== -->
 
     <div class="header">
 
-        <h1>LISTADO DE ESTUDIANTES</h1>
+        <h1>
+            LISTADO DE ESTUDIANTES
+        </h1>
 
-        <p>
+        <div class="ruta">
             TRANSPORTE ESCOLAR · RUTA 7
-        </p>
+        </div>
 
-        <p style="color:white;font-weight:normal;">
+        <div class="subtitulo">
             Unidad Educativa San Gabriel
-        </p>
+        </div>
 
     </div>
 
 
-    <!-- ESTADISTICAS -->
+
+    <!-- =========================
+         ESTADISTICAS
+    ========================== -->
 
     <div class="estadisticas">
 
+
         <div class="card">
 
-            <div>Total Estudiantes</div>
+            <div class="titulo-card">
+                Total Estudiantes
+            </div>
 
-            <div class="numero" id="totalEstudiantes">
+            <div
+                class="numero"
+                id="totalEstudiantes"
+            >
                 0
             </div>
 
         </div>
 
 
+
         <div class="card">
 
-            <div>Horario Matutino</div>
+            <div class="titulo-card">
+                Matutino
+            </div>
 
-            <div class="numero" id="totalMatutino">
+            <div
+                class="numero"
+                id="totalMatutino"
+            >
                 0
             </div>
 
         </div>
 
 
+
         <div class="card">
 
-            <div>Horario Vespertino</div>
+            <div class="titulo-card">
+                Vespertino
+            </div>
 
-            <div class="numero" id="totalVespertino">
+            <div
+                class="numero"
+                id="totalVespertino"
+            >
                 0
             </div>
 
         </div>
+
+
+
+        <div class="card">
+
+            <div class="titulo-card">
+                Sectores Activos
+            </div>
+
+            <div
+                class="numero"
+                id="totalSectores"
+            >
+                0
+            </div>
+
+        </div>
+
 
     </div>
 
 
-    <!-- FILTROS -->
+
+    <!-- =========================
+         FILTROS
+    ========================== -->
 
     <div class="panel">
 
-        <h3>🔎 Buscar y Filtrar Estudiantes</h3>
+        <h3>
+            🔎 Buscar y Filtrar Estudiantes
+        </h3>
+
 
         <div class="filtros">
+
 
             <input
                 type="text"
                 id="buscar"
-                placeholder="Buscar por nombre..."
+                placeholder="Buscar estudiante..."
             >
+
 
 
             <select id="filtroSector">
@@ -267,6 +460,7 @@
             </select>
 
 
+
             <select id="filtroNivel">
 
                 <option value="">
@@ -276,7 +470,8 @@
             </select>
 
 
-            <select id="filtroHorario">
+
+            <select id="filtroServicio">
 
                 <option value="">
                     TODOS LOS HORARIOS
@@ -293,29 +488,72 @@
             </select>
 
 
+
             <button onclick="cargarEstudiantes()">
 
-                🔄 ACTUALIZAR LISTADO
+                🔄 ACTUALIZAR
 
             </button>
 
+
         </div>
+
+
+        <div
+            class="ultima-actualizacion"
+            id="ultimaActualizacion"
+        >
+        </div>
+
 
     </div>
 
 
-    <!-- TABLA -->
+
+    <!-- =========================
+         TABLA
+    ========================== -->
 
     <div class="tabla-container">
 
-        <div id="loading" class="loading">
+
+        <div
+            id="loading"
+            class="loading"
+        >
 
             ⏳ Cargando estudiantes...
 
         </div>
 
 
-        <table id="tablaEstudiantes" style="display:none;">
+
+        <div
+            id="error"
+            class="error"
+            style="display:none"
+        >
+        </div>
+
+
+
+        <div
+            id="sinDatos"
+            class="sin-datos"
+            style="display:none"
+        >
+
+            📭 No existen estudiantes registrados.
+
+        </div>
+
+
+
+        <table
+            id="tablaEstudiantes"
+            style="display:none"
+        >
+
 
             <thead>
 
@@ -327,7 +565,7 @@
 
                     <th>NIVEL</th>
 
-                    <th>GRADO</th>
+                    <th>GRADO / AÑO</th>
 
                     <th>REPRESENTANTE</th>
 
@@ -337,31 +575,27 @@
 
                     <th>DIRECCIÓN</th>
 
-                    <th>HORARIO</th>
+                    <th>REFERENCIA</th>
+
+                    <th>SERVICIO</th>
 
                     <th>UBICACIÓN</th>
+
+                    <th>CONTACTO</th>
 
                 </tr>
 
             </thead>
 
 
+
             <tbody id="listaEstudiantes">
 
             </tbody>
 
+
         </table>
 
-
-        <div
-            id="sinDatos"
-            class="sin-datos"
-            style="display:none;"
-        >
-
-            No existen estudiantes registrados.
-
-        </div>
 
     </div>
 
@@ -369,22 +603,14 @@
 </div>
 
 
+
 <script>
 
 
 /* =====================================================
-   CONFIGURACIÓN
+   CONFIGURACIÓN API
 ===================================================== */
 
-
-/*
-IMPORTANTE:
-
-Aquí debes colocar la URL del Google Apps Script.
-
-La misma que utilizas para guardar los registros.
-
-*/
 
 const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbzC9S7bE9KpqVTL4DuneQC7LTZ5iggLg-P69PrYJ0eG8bsUkXPp_h78C-Yq2uZGDZK8/exec";
@@ -394,27 +620,97 @@ let estudiantes = [];
 
 
 /* =====================================================
+   JSONP
+   SOLUCIÓN PARA CORS EN GITHUB PAGES
+===================================================== */
+
+
+function cargarJSONP(url) {
+
+    return new Promise((resolve, reject) => {
+
+
+        const callbackName =
+            "jsonp_callback_" + Date.now();
+
+
+        window[callbackName] = function(data) {
+
+            delete window[callbackName];
+
+            document
+                .head
+                .removeChild(script);
+
+            resolve(data);
+
+        };
+
+
+        const script =
+            document.createElement("script");
+
+
+        script.src =
+            url +
+            "?action=records" +
+            "&callback=" +
+            callbackName;
+
+
+        script.onerror = function() {
+
+            delete window[callbackName];
+
+            script.remove();
+
+            reject(
+                new Error(
+                    "No se pudo conectar con Google Apps Script"
+                )
+            );
+
+        };
+
+
+        document.head.appendChild(script);
+
+
+    });
+
+}
+
+
+/* =====================================================
    CARGAR ESTUDIANTES
 ===================================================== */
 
 
 async function cargarEstudiantes() {
 
-    document.getElementById("loading").style.display = "block";
 
-    document.getElementById("tablaEstudiantes").style.display = "none";
-
-    document.getElementById("sinDatos").style.display = "none";
+    mostrarLoading();
 
 
     try {
 
-        const respuesta = await fetch(SCRIPT_URL + "?accion=listar");
 
-        const datos = await respuesta.json();
+        const respuesta =
+            await cargarJSONP(SCRIPT_URL);
 
 
-        estudiantes = datos;
+        if (!respuesta.ok) {
+
+            throw new Error(
+                respuesta.error ||
+                "Error desconocido en la API"
+            );
+
+        }
+
+
+        estudiantes =
+            respuesta.records || [];
 
 
         llenarFiltros();
@@ -423,20 +719,25 @@ async function cargarEstudiantes() {
         mostrarEstudiantes();
 
 
+        actualizarHora();
+
+
     }
 
-    catch(error) {
+    catch (error) {
+
 
         console.error(error);
 
 
-        document.getElementById("loading").innerHTML =
+        mostrarError(
+            "❌ Error al cargar estudiantes: " +
+            error.message
+        );
 
-        "❌ Error al cargar los estudiantes.<br><br>" +
-
-        "Verifica la configuración del Google Apps Script.";
 
     }
+
 
 }
 
@@ -449,68 +750,101 @@ async function cargarEstudiantes() {
 function llenarFiltros() {
 
 
-    const sectores = [...new Set(
-
-        estudiantes.map(e => e.sector)
-
-    )];
+    const selectSector =
+        document.getElementById("filtroSector");
 
 
-    const niveles = [...new Set(
-
-        estudiantes.map(e => e.nivel)
-
-    )];
+    const selectNivel =
+        document.getElementById("filtroNivel");
 
 
-    const selectSector = document.getElementById("filtroSector");
+    const sectorActual =
+        selectSector.value;
 
 
-    const selectNivel = document.getElementById("filtroNivel");
+    const nivelActual =
+        selectNivel.value;
+
+
+    const sectores = [
+
+        ...new Set(
+
+            estudiantes
+
+                .map(e => e.sector)
+
+                .filter(Boolean)
+
+        )
+
+    ].sort();
+
+
+    const niveles = [
+
+        ...new Set(
+
+            estudiantes
+
+                .map(e => e.nivel)
+
+                .filter(Boolean)
+
+        )
+
+    ].sort();
+
 
 
     selectSector.innerHTML =
-
-        `<option value="">TODOS LOS SECTORES</option>`;
-
-
-    selectNivel.innerHTML =
-
-        `<option value="">TODOS LOS NIVELES</option>`;
+        '<option value="">TODOS LOS SECTORES</option>';
 
 
     sectores.forEach(sector => {
 
-        if(sector){
+        const option =
+            document.createElement("option");
 
-            selectSector.innerHTML +=
 
-            `<option value="${sector}">
+        option.value = sector;
 
-                ${sector}
+        option.textContent = sector;
 
-            </option>`;
 
-        }
+        selectSector.appendChild(option);
+
 
     });
+
+
+
+    selectNivel.innerHTML =
+        '<option value="">TODOS LOS NIVELES</option>';
 
 
     niveles.forEach(nivel => {
 
-        if(nivel){
+        const option =
+            document.createElement("option");
 
-            selectNivel.innerHTML +=
 
-            `<option value="${nivel}">
+        option.value = nivel;
 
-                ${nivel}
+        option.textContent = nivel;
 
-            </option>`;
 
-        }
+        selectNivel.appendChild(option);
+
 
     });
+
+
+
+    selectSector.value = sectorActual;
+
+
+    selectNivel.value = nivelActual;
 
 
 }
@@ -524,227 +858,242 @@ function llenarFiltros() {
 function mostrarEstudiantes() {
 
 
-    const buscar =
+    const textoBusqueda =
 
-        document.getElementById("buscar").value
-
-        .toUpperCase();
-
-
-    const sector =
-
-        document.getElementById("filtroSector").value;
+        document
+            .getElementById("buscar")
+            .value
+            .toUpperCase()
+            .trim();
 
 
-    const nivel =
+    const sectorSeleccionado =
 
-        document.getElementById("filtroNivel").value;
-
-
-    const horario =
-
-        document.getElementById("filtroHorario").value;
+        document
+            .getElementById("filtroSector")
+            .value;
 
 
+    const nivelSeleccionado =
 
-    const filtrados = estudiantes.filter(estudiante => {
+        document
+            .getElementById("filtroNivel")
+            .value;
 
 
-        const coincideNombre =
+    const servicioSeleccionado =
 
-            estudiante.nombres_estudiante
+        document
+            .getElementById("filtroServicio")
+            .value;
 
-            ?.toUpperCase()
 
-            .includes(buscar);
+
+    const filtrados = estudiantes.filter(e => {
+
+
+        const nombre =
+            String(e.estudiante || "")
+            .toUpperCase();
+
+
+        const representante =
+            String(e.representante || "")
+            .toUpperCase();
+
+
+        const telefono =
+            String(e.telefono || "");
+
+
+
+        const coincideBusqueda =
+
+            !textoBusqueda ||
+
+            nombre.includes(textoBusqueda) ||
+
+            representante.includes(textoBusqueda) ||
+
+            telefono.includes(textoBusqueda);
+
 
 
         const coincideSector =
 
-            !sector ||
+            !sectorSeleccionado ||
 
-            estudiante.sector === sector;
+            e.sector === sectorSeleccionado;
+
 
 
         const coincideNivel =
 
-            !nivel ||
+            !nivelSeleccionado ||
 
-            estudiante.nivel === nivel;
-
-
-        const coincideHorario =
-
-            !horario ||
-
-            estudiante.horario_servicio === horario;
+            e.nivel === nivelSeleccionado;
 
 
-        return
 
-            coincideNombre &&
+        const coincideServicio =
+
+            !servicioSeleccionado ||
+
+            e.servicio === servicioSeleccionado;
+
+
+
+        return (
+
+            coincideBusqueda &&
 
             coincideSector &&
 
             coincideNivel &&
 
-            coincideHorario;
+            coincideServicio
+
+        );
 
 
     });
 
 
+
     actualizarEstadisticas(filtrados);
 
 
-    const tbody =
 
+    const tbody =
         document.getElementById("listaEstudiantes");
 
 
     tbody.innerHTML = "";
 
 
-    document.getElementById("loading").style.display = "none";
+    ocultarEstados();
 
 
-    if(filtrados.length === 0){
 
-        document.getElementById("tablaEstudiantes")
-
-        .style.display = "none";
+    if (filtrados.length === 0) {
 
 
-        document.getElementById("sinDatos")
-
-        .style.display = "block";
+        document
+            .getElementById("sinDatos")
+            .style.display = "block";
 
 
         return;
 
+
     }
 
 
-    document.getElementById("tablaEstudiantes")
 
-    .style.display = "table";
-
-
-    document.getElementById("sinDatos")
-
-    .style.display = "none";
+    document
+        .getElementById("tablaEstudiantes")
+        .style.display = "table";
 
 
 
-    filtrados.forEach((e,index) => {
+    filtrados.forEach((e, index) => {
 
 
-        const direccion = `
+        const direccion = [
 
-            ${e.calle_principal || ""}
+            e.calleprincipal,
 
-            ${e.calle_secundaria || ""}
+            e.callesecundaria,
 
-            ${e.numero_casa || ""}
+            e.nrocasalote
 
-        `;
+        ]
+
+        .filter(Boolean)
+
+        .join(" - ");
 
 
-        tbody.innerHTML += `
+
+        const fila =
+            document.createElement("tr");
 
 
-        <tr>
 
+        fila.innerHTML = `
 
             <td>
-
                 ${index + 1}
+            </td>
 
+
+            <td class="estudiante">
+                ${escapeHTML(e.estudiante)}
             </td>
 
 
             <td>
-
-                <strong>
-
-                    ${e.nombres_estudiante || ""}
-
-                </strong>
-
+                ${escapeHTML(e.nivel)}
             </td>
 
 
             <td>
-
-                ${e.nivel || ""}
-
+                ${escapeHTML(e.grado)}
             </td>
 
 
             <td>
-
-                ${e.grado || ""}
-
+                ${escapeHTML(e.representante)}
             </td>
 
 
             <td>
-
-                ${e.nombre_representante || ""}
-
+                ${escapeHTML(e.telefono)}
             </td>
 
 
             <td>
-
-                ${e.telefono || ""}
-
+                ${escapeHTML(e.sector)}
             </td>
 
 
             <td>
-
-                ${e.sector || ""}
-
+                ${escapeHTML(direccion)}
             </td>
 
 
             <td>
-
-                ${direccion}
-
+                ${escapeHTML(e.referencia)}
             </td>
 
 
             <td>
-
-                ${e.horario_servicio || ""}
-
+                ${escapeHTML(e.servicio)}
             </td>
 
 
             <td>
-
 
                 ${
 
-                    e.url_maps
+                    e.urlmaps
 
                     ?
 
-                    `<a
+                    `
 
-                        class="btn-mapa"
-
-                        href="${e.url_maps}"
-
+                    <a
+                        href="${escapeAttribute(e.urlmaps)}"
                         target="_blank"
-
+                        rel="noopener"
+                        class="btn-mapa"
                     >
 
-                    📍 VER MAPA
+                        📍 VER MAPA
 
-                    </a>`
+                    </a>
+
+                    `
 
                     :
 
@@ -752,14 +1101,20 @@ function mostrarEstudiantes() {
 
                 }
 
-
             </td>
 
 
-        </tr>
+            <td>
 
+                ${crearBotonWhatsApp(e.telefono)}
+
+            </td>
 
         `;
+
+
+
+        tbody.appendChild(fila);
 
 
     });
@@ -769,76 +1124,294 @@ function mostrarEstudiantes() {
 
 
 /* =====================================================
-   ESTADÍSTICAS
+   ESTADISTICAS
 ===================================================== */
 
 
 function actualizarEstadisticas(lista) {
 
 
-    const total = lista.length;
+    const total =
+        lista.length;
 
 
-    const matutino = lista.filter(e =>
-
-        e.horario_servicio ===
-
-        "MATUTINO (MAÑANA)"
-
-    ).length;
+    const matutino =
+        lista.filter(e =>
+            e.servicio === "MATUTINO (MAÑANA)"
+        ).length;
 
 
-    const vespertino = lista.filter(e =>
-
-        e.horario_servicio ===
-
-        "VESPERTINO (TARDE)"
-
-    ).length;
+    const vespertino =
+        lista.filter(e =>
+            e.servicio === "VESPERTINO (TARDE)"
+        ).length;
 
 
+    const sectores = new Set(
 
-    document.getElementById("totalEstudiantes")
+        lista
 
-    .innerText = total;
+            .map(e => e.sector)
+
+            .filter(Boolean)
+
+    );
 
 
-    document.getElementById("totalMatutino")
+    document
+        .getElementById("totalEstudiantes")
+        .textContent = total;
 
-    .innerText = matutino;
+
+    document
+        .getElementById("totalMatutino")
+        .textContent = matutino;
 
 
-    document.getElementById("totalVespertino")
+    document
+        .getElementById("totalVespertino")
+        .textContent = vespertino;
 
-    .innerText = vespertino;
+
+    document
+        .getElementById("totalSectores")
+        .textContent = sectores.size;
 
 
 }
 
 
 /* =====================================================
-   EVENTOS DE FILTROS
+   WHATSAPP
 ===================================================== */
 
 
-document.getElementById("buscar")
-
-.addEventListener("input", mostrarEstudiantes);
+function crearBotonWhatsApp(telefono) {
 
 
-document.getElementById("filtroSector")
+    if (!telefono) {
 
-.addEventListener("change", mostrarEstudiantes);
+        return "SIN TELÉFONO";
 
-
-document.getElementById("filtroNivel")
-
-.addEventListener("change", mostrarEstudiantes);
+    }
 
 
-document.getElementById("filtroHorario")
+    let numero =
+        String(telefono)
+        .replace(/\D/g, "");
 
-.addEventListener("change", mostrarEstudiantes);
+
+    /*
+    Ecuador:
+
+    0991234567
+
+    se convierte en:
+
+    593991234567
+    */
+
+
+    if (
+
+        numero.startsWith("0") &&
+
+        numero.length === 10
+
+    ) {
+
+        numero =
+            "593" +
+            numero.substring(1);
+
+    }
+
+
+    return `
+
+        <a
+            href="https://wa.me/${numero}"
+            target="_blank"
+            rel="noopener"
+            class="btn-whatsapp"
+        >
+
+            💬 WHATSAPP
+
+        </a>
+
+    `;
+
+
+}
+
+
+/* =====================================================
+   FUNCIONES VISUALES
+===================================================== */
+
+
+function mostrarLoading() {
+
+
+    ocultarEstados();
+
+
+    document
+        .getElementById("loading")
+        .style.display = "block";
+
+
+}
+
+
+function mostrarError(mensaje) {
+
+
+    ocultarEstados();
+
+
+    const errorDiv =
+        document.getElementById("error");
+
+
+    errorDiv.textContent =
+        mensaje;
+
+
+    errorDiv.style.display =
+        "block";
+
+
+}
+
+
+function ocultarEstados() {
+
+
+    document
+        .getElementById("loading")
+        .style.display = "none";
+
+
+    document
+        .getElementById("error")
+        .style.display = "none";
+
+
+    document
+        .getElementById("sinDatos")
+        .style.display = "none";
+
+
+    document
+        .getElementById("tablaEstudiantes")
+        .style.display = "none";
+
+
+}
+
+
+/* =====================================================
+   SEGURIDAD HTML
+===================================================== */
+
+
+function escapeHTML(valor) {
+
+
+    if (
+
+        valor === undefined ||
+
+        valor === null
+
+    ) return "";
+
+
+    return String(valor)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+
+}
+
+
+function escapeAttribute(valor) {
+
+
+    return escapeHTML(valor);
+
+}
+
+
+/* =====================================================
+   HORA ACTUALIZACION
+===================================================== */
+
+
+function actualizarHora() {
+
+
+    const ahora =
+        new Date();
+
+
+    document
+        .getElementById("ultimaActualizacion")
+        .textContent =
+
+        "Última actualización: " +
+
+        ahora.toLocaleString("es-EC");
+
+
+}
+
+
+/* =====================================================
+   EVENTOS
+===================================================== */
+
+
+document
+    .getElementById("buscar")
+    .addEventListener(
+        "input",
+        mostrarEstudiantes
+    );
+
+
+document
+    .getElementById("filtroSector")
+    .addEventListener(
+        "change",
+        mostrarEstudiantes
+    );
+
+
+document
+    .getElementById("filtroNivel")
+    .addEventListener(
+        "change",
+        mostrarEstudiantes
+    );
+
+
+document
+    .getElementById("filtroServicio")
+    .addEventListener(
+        "change",
+        mostrarEstudiantes
+    );
 
 
 /* =====================================================
