@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Listado de Estudiantes - Ruta 7</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f4f4;
+            padding: 20px;
+            color: #111;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .header {
+            background: #111;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-bottom: 8px solid #ffcc00;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #ffcc00;
+            margin-bottom: 0;
+            font-weight: bold;
+        }
+
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.12);
+            margin-bottom: 20px;
+        }
+
+        .estadisticas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #111;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-bottom: 5px solid #ffcc00;
+        }
+
+        .card .numero {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .filtros {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            border: 2px solid #ccc;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #ffcc00;
+        }
+
+        button {
+            border: 2px solid #111;
+            background: #ffcc00;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #e6b800;
+        }
+
+        .tabla-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.12);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead {
+            background: #111;
+            color: #ffcc00;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #fff9d9;
+        }
+
+        .btn-mapa {
+            display: inline-block;
+            padding: 7px 10px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .btn-mapa:hover {
+            background: #218838;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .sin-datos {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+
+        @media(max-width:600px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 21px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>LISTADO DE ESTUDIANTES</h1>
+
+        <p>
+            TRANSPORTE ESCOLAR · RUTA 7
+        </p>
+
+        <p style="color:white;font-weight:normal;">
+            Unidad Educativa San Gabriel
+        </p>
+
+    </div>
+
+
+    <!-- ESTADISTICAS -->
+
+    <div class="estadisticas">
+
+        <div class="card">
+
+            <div>Total Estudiantes</div>
+
+            <div class="numero" id="totalEstudiantes">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div>Horario Matutino</div>
+
+            <div class="numero" id="totalMatutino">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div>Horario Vespertino</div>
+
+            <div class="numero" id="totalVespertino">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTROS -->
+
+    <div class="panel">
+
+        <h3>🔎 Buscar y Filtrar Estudiantes</h3>
+
+        <div class="filtros">
+
+            <input
+                type="text"
+                id="buscar"
+                placeholder="Buscar por nombre..."
+            >
+
+
+            <select id="filtroSector">
+
+                <option value="">
+                    TODOS LOS SECTORES
+                </option>
+
+            </select>
+
+
+            <select id="filtroNivel">
+
+                <option value="">
+                    TODOS LOS NIVELES
+                </option>
+
+            </select>
+
+
+            <select id="filtroHorario">
+
+                <option value="">
+                    TODOS LOS HORARIOS
+                </option>
+
+                <option value="MATUTINO (MAÑANA)">
+                    MATUTINO
+                </option>
+
+                <option value="VESPERTINO (TARDE)">
+                    VESPERTINO
+                </option>
+
+            </select>
+
+
+            <button onclick="cargarEstudiantes()">
+
+                🔄 ACTUALIZAR LISTADO
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLA -->
+
+    <div class="tabla-container">
+
+        <div id="loading" class="loading">
+
+            ⏳ Cargando estudiantes...
+
+        </div>
+
+
+        <table id="tablaEstudiantes" style="display:none;">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>ESTUDIANTE</th>
+
+                    <th>NIVEL</th>
+
+                    <th>GRADO</th>
+
+                    <th>REPRESENTANTE</th>
+
+                    <th>TELÉFONO</th>
+
+                    <th>SECTOR</th>
+
+                    <th>DIRECCIÓN</th>
+
+                    <th>HORARIO</th>
+
+                    <th>UBICACIÓN</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="listaEstudiantes">
+
+            </tbody>
+
+        </table>
+
+
+        <div
+            id="sinDatos"
+            class="sin-datos"
+            style="display:none;"
+        >
+
+            No existen estudiantes registrados.
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   CONFIGURACIÓN
+===================================================== */
+
+
+/*
+IMPORTANTE:
+
+Aquí debes colocar la URL del Google Apps Script.
+
+La misma que utilizas para guardar los registros.
+
+*/
+
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbzC9S7bE9KpqVTL4DuneQC7LTZ5iggLg-P69PrYJ0eG8bsUkXPp_h78C-Yq2uZGDZK8/exec";
+
+
+let estudiantes = [];
+
+
+/* =====================================================
+   CARGAR ESTUDIANTES
+===================================================== */
+
+
+async function cargarEstudiantes() {
+
+    document.getElementById("loading").style.display = "block";
+
+    document.getElementById("tablaEstudiantes").style.display = "none";
+
+    document.getElementById("sinDatos").style.display = "none";
+
+
+    try {
+
+        const respuesta = await fetch(SCRIPT_URL + "?accion=listar");
+
+        const datos = await respuesta.json();
+
+
+        estudiantes = datos;
+
+
+        llenarFiltros();
+
+
+        mostrarEstudiantes();
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+
+        document.getElementById("loading").innerHTML =
+
+        "❌ Error al cargar los estudiantes.<br><br>" +
+
+        "Verifica la configuración del Google Apps Script.";
+
+    }
+
+}
+
+
+/* =====================================================
+   LLENAR FILTROS
+===================================================== */
+
+
+function llenarFiltros() {
+
+
+    const sectores = [...new Set(
+
+        estudiantes.map(e => e.sector)
+
+    )];
+
+
+    const niveles = [...new Set(
+
+        estudiantes.map(e => e.nivel)
+
+    )];
+
+
+    const selectSector = document.getElementById("filtroSector");
+
+
+    const selectNivel = document.getElementById("filtroNivel");
+
+
+    selectSector.innerHTML =
+
+        `<option value="">TODOS LOS SECTORES</option>`;
+
+
+    selectNivel.innerHTML =
+
+        `<option value="">TODOS LOS NIVELES</option>`;
+
+
+    sectores.forEach(sector => {
+
+        if(sector){
+
+            selectSector.innerHTML +=
+
+            `<option value="${sector}">
+
+                ${sector}
+
+            </option>`;
+
+        }
+
+    });
+
+
+    niveles.forEach(nivel => {
+
+        if(nivel){
+
+            selectNivel.innerHTML +=
+
+            `<option value="${nivel}">
+
+                ${nivel}
+
+            </option>`;
+
+        }
+
+    });
+
+
+}
+
+
+/* =====================================================
+   MOSTRAR ESTUDIANTES
+===================================================== */
+
+
+function mostrarEstudiantes() {
+
+
+    const buscar =
+
+        document.getElementById("buscar").value
+
+        .toUpperCase();
+
+
+    const sector =
+
+        document.getElementById("filtroSector").value;
+
+
+    const nivel =
+
+        document.getElementById("filtroNivel").value;
+
+
+    const horario =
+
+        document.getElementById("filtroHorario").value;
+
+
+
+    const filtrados = estudiantes.filter(estudiante => {
+
+
+        const coincideNombre =
+
+            estudiante.nombres_estudiante
+
+            ?.toUpperCase()
+
+            .includes(buscar);
+
+
+        const coincideSector =
+
+            !sector ||
+
+            estudiante.sector === sector;
+
+
+        const coincideNivel =
+
+            !nivel ||
+
+            estudiante.nivel === nivel;
+
+
+        const coincideHorario =
+
+            !horario ||
+
+            estudiante.horario_servicio === horario;
+
+
+        return
+
+            coincideNombre &&
+
+            coincideSector &&
+
+            coincideNivel &&
+
+            coincideHorario;
+
+
+    });
+
+
+    actualizarEstadisticas(filtrados);
+
+
+    const tbody =
+
+        document.getElementById("listaEstudiantes");
+
+
+    tbody.innerHTML = "";
+
+
+    document.getElementById("loading").style.display = "none";
+
+
+    if(filtrados.length === 0){
+
+        document.getElementById("tablaEstudiantes")
+
+        .style.display = "none";
+
+
+        document.getElementById("sinDatos")
+
+        .style.display = "block";
+
+
+        return;
+
+    }
+
+
+    document.getElementById("tablaEstudiantes")
+
+    .style.display = "table";
+
+
+    document.getElementById("sinDatos")
+
+    .style.display = "none";
+
+
+
+    filtrados.forEach((e,index) => {
+
+
+        const direccion = `
+
+            ${e.calle_principal || ""}
+
+            ${e.calle_secundaria || ""}
+
+            ${e.numero_casa || ""}
+
+        `;
+
+
+        tbody.innerHTML += `
+
+
+        <tr>
+
+
+            <td>
+
+                ${index + 1}
+
+            </td>
+
+
+            <td>
+
+                <strong>
+
+                    ${e.nombres_estudiante || ""}
+
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                ${e.nivel || ""}
+
+            </td>
+
+
+            <td>
+
+                ${e.grado || ""}
+
+            </td>
+
+
+            <td>
+
+                ${e.nombre_representante || ""}
+
+            </td>
+
+
+            <td>
+
+                ${e.telefono || ""}
+
+            </td>
+
+
+            <td>
+
+                ${e.sector || ""}
+
+            </td>
+
+
+            <td>
+
+                ${direccion}
+
+            </td>
+
+
+            <td>
+
+                ${e.horario_servicio || ""}
+
+            </td>
+
+
+            <td>
+
+
+                ${
+
+                    e.url_maps
+
+                    ?
+
+                    `<a
+
+                        class="btn-mapa"
+
+                        href="${e.url_maps}"
+
+                        target="_blank"
+
+                    >
+
+                    📍 VER MAPA
+
+                    </a>`
+
+                    :
+
+                    "SIN UBICACIÓN"
+
+                }
+
+
+            </td>
+
+
+        </tr>
+
+
+        `;
+
+
+    });
+
+
+}
+
+
+/* =====================================================
+   ESTADÍSTICAS
+===================================================== */
+
+
+function actualizarEstadisticas(lista) {
+
+
+    const total = lista.length;
+
+
+    const matutino = lista.filter(e =>
+
+        e.horario_servicio ===
+
+        "MATUTINO (MAÑANA)"
+
+    ).length;
+
+
+    const vespertino = lista.filter(e =>
+
+        e.horario_servicio ===
+
+        "VESPERTINO (TARDE)"
+
+    ).length;
+
+
+
+    document.getElementById("totalEstudiantes")
+
+    .innerText = total;
+
+
+    document.getElementById("totalMatutino")
+
+    .innerText = matutino;
+
+
+    document.getElementById("totalVespertino")
+
+    .innerText = vespertino;
+
+
+}
+
+
+/* =====================================================
+   EVENTOS DE FILTROS
+===================================================== */
+
+
+document.getElementById("buscar")
+
+.addEventListener("input", mostrarEstudiantes);
+
+
+document.getElementById("filtroSector")
+
+.addEventListener("change", mostrarEstudiantes);
+
+
+document.getElementById("filtroNivel")
+
+.addEventListener("change", mostrarEstudiantes);
+
+
+document.getElementById("filtroHorario")
+
+.addEventListener("change", mostrarEstudiantes);
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+
+cargarEstudiantes();
+
+
+</script>
+
+
+</body>
+
+</html>
