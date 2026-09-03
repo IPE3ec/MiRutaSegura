@@ -187,6 +187,11 @@
                 <option value="CAUPICHO">CAUPICHO</option>
                 <option value="BEATERIO">BEATERIO</option>
                 <option value="LA BRETAÑA">LA BRETAÑA</option>
+                <!-- SECTORES ADICIONALES -->
+                <option value="SOLANDA">SOLANDA</option>
+                <option value="MAYORISTA">MAYORISTA</option>
+                <option value="EL CONDE">EL CONDE</option>
+                <option value="AYMESA">AYMESA</option>
             </select>
         </div>
 
@@ -246,6 +251,7 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC9S7bE9KpqVTL4DuneQC7LTZ5iggLg-P69PrYJ0eG8bsUkXPp_h78C-Yq2uZGDZK8/exec";
 
+    // Coordenadas asociadas a cada sector
     const coordenadasSectores = {
         "CIUDAD JARDIN": [-0.334591, -78.528823],
         "VENECIA": [-0.332753, -78.542990],
@@ -253,7 +259,12 @@
         "SANTO TOMAS 2": [-0.337373, -78.542910],
         "CAUPICHO": [-0.328020, -78.538705],
         "BEATERIO": [-0.321569, -78.536778],
-        "LA BRETAÑA": [-0.313609, -78.544318]
+        "LA BRETAÑA": [-0.313609, -78.544318],
+        // NUEVOS SECTORES CON SUS COORDENADAS
+        "SOLANDA": [-0.268086, -78.538229],
+        "MAYORISTA": [-0.272803, -78.534819],
+        "EL CONDE": [-0.302692, -78.540252],
+        "AYMESA": [-0.296042, -78.539539]
     };
 
     const latInicial = -0.334591;
@@ -404,7 +415,7 @@
         btnEnviar.disabled = this.value === "";
     });
 
-    // ENVÍO DE DATOS EN FORMATO URL-ENCODED (RECOMENDADO PARA GOOGLE APPS SCRIPT)
+    // ENVÍO DE DATOS EN FORMATO URL-ENCODED
     document.getElementById('formulario-registro').addEventListener('submit', function(e) {
         e.preventDefault();
 
