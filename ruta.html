@@ -129,7 +129,7 @@
 
 <div id="map-container">
     <div class="panel-control">
-        <div class="header-panel">RUTA VIAL - SAN GABRIEL</div>
+        <div class="header-panel">MI RUTA SEGURA - SAN GABRIEL</div>
         
         <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">🔄 Cargar Estudiantes</button>
         <button class="btn btn-trazar" id="btn-trazar" onclick="generarRutaOptima()" disabled>🚗 Trazar Ruta Óptima</button>
@@ -154,7 +154,7 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxw6VjmBzYEGrykyyOX0enC6rzSCwIdX1WiOCU3qGHKFPgzLZY0Ama_Eyoq-R75RZMK/exec";
 
-    // Coordenadas predefinidas para sectores clave
+    // Sectores clave adicionales con sus coordenadas fijas
     const sectoresPredefinidos = {
         "SOLANDA": { lat: -0.268086, lng: -78.538229 },
         "MAYORISTA": { lat: -0.272803, lng: -78.534819 },
@@ -166,7 +166,7 @@
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
 
-    // Inicializar mapa centrado en el Sur de Quito
+    // Inicializar mapa centrado en Quito Sur
     const map = L.map('map').setView([-0.2800, -78.5350], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -176,7 +176,7 @@
 
     marcadoresGroup.addTo(map);
 
-    // 1. CARGAR DATOS DESDE GOOGLE SHEETS
+    // 1. CARGAR DATOS DESDE GOOGLE APPS SCRIPT
     function cargarDatosDesdeGoogle() {
         const contenedor = document.getElementById('contenedor-lista');
         contenedor.innerHTML = "<p style='text-align:center;'>⏳ Leyendo Google Sheets...</p>";
@@ -186,11 +186,19 @@
             redirect: "follow"
         })
         .then(res => {
-            if (!res.ok) throw new Error("Respuesta no válida");
+            if (!res.ok) throw new Error("Respuesta no válida del servidor");
             return res.json();
         })
-        .then(data => {
-            estudiantesData = Array.isArray(data) ? data : [];
+        .then(response => {
+            // Adaptación para la estructura de tu script: { ok: true, total: X, records: [...] }
+            if (response && response.records && Array.isArray(response.records)) {
+                estudiantesData = response.records;
+            } else if (Array.isArray(response)) {
+                estudiantesData = response;
+            } else {
+                estudiantesData = [];
+            }
+
             document.getElementById('cant-alumnos').innerText = estudiantesData.length;
 
             if (estudiantesData.length > 0) {
@@ -203,11 +211,11 @@
         })
         .catch(err => {
             console.error("Error cargando datos:", err);
-            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error de lectura. Asegúrate de publicar la Web App como 'Cualquiera' en Google Apps Script.</p>";
+            contenedor.innerHTML = "<p style='color:red; text-align:center;'>❌ Error de lectura. Verifica el enlace de implementación de Apps Script.</p>";
         });
     }
 
-    // 2. RENDEREAR LISTA Y PINES EN MAPA
+    // 2. MOSTRAR ESTUDIANTES Y UBICACIONES EN EL MAPA
     function renderizarListaYMapa() {
         const contenedor = document.getElementById('contenedor-lista');
         contenedor.innerHTML = "";
@@ -218,20 +226,21 @@
         let contUbicados = 0;
 
         estudiantesData.forEach((est, index) => {
-            const nombre = est.estudiante || est.nombresestudiante || est.nombre || `Estudiante #${index + 1}`;
-            const urlMaps = est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "";
+            const nombre = est.estudiante || `Estudiante #${index + 1}`;
+            const urlMaps = est.urlmaps || est.enlacegooglemaps || "";
             const sector = (est.sector || 'Sin sector').trim();
-            const callePrin = est.calleprincipal || '';
-            const calleSec = est.callesecundaria || '';
-            const numCasa = est.nrocasalote || est.numerocasa || '';
+            const callePrin = est.calleprincipal || est.callePrincipal || '';
+            const calleSec = est.callesecundaria || est.calleSecundaria || '';
+            const numCasa = est.nrocasalote || est.nroCasaLote || '';
             const telefono = est.telefono || 'Sin teléfono';
-            const horario = est.tipodeservicio || '';
+            const horario = est.servicio || est.tipodeservicio || '';
             const rep = est.representante || '';
             const ref = est.referencia || '';
 
-            // Intentar obtener coordenadas desde la URL o desde los sectores predefinidos
+            // 1. Extraer coordenadas desde el enlace de Google Maps
             let coords = extraerCoordenadas(urlMaps);
 
+            // 2. Si no hay coordenadas en el enlace, buscar en los sectores predefinidos
             if (!coords) {
                 const sectorUpper = sector.toUpperCase();
                 for (const key in sectoresPredefinidos) {
@@ -248,7 +257,7 @@
                 est.lng = coords.lng;
                 bounds.push([coords.lat, coords.lng]);
 
-                // Marcador Numerado
+                // Crear ícono con número de parada
                 const customIcon = L.divIcon({
                     className: 'numbered-icon',
                     html: contUbicados,
@@ -267,7 +276,7 @@
                 `);
                 marcadoresGroup.addLayer(marker);
 
-                // Card Lateral
+                // Tarjeta de la lista izquierda
                 const card = document.createElement('div');
                 card.className = 'card-estudiante';
                 card.innerHTML = `
@@ -301,22 +310,22 @@
         }
     }
 
-    // Extractor multi-patrón de coordenadas
+    // Extractor de coordenadas de enlaces Google Maps
     function extraerCoordenadas(texto) {
         if (!texto) return null;
         const str = texto.toString();
 
-        // 1. Patrón tipo @lat,lng
+        // Formato @lat,lng
         const regexAt = /@(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
         const matchAt = str.match(regexAt);
         if (matchAt) return { lat: parseFloat(matchAt[1]), lng: parseFloat(matchAt[2]) };
 
-        // 2. Patrón con parámetro q=lat,lng
+        // Formato q=lat,lng
         const regexQuery = /[?&](?:q|ll|place)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
         const matchQuery = str.match(regexQuery);
         if (matchQuery) return { lat: parseFloat(matchQuery[1]), lng: parseFloat(matchQuery[2]) };
 
-        // 3. Patrón simple lat,lng
+        // Formato lat,lng simple
         const regexDirect = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
         const matchDirect = str.match(regexDirect);
         if (matchDirect) return { lat: parseFloat(matchDirect[1]), lng: parseFloat(matchDirect[2]) };
@@ -324,11 +333,11 @@
         return null;
     }
 
-    // 3. TRAZADO DE RUTA VIAL
+    // 3. TRAZADO DE RUTA OPTIMIZADA
     function generarRutaOptima() {
         const puntosValidos = estudiantesData.filter(e => e.lat && e.lng);
         if (puntosValidos.length < 2) {
-            alert("Se necesitan al menos 2 puntos para trazar la ruta.");
+            alert("Se necesitan al menos 2 estudiantes con ubicación válida para trazar la ruta.");
             return;
         }
 
@@ -374,7 +383,7 @@
             })
             .catch(err => {
                 console.error("Error al trazar:", err);
-                alert("Error al obtener la ruta vial.");
+                alert("Error al conectar con el servidor de rutas.");
                 btn.innerText = "🚗 Trazar Ruta Óptima";
                 btn.disabled = false;
             });
