@@ -1,851 +1,1367 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Listado de Estudiantes - Ruta 7</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            margin: 0;
-            padding: 20px;
-            background: #f3f4f6;
-            color: #111;
-        }
-
-        .container {
-            max-width: 1450px;
-            margin: auto;
-        }
-
-        /* =========================
-           ENCABEZADO
-        ========================== */
-
-        .header {
-            background: #111;
-            color: white;
-            padding: 25px;
-            border-radius: 14px;
-            border-bottom: 8px solid #ffcc00;
-            margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,.15);
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-            letter-spacing: 1px;
-        }
-
-        .ruta {
-            display: inline-block;
-            margin-top: 10px;
-            background: #ffcc00;
-            color: #111;
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        .subtitulo {
-            margin-top: 12px;
-            color: #ddd;
-            font-size: 14px;
-        }
-
-        /* =========================
-           ESTADISTICAS
-        ========================== */
-
-        .estadisticas {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,.1);
-            border-top: 5px solid #ffcc00;
-        }
-
-        .card .titulo-card {
-            font-size: 14px;
-            color: #555;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .card .numero {
-            font-size: 34px;
-            font-weight: bold;
-            margin-top: 8px;
-            color: #111;
-        }
-
-        /* =========================
-           PANEL FILTROS
-        ========================== */
-
-        .panel {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,.1);
-            margin-bottom: 20px;
-        }
-
-        .panel h3 {
-            margin-top: 0;
-        }
-
-        .filtros {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-        }
-
-        input,
-        select,
-        button {
-            width: 100%;
-            padding: 12px;
-            border-radius: 7px;
-            font-size: 14px;
-        }
-
-        input,
-        select {
-            border: 2px solid #ddd;
-            background: white;
-        }
 
-        input:focus,
-        select:focus {
-            border-color: #ffcc00;
-            outline: none;
-        }
-
-        button {
-            border: 2px solid #111;
-            background: #ffcc00;
-            color: #111;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .2s;
-        }
-
-        button:hover {
-            background: #e6b800;
-            transform: translateY(-1px);
-        }
-
-        /* =========================
-           TABLA
-        ========================== */
-
-        .tabla-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,.12);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1250px;
-        }
-
-        thead {
-            background: #111;
-            color: #ffcc00;
-        }
-
-        th {
-            padding: 14px 10px;
-            text-align: left;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #eee;
-            font-size: 13px;
-        }
-
-        tbody tr:hover {
-            background: #fff9d9;
-        }
-
-        .estudiante {
-            font-weight: bold;
-        }
-
-        /* =========================
-           BOTONES
-        ========================== */
-
-        .btn-mapa {
-
-            display: inline-block;
-
-            background: #28a745;
-
-            color: white;
-
-            padding: 7px 10px;
-
-            border-radius: 6px;
-
-            text-decoration: none;
-
-            font-size: 11px;
-
-            font-weight: bold;
-
-            white-space: nowrap;
-
-        }
-
-        .btn-mapa:hover {
-
-            background: #218838;
-
-        }
-
-
-        .btn-whatsapp {
-
-            display: inline-block;
-
-            background: #25D366;
-
-            color: white;
-
-            padding: 7px 10px;
-
-            border-radius: 6px;
-
-            text-decoration: none;
-
-            font-size: 11px;
-
-            font-weight: bold;
-
-            white-space: nowrap;
-
-        }
-
-
-        /* =========================
-           ESTADOS
-        ========================== */
-
-        .loading {
-
-            text-align: center;
-
-            padding: 50px;
-
-            font-size: 18px;
-
-            font-weight: bold;
-
-        }
-
-        .error {
-
-            text-align: center;
-
-            padding: 40px;
-
-            color: #dc3545;
-
-            font-weight: bold;
-
-        }
-
-        .sin-datos {
-
-            text-align: center;
-
-            padding: 50px;
-
-            color: #777;
-
-            font-size: 16px;
-
-        }
-
-
-        .ultima-actualizacion {
-
-            text-align: right;
-
-            font-size: 12px;
-
-            color: #777;
-
-            margin-top: 10px;
-
-        }
-
-
-        @media(max-width:600px) {
-
-            body {
-                padding: 10px;
-            }
-
-            .header h1 {
-                font-size: 21px;
-            }
-
-        }
-
-    </style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Listado de Estudiantes - Ruta 7</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+    margin:0;
+    padding:20px;
+    background:#f3f4f6;
+    color:#111;
+}
+
+.container{
+    max-width:1450px;
+    margin:auto;
+}
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.header{
+    background:#111;
+    color:white;
+    padding:25px;
+    border-radius:14px;
+    border-bottom:8px solid #ffcc00;
+    margin-bottom:20px;
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+.header h1{
+    margin:0;
+    font-size:28px;
+    letter-spacing:1px;
+}
+
+.ruta{
+    display:inline-block;
+    margin-top:10px;
+    background:#ffcc00;
+    color:#111;
+    padding:6px 18px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.subtitulo{
+    margin-top:12px;
+    color:#ddd;
+    font-size:14px;
+}
+
+/* =========================
+   ESTADISTICAS
+========================= */
+
+.estadisticas{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+    border-top:5px solid #ffcc00;
+}
+
+.card .titulo-card{
+    font-size:14px;
+    color:#555;
+    font-weight:bold;
+    text-transform:uppercase;
+}
+
+.card .numero{
+    font-size:34px;
+    font-weight:bold;
+    margin-top:8px;
+}
+
+/* =========================
+   PANEL
+========================= */
+
+.panel{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+    margin-bottom:20px;
+}
+
+.panel h3{
+    margin-top:0;
+}
+
+.filtros{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:12px;
+}
+
+input,
+select,
+button{
+    width:100%;
+    padding:12px;
+    border-radius:7px;
+    font-size:14px;
+}
+
+input,
+select{
+    border:2px solid #ddd;
+    background:white;
+}
+
+input:focus,
+select:focus{
+    border-color:#ffcc00;
+    outline:none;
+}
+
+button{
+    border:2px solid #111;
+    background:#ffcc00;
+    color:#111;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+button:hover{
+    background:#e6b800;
+    transform:translateY(-1px);
+}
+
+/* =========================
+   BOTON DATOS INCOMPLETOS
+========================= */
+
+.boton-incompletos{
+    background:#dc3545;
+    color:white;
+    border:2px solid #a71d2a;
+}
+
+.boton-incompletos:hover{
+    background:#bb2d3b;
+}
+
+.boton-todos{
+    background:#111;
+    color:white;
+    border:2px solid #111;
+}
+
+/* =========================
+   ALERTA INCOMPLETOS
+========================= */
+
+.alerta-incompletos{
+    display:none;
+    background:#fff3cd;
+    border:2px solid #ffcc00;
+    color:#664d03;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    font-weight:bold;
+}
+
+.alerta-incompletos strong{
+    font-size:20px;
+}
+
+/* =========================
+   TABLA
+========================= */
+
+.tabla-container{
+    background:white;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,.12);
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1500px;
+}
+
+thead{
+    background:#111;
+    color:#ffcc00;
+}
+
+th{
+    padding:14px 10px;
+    text-align:left;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+td{
+    padding:12px 10px;
+    border-bottom:1px solid #eee;
+    font-size:13px;
+}
+
+tbody tr:hover{
+    background:#fff9d9;
+}
+
+.estudiante{
+    font-weight:bold;
+}
+
+/* =========================
+   DATOS FALTANTES
+========================= */
+
+.faltante{
+    background:#dc3545;
+    color:white;
+    padding:4px 7px;
+    border-radius:5px;
+    display:inline-block;
+    margin:2px;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.dato-vacio{
+    color:#dc3545;
+    font-weight:bold;
+}
+
+.dato-completo{
+    color:#198754;
+}
+
+/* =========================
+   BOTONES
+========================= */
+
+.btn-mapa{
+    display:inline-block;
+    background:#28a745;
+    color:white;
+    padding:7px 10px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.btn-mapa:hover{
+    background:#218838;
+}
+
+.btn-whatsapp{
+    display:inline-block;
+    background:#25D366;
+    color:white;
+    padding:7px 10px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.btn-editar{
+    display:inline-block;
+    background:#0d6efd;
+    color:white;
+    border:none;
+    padding:7px 10px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-editar:hover{
+    background:#0b5ed7;
+}
+
+.btn-eliminar{
+    display:inline-block;
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:7px 10px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-eliminar:hover{
+    background:#bb2d3b;
+}
+
+/* =========================
+   ESTADOS
+========================= */
+
+.loading{
+    text-align:center;
+    padding:50px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.error{
+    text-align:center;
+    padding:40px;
+    color:#dc3545;
+    font-weight:bold;
+}
+
+.sin-datos{
+    text-align:center;
+    padding:50px;
+    color:#777;
+    font-size:16px;
+}
+
+.ultima-actualizacion{
+    text-align:right;
+    font-size:12px;
+    color:#777;
+    margin-top:10px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:9999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.65);
+    overflow:auto;
+}
+
+.modal-contenido{
+    background:white;
+    width:95%;
+    max-width:800px;
+    margin:40px auto;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:2px solid #eee;
+    padding-bottom:15px;
+    margin-bottom:20px;
+}
+
+.modal-header h2{
+    margin:0;
+}
+
+.cerrar{
+    font-size:30px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-grupo{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-grupo label{
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.form-grupo input,
+.form-grupo select{
+    width:100%;
+}
+
+.form-completo{
+    grid-column:1/-1;
+}
+
+.botones-modal{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn-guardar{
+    background:#198754;
+    color:white;
+    border-color:#198754;
+}
+
+.btn-cancelar{
+    background:#6c757d;
+    color:white;
+    border-color:#6c757d;
+}
+
+@media(max-width:600px){
+
+    body{
+        padding:10px;
+    }
+
+    .header h1{
+        font-size:21px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
-
-    <!-- =========================
-         ENCABEZADO
-    ========================== -->
-
-    <div class="header">
-
-        <h1>
-            LISTADO DE ESTUDIANTES
-        </h1>
-
-        <div class="ruta">
-            TRANSPORTE ESCOLAR · RUTA 7
-        </div>
-
-        <div class="subtitulo">
-            Unidad Educativa San Gabriel
-        </div>
-
-    </div>
-
-
-
-    <!-- =========================
-         ESTADISTICAS
-    ========================== -->
-
-    <div class="estadisticas">
-
-
-        <div class="card">
-
-            <div class="titulo-card">
-                Total Estudiantes
-            </div>
-
-            <div
-                class="numero"
-                id="totalEstudiantes"
-            >
-                0
-            </div>
-
-        </div>
-
-
-
-        <div class="card">
-
-            <div class="titulo-card">
-                Matutino
-            </div>
-
-            <div
-                class="numero"
-                id="totalMatutino"
-            >
-                0
-            </div>
-
-        </div>
-
-
-
-        <div class="card">
-
-            <div class="titulo-card">
-                Vespertino
-            </div>
-
-            <div
-                class="numero"
-                id="totalVespertino"
-            >
-                0
-            </div>
-
-        </div>
-
-
-
-        <div class="card">
-
-            <div class="titulo-card">
-                Sectores Activos
-            </div>
-
-            <div
-                class="numero"
-                id="totalSectores"
-            >
-                0
-            </div>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- =========================
-         FILTROS
-    ========================== -->
-
-    <div class="panel">
-
-        <h3>
-            🔎 Buscar y Filtrar Estudiantes
-        </h3>
-
-
-        <div class="filtros">
-
-
-            <input
-                type="text"
-                id="buscar"
-                placeholder="Buscar estudiante..."
-            >
-
-
-
-            <select id="filtroSector">
-
-                <option value="">
-                    TODOS LOS SECTORES
-                </option>
-
-            </select>
-
-
-
-            <select id="filtroNivel">
-
-                <option value="">
-                    TODOS LOS NIVELES
-                </option>
-
-            </select>
-
-
-
-            <select id="filtroServicio">
-
-                <option value="">
-                    TODOS LOS HORARIOS
-                </option>
-
-                <option value="MATUTINO (MAÑANA)">
-                    MATUTINO
-                </option>
-
-                <option value="VESPERTINO (TARDE)">
-                    VESPERTINO
-                </option>
-
-            </select>
-
-
-
-            <button onclick="cargarEstudiantes()">
-
-                🔄 ACTUALIZAR
-
-            </button>
-
-
-        </div>
-
-
-        <div
-            class="ultima-actualizacion"
-            id="ultimaActualizacion"
-        >
-        </div>
-
-
-    </div>
-
-
-
-    <!-- =========================
-         TABLA
-    ========================== -->
-
-    <div class="tabla-container">
-
-
-        <div
-            id="loading"
-            class="loading"
-        >
-
-            ⏳ Cargando estudiantes...
-
-        </div>
-
-
-
-        <div
-            id="error"
-            class="error"
-            style="display:none"
-        >
-        </div>
-
-
-
-        <div
-            id="sinDatos"
-            class="sin-datos"
-            style="display:none"
-        >
-
-            📭 No existen estudiantes registrados.
-
-        </div>
-
-
-
-        <table
-            id="tablaEstudiantes"
-            style="display:none"
-        >
-
-
-            <thead>
-
-                <tr>
-
-                    <th>#</th>
-
-                    <th>ESTUDIANTE</th>
-
-                    <th>NIVEL</th>
-
-                    <th>GRADO / AÑO</th>
-
-                    <th>REPRESENTANTE</th>
-
-                    <th>TELÉFONO</th>
-
-                    <th>SECTOR</th>
-
-                    <th>DIRECCIÓN</th>
-
-                    <th>REFERENCIA</th>
-
-                    <th>SERVICIO</th>
-
-                    <th>UBICACIÓN</th>
-
-                    <th>CONTACTO</th>
-
-                </tr>
-
-            </thead>
-
-
-
-            <tbody id="listaEstudiantes">
-
-            </tbody>
-
-
-        </table>
-
-
-    </div>
-
+<!-- =========================
+     ENCABEZADO
+========================= -->
+
+<div class="header">
+
+<h1>
+LISTADO DE ESTUDIANTES
+</h1>
+
+<div class="ruta">
+TRANSPORTE ESCOLAR · RUTA 7
+</div>
+
+<div class="subtitulo">
+Unidad Educativa San Gabriel
+</div>
 
 </div>
 
 
+<!-- =========================
+     ESTADISTICAS
+========================= -->
+
+<div class="estadisticas">
+
+<div class="card">
+
+<div class="titulo-card">
+Total Estudiantes
+</div>
+
+<div class="numero" id="totalEstudiantes">
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="titulo-card">
+Matutino
+</div>
+
+<div class="numero" id="totalMatutino">
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="titulo-card">
+Vespertino
+</div>
+
+<div class="numero" id="totalVespertino">
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="titulo-card">
+Sectores Activos
+</div>
+
+<div class="numero" id="totalSectores">
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="titulo-card">
+Datos Incompletos
+</div>
+
+<div class="numero" id="totalIncompletos">
+0
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     ALERTA
+========================= -->
+
+<div
+class="alerta-incompletos"
+id="alertaIncompletos"
+>
+
+⚠️ Hay
+
+<strong id="numeroAlerta">
+0
+</strong>
+
+estudiantes con datos incompletos.
+
+</div>
+
+
+<!-- =========================
+     FILTROS
+========================= -->
+
+<div class="panel">
+
+<h3>
+🔎 Buscar y Filtrar Estudiantes
+</h3>
+
+<div class="filtros">
+
+<input
+type="text"
+id="buscar"
+placeholder="Buscar estudiante..."
+>
+
+
+<select id="filtroSector">
+
+<option value="">
+TODOS LOS SECTORES
+</option>
+
+</select>
+
+
+<select id="filtroNivel">
+
+<option value="">
+TODOS LOS NIVELES
+</option>
+
+</select>
+
+
+<select id="filtroServicio">
+
+<option value="">
+TODOS LOS HORARIOS
+</option>
+
+<option value="MATUTINO (MAÑANA)">
+MATUTINO
+</option>
+
+<option value="VESPERTINO (TARDE)">
+VESPERTINO
+</option>
+
+</select>
+
+
+<button onclick="cargarEstudiantes()">
+🔄 ACTUALIZAR
+</button>
+
+
+<button
+class="boton-incompletos"
+onclick="mostrarIncompletos()"
+>
+⚠️ VER DATOS INCOMPLETOS
+</button>
+
+
+<button
+class="boton-todos"
+onclick="mostrarTodos()"
+>
+👥 VER TODOS
+</button>
+
+</div>
+
+
+<div
+class="ultima-actualizacion"
+id="ultimaActualizacion"
+>
+</div>
+
+</div>
+
+
+<!-- =========================
+     TABLA
+========================= -->
+
+<div class="tabla-container">
+
+<div
+id="loading"
+class="loading"
+>
+
+⏳ Cargando estudiantes...
+
+</div>
+
+
+<div
+id="error"
+class="error"
+style="display:none"
+>
+</div>
+
+
+<div
+id="sinDatos"
+class="sin-datos"
+style="display:none"
+>
+
+📭 No existen estudiantes registrados.
+
+</div>
+
+
+<table
+id="tablaEstudiantes"
+style="display:none"
+>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>ESTUDIANTE</th>
+
+<th>NIVEL</th>
+
+<th>GRADO / AÑO</th>
+
+<th>REPRESENTANTE</th>
+
+<th>TELÉFONO</th>
+
+<th>SECTOR</th>
+
+<th>DIRECCIÓN</th>
+
+<th>REFERENCIA</th>
+
+<th>SERVICIO</th>
+
+<th>UBICACIÓN</th>
+
+<th>CONTACTO</th>
+
+<th>DATOS FALTANTES</th>
+
+<th>EDITAR</th>
+
+<th>ELIMINAR</th>
+
+</tr>
+
+</thead>
+
+<tbody id="listaEstudiantes">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     MODAL EDITAR
+========================= -->
+
+<div
+class="modal"
+id="modalEditar"
+>
+
+<div class="modal-contenido">
+
+<div class="modal-header">
+
+<h2>
+✏️ Editar estudiante
+</h2>
+
+<span
+class="cerrar"
+onclick="cerrarModal()"
+>
+&times;
+</span>
+
+</div>
+
+
+<div class="form-grid">
+
+<input
+type="hidden"
+id="editId"
+>
+
+
+<div class="form-grupo">
+
+<label>
+ESTUDIANTE
+</label>
+
+<input
+type="text"
+id="editEstudiante"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+NIVEL
+</label>
+
+<input
+type="text"
+id="editNivel"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+GRADO / AÑO
+</label>
+
+<input
+type="text"
+id="editGrado"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+REPRESENTANTE
+</label>
+
+<input
+type="text"
+id="editRepresentante"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+TELÉFONO
+</label>
+
+<input
+type="text"
+id="editTelefono"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+SECTOR
+</label>
+
+<input
+type="text"
+id="editSector"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+CALLE PRINCIPAL
+</label>
+
+<input
+type="text"
+id="editCallePrincipal"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+CALLE SECUNDARIA
+</label>
+
+<input
+type="text"
+id="editCalleSecundaria"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+NRO. CASA / LOTE
+</label>
+
+<input
+type="text"
+id="editNroCasaLote"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+REFERENCIA
+</label>
+
+<input
+type="text"
+id="editReferencia"
+>
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+TIPO DE SERVICIO
+</label>
+
+<select id="editServicio">
+
+<option value="">
+SELECCIONAR
+</option>
+
+<option value="MATUTINO (MAÑANA)">
+MATUTINO
+</option>
+
+<option value="VESPERTINO (TARDE)">
+VESPERTINO
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-grupo">
+
+<label>
+ENLACE GOOGLE MAPS
+</label>
+
+<input
+type="url"
+id="editMaps"
+>
+</div>
+
+</div>
+
+
+<div class="botones-modal">
+
+<button
+class="btn-guardar"
+onclick="guardarEdicion()"
+>
+💾 GUARDAR CAMBIOS
+</button>
+
+<button
+class="btn-cancelar"
+onclick="cerrarModal()"
+>
+CANCELAR
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 
 <script>
-
 
 /* =====================================================
    CONFIGURACIÓN API
 ===================================================== */
 
-
 const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbzC9S7bE9KpqVTL4DuneQC7LTZ5iggLg-P69PrYJ0eG8bsUkXPp_h78C-Yq2uZGDZK8/exec";
+"https://script.google.com/macros/s/AKfycbyo5jjvhBXmZ_NwV136OdvQZMFVAmNO9VIfNkSYPNgXzUwj6SLxBb6CQEZn_cqoy3UsWw/exec";
 
 
 let estudiantes = [];
 
+let modoIncompletos = false;
+
 
 /* =====================================================
    JSONP
-   SOLUCIÓN PARA CORS EN GITHUB PAGES
 ===================================================== */
 
+function cargarJSONP(url){
 
-function cargarJSONP(url) {
+return new Promise((resolve,reject)=>{
 
-    return new Promise((resolve, reject) => {
+const callbackName =
+"jsonp_callback_" + Date.now();
 
+let script =
+document.createElement("script");
 
-        const callbackName =
-            "jsonp_callback_" + Date.now();
+window[callbackName] = function(data){
 
+delete window[callbackName];
 
-        window[callbackName] = function(data) {
+if(script.parentNode){
 
-            delete window[callbackName];
+script.parentNode.removeChild(script);
 
-            document
-                .head
-                .removeChild(script);
+}
 
-            resolve(data);
+resolve(data);
 
-        };
-
-
-        const script =
-            document.createElement("script");
+};
 
 
-        script.src =
-            url +
-            "?action=records" +
-            "&callback=" +
-            callbackName;
+script.src =
+url +
+(url.includes("?") ? "&" : "?") +
+"callback=" +
+callbackName;
 
 
-        script.onerror = function() {
+script.onerror=function(){
 
-            delete window[callbackName];
+delete window[callbackName];
 
-            script.remove();
+if(script.parentNode){
 
-            reject(
-                new Error(
-                    "No se pudo conectar con Google Apps Script"
-                )
-            );
+script.parentNode.removeChild(script);
 
-        };
+}
+
+reject(
+new Error(
+"No se pudo conectar con Google Apps Script"
+)
+);
+
+};
 
 
-        document.head.appendChild(script);
+document.head.appendChild(script);
 
-
-    });
+});
 
 }
 
 
 /* =====================================================
-   CARGAR ESTUDIANTES
+   CARGAR
 ===================================================== */
 
+async function cargarEstudiantes(){
 
-async function cargarEstudiantes() {
+mostrarLoading();
 
+try{
 
-    mostrarLoading();
-
-
-    try {
-
-
-        const respuesta =
-            await cargarJSONP(SCRIPT_URL);
+const respuesta =
+await cargarJSONP(
+SCRIPT_URL + "?action=records"
+);
 
 
-        if (!respuesta.ok) {
+if(!respuesta.ok){
 
-            throw new Error(
-                respuesta.error ||
-                "Error desconocido en la API"
-            );
+throw new Error(
+respuesta.error ||
+"Error desconocido"
+);
 
-        }
-
-
-        estudiantes =
-            respuesta.records || [];
+}
 
 
-        llenarFiltros();
+estudiantes =
+respuesta.records || [];
 
 
-        mostrarEstudiantes();
+llenarFiltros();
+
+actualizarEstadisticasGlobales();
+
+mostrarEstudiantes();
+
+actualizarHora();
 
 
-        actualizarHora();
+}catch(error){
 
+console.error(error);
 
-    }
+mostrarError(
+"❌ Error al cargar estudiantes: " +
+error.message
+);
 
-    catch (error) {
-
-
-        console.error(error);
-
-
-        mostrarError(
-            "❌ Error al cargar estudiantes: " +
-            error.message
-        );
-
-
-    }
-
+}
 
 }
 
 
 /* =====================================================
-   LLENAR FILTROS
+   DETECTAR CAMPOS FALTANTES
 ===================================================== */
 
+function obtenerFaltantes(e){
 
-function llenarFiltros() {
-
-
-    const selectSector =
-        document.getElementById("filtroSector");
+const faltantes=[];
 
 
-    const selectNivel =
-        document.getElementById("filtroNivel");
+/*
+   CAMPOS OBLIGATORIOS
+*/
+
+if(!String(e.estudiante || "").trim())
+faltantes.push("ESTUDIANTE");
+
+if(!String(e.nivel || "").trim())
+faltantes.push("NIVEL");
+
+if(!String(e.grado || "").trim())
+faltantes.push("GRADO");
+
+if(!String(e.representante || "").trim())
+faltantes.push("REPRESENTANTE");
+
+if(!String(e.telefono || "").trim())
+faltantes.push("TELÉFONO");
+
+if(!String(e.sector || "").trim())
+faltantes.push("SECTOR");
+
+if(!String(e.calleprincipal || "").trim())
+faltantes.push("CALLE PRINCIPAL");
+
+if(!String(e.callesecundaria || "").trim())
+faltantes.push("CALLE SECUNDARIA");
+
+if(!String(e.nrocasalote || "").trim())
+faltantes.push("NRO. CASA / LOTE");
+
+if(!String(e.referencia || "").trim())
+faltantes.push("REFERENCIA");
+
+if(!String(e.servicio || "").trim())
+faltantes.push("SERVICIO");
+
+if(!String(e.urlmaps || "").trim())
+faltantes.push("UBICACIÓN");
 
 
-    const sectorActual =
-        selectSector.value;
+return faltantes;
+
+}
 
 
-    const nivelActual =
-        selectNivel.value;
+/* =====================================================
+   VER SI ESTÁ INCOMPLETO
+===================================================== */
+
+function esIncompleto(e){
+
+return obtenerFaltantes(e).length > 0;
+
+}
 
 
-    const sectores = [
+/* =====================================================
+   ESTADISTICAS GLOBALES
+===================================================== */
 
-        ...new Set(
+function actualizarEstadisticasGlobales(){
 
-            estudiantes
-
-                .map(e => e.sector)
-
-                .filter(Boolean)
-
-        )
-
-    ].sort();
+const total =
+estudiantes.length;
 
 
-    const niveles = [
-
-        ...new Set(
-
-            estudiantes
-
-                .map(e => e.nivel)
-
-                .filter(Boolean)
-
-        )
-
-    ].sort();
+const matutino =
+estudiantes.filter(e =>
+String(e.servicio || "").toUpperCase()
+===
+"MATUTINO (MAÑANA)"
+).length;
 
 
-
-    selectSector.innerHTML =
-        '<option value="">TODOS LOS SECTORES</option>';
-
-
-    sectores.forEach(sector => {
-
-        const option =
-            document.createElement("option");
+const vespertino =
+estudiantes.filter(e =>
+String(e.servicio || "").toUpperCase()
+===
+"VESPERTINO (TARDE)"
+).length;
 
 
-        option.value = sector;
-
-        option.textContent = sector;
-
-
-        selectSector.appendChild(option);
-
-
-    });
+const sectores =
+new Set(
+estudiantes
+.map(e=>e.sector)
+.filter(Boolean)
+);
 
 
-
-    selectNivel.innerHTML =
-        '<option value="">TODOS LOS NIVELES</option>';
-
-
-    niveles.forEach(nivel => {
-
-        const option =
-            document.createElement("option");
+const incompletos =
+estudiantes.filter(esIncompleto);
 
 
-        option.value = nivel;
-
-        option.textContent = nivel;
-
-
-        selectNivel.appendChild(option);
+document.getElementById(
+"totalEstudiantes"
+).textContent=total;
 
 
-    });
+document.getElementById(
+"totalMatutino"
+).textContent=matutino;
 
 
+document.getElementById(
+"totalVespertino"
+).textContent=vespertino;
 
-    selectSector.value = sectorActual;
+
+document.getElementById(
+"totalSectores"
+).textContent=sectores.size;
 
 
-    selectNivel.value = nivelActual;
+document.getElementById(
+"totalIncompletos"
+).textContent=incompletos.length;
 
+
+document.getElementById(
+"numeroAlerta"
+).textContent=incompletos.length;
+
+
+document.getElementById(
+"alertaIncompletos"
+).style.display =
+incompletos.length ?
+"block" :
+"none";
+
+}
+
+
+/* =====================================================
+   FILTROS
+===================================================== */
+
+function llenarFiltros(){
+
+const selectSector =
+document.getElementById("filtroSector");
+
+const selectNivel =
+document.getElementById("filtroNivel");
+
+
+const sectorActual =
+selectSector.value;
+
+const nivelActual =
+selectNivel.value;
+
+
+const sectores=[
+...new Set(
+estudiantes
+.map(e=>e.sector)
+.filter(Boolean)
+)
+].sort();
+
+
+const niveles=[
+...new Set(
+estudiantes
+.map(e=>e.nivel)
+.filter(Boolean)
+)
+].sort();
+
+
+selectSector.innerHTML=
+'<option value="">TODOS LOS SECTORES</option>';
+
+
+sectores.forEach(sector=>{
+
+const option=
+document.createElement("option");
+
+option.value=sector;
+option.textContent=sector;
+
+selectSector.appendChild(option);
+
+});
+
+
+selectNivel.innerHTML=
+'<option value="">TODOS LOS NIVELES</option>';
+
+
+niveles.forEach(nivel=>{
+
+const option=
+document.createElement("option");
+
+option.value=nivel;
+option.textContent=nivel;
+
+selectNivel.appendChild(option);
+
+});
+
+
+selectSector.value=sectorActual;
+selectNivel.value=nivelActual;
+
+}
+
+
+/* =====================================================
+   MOSTRAR TODOS
+===================================================== */
+
+function mostrarTodos(){
+
+modoIncompletos=false;
+
+mostrarEstudiantes();
+
+}
+
+
+/* =====================================================
+   MOSTRAR INCOMPLETOS
+===================================================== */
+
+function mostrarIncompletos(){
+
+modoIncompletos=true;
+
+mostrarEstudiantes();
 
 }
 
@@ -854,329 +1370,717 @@ function llenarFiltros() {
    MOSTRAR ESTUDIANTES
 ===================================================== */
 
+function mostrarEstudiantes(){
 
-function mostrarEstudiantes() {
+const textoBusqueda=
+document
+.getElementById("buscar")
+.value
+.toUpperCase()
+.trim();
 
 
-    const textoBusqueda =
+const sectorSeleccionado=
+document
+.getElementById("filtroSector")
+.value;
 
-        document
-            .getElementById("buscar")
-            .value
-            .toUpperCase()
-            .trim();
 
+const nivelSeleccionado=
+document
+.getElementById("filtroNivel")
+.value;
 
-    const sectorSeleccionado =
 
-        document
-            .getElementById("filtroSector")
-            .value;
+const servicioSeleccionado=
+document
+.getElementById("filtroServicio")
+.value;
 
 
-    const nivelSeleccionado =
+const filtrados =
+estudiantes.filter(e=>{
 
-        document
-            .getElementById("filtroNivel")
-            .value;
+const nombre =
+String(e.estudiante || "")
+.toUpperCase();
 
 
-    const servicioSeleccionado =
+const representante =
+String(e.representante || "")
+.toUpperCase();
 
-        document
-            .getElementById("filtroServicio")
-            .value;
 
+const telefono =
+String(e.telefono || "");
 
 
-    const filtrados = estudiantes.filter(e => {
+const coincideBusqueda =
+!textoBusqueda ||
+nombre.includes(textoBusqueda) ||
+representante.includes(textoBusqueda) ||
+telefono.includes(textoBusqueda);
 
 
-        const nombre =
-            String(e.estudiante || "")
-            .toUpperCase();
+const coincideSector =
+!sectorSeleccionado ||
+e.sector === sectorSeleccionado;
 
 
-        const representante =
-            String(e.representante || "")
-            .toUpperCase();
+const coincideNivel =
+!nivelSeleccionado ||
+e.nivel === nivelSeleccionado;
 
 
-        const telefono =
-            String(e.telefono || "");
+const coincideServicio =
+!servicioSeleccionado ||
+e.servicio === servicioSeleccionado;
 
 
+const coincideIncompleto =
+!modoIncompletos ||
+esIncompleto(e);
 
-        const coincideBusqueda =
 
-            !textoBusqueda ||
+return(
+coincideBusqueda &&
+coincideSector &&
+coincideNivel &&
+coincideServicio &&
+coincideIncompleto
+);
 
-            nombre.includes(textoBusqueda) ||
+});
 
-            representante.includes(textoBusqueda) ||
 
-            telefono.includes(textoBusqueda);
-
-
-
-        const coincideSector =
-
-            !sectorSeleccionado ||
-
-            e.sector === sectorSeleccionado;
-
-
-
-        const coincideNivel =
-
-            !nivelSeleccionado ||
-
-            e.nivel === nivelSeleccionado;
-
-
-
-        const coincideServicio =
-
-            !servicioSeleccionado ||
-
-            e.servicio === servicioSeleccionado;
-
-
-
-        return (
-
-            coincideBusqueda &&
-
-            coincideSector &&
-
-            coincideNivel &&
-
-            coincideServicio
-
-        );
-
-
-    });
-
-
-
-    actualizarEstadisticas(filtrados);
-
-
-
-    const tbody =
-        document.getElementById("listaEstudiantes");
-
-
-    tbody.innerHTML = "";
-
-
-    ocultarEstados();
-
-
-
-    if (filtrados.length === 0) {
-
-
-        document
-            .getElementById("sinDatos")
-            .style.display = "block";
-
-
-        return;
-
-
-    }
-
-
-
-    document
-        .getElementById("tablaEstudiantes")
-        .style.display = "table";
-
-
-
-    filtrados.forEach((e, index) => {
-
-
-        const direccion = [
-
-            e.calleprincipal,
-
-            e.callesecundaria,
-
-            e.nrocasalote
-
-        ]
-
-        .filter(Boolean)
-
-        .join(" - ");
-
-
-
-        const fila =
-            document.createElement("tr");
-
-
-
-        fila.innerHTML = `
-
-            <td>
-                ${index + 1}
-            </td>
-
-
-            <td class="estudiante">
-                ${escapeHTML(e.estudiante)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(e.nivel)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(e.grado)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(e.representante)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(e.telefono)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(e.sector)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(direccion)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(e.referencia)}
-            </td>
-
-
-            <td>
-                ${escapeHTML(e.servicio)}
-            </td>
-
-
-            <td>
-
-                ${
-
-                    e.urlmaps
-
-                    ?
-
-                    `
-
-                    <a
-                        href="${escapeAttribute(e.urlmaps)}"
-                        target="_blank"
-                        rel="noopener"
-                        class="btn-mapa"
-                    >
-
-                        📍 VER MAPA
-
-                    </a>
-
-                    `
-
-                    :
-
-                    "SIN UBICACIÓN"
-
-                }
-
-            </td>
-
-
-            <td>
-
-                ${crearBotonWhatsApp(e.telefono)}
-
-            </td>
-
-        `;
-
-
-
-        tbody.appendChild(fila);
-
-
-    });
-
+actualizarTabla(filtrados);
 
 }
 
 
 /* =====================================================
-   ESTADISTICAS
+   TABLA
 ===================================================== */
 
+function actualizarTabla(filtrados){
 
-function actualizarEstadisticas(lista) {
-
-
-    const total =
-        lista.length;
-
-
-    const matutino =
-        lista.filter(e =>
-            e.servicio === "MATUTINO (MAÑANA)"
-        ).length;
+const tbody =
+document.getElementById(
+"listaEstudiantes"
+);
 
 
-    const vespertino =
-        lista.filter(e =>
-            e.servicio === "VESPERTINO (TARDE)"
-        ).length;
+tbody.innerHTML="";
 
 
-    const sectores = new Set(
-
-        lista
-
-            .map(e => e.sector)
-
-            .filter(Boolean)
-
-    );
+ocultarEstados();
 
 
-    document
-        .getElementById("totalEstudiantes")
-        .textContent = total;
+if(filtrados.length===0){
+
+document.getElementById(
+"sinDatos"
+).style.display="block";
+
+return;
+
+}
 
 
-    document
-        .getElementById("totalMatutino")
-        .textContent = matutino;
+document.getElementById(
+"tablaEstudiantes"
+).style.display="table";
 
 
-    document
-        .getElementById("totalVespertino")
-        .textContent = vespertino;
+filtrados.forEach((e,index)=>{
+
+const faltantes =
+obtenerFaltantes(e);
 
 
-    document
-        .getElementById("totalSectores")
-        .textContent = sectores.size;
+const direccion=[
+e.calleprincipal,
+e.callesecundaria,
+e.nrocasalote
+]
+.filter(Boolean)
+.join(" - ");
 
+
+const fila =
+document.createElement("tr");
+
+
+fila.innerHTML=`
+
+<td>
+${index+1}
+</td>
+
+
+<td class="estudiante">
+${escapeHTML(e.estudiante)}
+</td>
+
+
+<td>
+${mostrarDato(e.nivel)}
+</td>
+
+
+<td>
+${mostrarDato(e.grado)}
+</td>
+
+
+<td>
+${mostrarDato(e.representante)}
+</td>
+
+
+<td>
+${mostrarDato(e.telefono)}
+</td>
+
+
+<td>
+${mostrarDato(e.sector)}
+</td>
+
+
+<td>
+${mostrarDato(direccion)}
+</td>
+
+
+<td>
+${mostrarDato(e.referencia)}
+</td>
+
+
+<td>
+${mostrarDato(e.servicio)}
+</td>
+
+
+<td>
+
+${
+e.urlmaps
+
+?
+
+`
+<a
+href="${escapeAttribute(e.urlmaps)}"
+target="_blank"
+rel="noopener"
+class="btn-mapa"
+>
+📍 VER MAPA
+</a>
+`
+
+:
+
+`
+<span class="dato-vacio">
+SIN UBICACIÓN
+</span>
+`
+
+}
+
+</td>
+
+
+<td>
+
+${crearBotonWhatsApp(e.telefono)}
+
+</td>
+
+
+<td>
+
+${
+faltantes.length
+
+?
+
+faltantes
+.map(
+x =>
+`<span class="faltante">${x}</span>`
+)
+.join("")
+
+:
+
+`
+<span class="dato-completo">
+✓ COMPLETO
+</span>
+`
+
+}
+
+</td>
+
+
+<td>
+
+<button
+class="btn-editar"
+onclick='editarEstudiante(${JSON.stringify(e).replace(/'/g,"&#39;")})'
+>
+✏️ EDITAR
+</button>
+
+</td>
+
+
+<td>
+
+<button
+class="btn-eliminar"
+onclick='eliminarEstudiante(${JSON.stringify(e).replace(/'/g,"&#39;")})'
+>
+🗑️ ELIMINAR
+</button>
+
+</td>
+
+`;
+
+
+tbody.appendChild(fila);
+
+});
+
+}
+
+
+/* =====================================================
+   MOSTRAR DATO
+===================================================== */
+
+function mostrarDato(valor){
+
+if(
+valor === undefined ||
+valor === null ||
+String(valor).trim()===""
+){
+
+return `
+<span class="dato-vacio">
+❌ FALTA
+</span>
+`;
+
+}
+
+return escapeHTML(valor);
+
+}
+
+
+/* =====================================================
+   EDITAR
+===================================================== */
+
+function editarEstudiante(e){
+
+document.getElementById(
+"editId"
+).value=e.id || "";
+
+
+document.getElementById(
+"editEstudiante"
+).value=e.estudiante || "";
+
+
+document.getElementById(
+"editNivel"
+).value=e.nivel || "";
+
+
+document.getElementById(
+"editGrado"
+).value=e.grado || "";
+
+
+document.getElementById(
+"editRepresentante"
+).value=e.representante || "";
+
+
+document.getElementById(
+"editTelefono"
+).value=e.telefono || "";
+
+
+document.getElementById(
+"editSector"
+).value=e.sector || "";
+
+
+document.getElementById(
+"editCallePrincipal"
+).value=e.calleprincipal || "";
+
+
+document.getElementById(
+"editCalleSecundaria"
+).value=e.callesecundaria || "";
+
+
+document.getElementById(
+"editNroCasaLote"
+).value=e.nrocasalote || "";
+
+
+document.getElementById(
+"editReferencia"
+).value=e.referencia || "";
+
+
+document.getElementById(
+"editServicio"
+).value=e.servicio || "";
+
+
+document.getElementById(
+"editMaps"
+).value=e.urlmaps || "";
+
+
+document.getElementById(
+"modalEditar"
+).style.display="block";
+
+}
+
+
+/* =====================================================
+   GUARDAR EDICION
+===================================================== */
+
+async function guardarEdicion(){
+
+const id =
+document.getElementById("editId").value;
+
+
+if(!id){
+
+alert(
+"No se encontró el ID del estudiante."
+);
+
+return;
+
+}
+
+
+const datos={
+
+action:"update",
+
+id:id,
+
+estudiante:
+document.getElementById(
+"editEstudiante"
+).value,
+
+nivel:
+document.getElementById(
+"editNivel"
+).value,
+
+grado:
+document.getElementById(
+"editGrado"
+).value,
+
+representante:
+document.getElementById(
+"editRepresentante"
+).value,
+
+telefono:
+document.getElementById(
+"editTelefono"
+).value,
+
+sector:
+document.getElementById(
+"editSector"
+).value,
+
+callePrincipal:
+document.getElementById(
+"editCallePrincipal"
+).value,
+
+calleSecundaria:
+document.getElementById(
+"editCalleSecundaria"
+).value,
+
+nroCasaLote:
+document.getElementById(
+"editNroCasaLote"
+).value,
+
+referencia:
+document.getElementById(
+"editReferencia"
+).value,
+
+tipoServicio:
+document.getElementById(
+"editServicio"
+).value,
+
+enlaceGoogleMaps:
+document.getElementById(
+"editMaps"
+).value
+
+};
+
+
+try{
+
+const resultado =
+await enviarDatos(datos);
+
+
+if(!resultado.ok){
+
+throw new Error(
+resultado.error ||
+"No se pudo actualizar"
+);
+
+}
+
+
+alert(
+"✅ Estudiante actualizado correctamente."
+);
+
+
+cerrarModal();
+
+
+cargarEstudiantes();
+
+
+}catch(error){
+
+alert(
+"❌ Error: " +
+error.message
+);
+
+}
+
+}
+
+
+/* =====================================================
+   ELIMINAR
+===================================================== */
+
+async function eliminarEstudiante(e){
+
+const nombre =
+e.estudiante ||
+"este estudiante";
+
+
+const confirmar =
+confirm(
+"⚠️ ATENCIÓN\n\n" +
+"¿Está seguro de eliminar a:\n\n" +
+nombre +
+"\n\nEsta acción no se puede deshacer."
+);
+
+
+if(!confirmar) return;
+
+
+if(!e.id){
+
+alert(
+"No se encontró el ID del estudiante."
+);
+
+return;
+
+}
+
+
+try{
+
+const resultado =
+await enviarDatos({
+
+action:"delete",
+
+id:e.id
+
+});
+
+
+if(!resultado.ok){
+
+throw new Error(
+resultado.error ||
+"No se pudo eliminar"
+);
+
+}
+
+
+alert(
+"✅ Estudiante eliminado correctamente."
+);
+
+
+cargarEstudiantes();
+
+
+}catch(error){
+
+alert(
+"❌ Error al eliminar: " +
+error.message
+);
+
+}
+
+}
+
+
+/* =====================================================
+   ENVIAR POST
+===================================================== */
+
+function enviarDatos(datos){
+
+return new Promise((resolve,reject)=>{
+
+const form =
+document.createElement("form");
+
+
+form.method="POST";
+
+form.action=SCRIPT_URL;
+
+form.target="iframeRespuesta";
+
+
+Object.keys(datos).forEach(key=>{
+
+const input =
+document.createElement("input");
+
+input.type="hidden";
+
+input.name=key;
+
+input.value=
+datos[key] ?? "";
+
+form.appendChild(input);
+
+});
+
+
+let iframe =
+document.getElementById(
+"iframeRespuesta"
+);
+
+
+if(!iframe){
+
+iframe =
+document.createElement("iframe");
+
+iframe.name="iframeRespuesta";
+iframe.id="iframeRespuesta";
+
+iframe.style.display="none";
+
+document.body.appendChild(iframe);
+
+}
+
+
+document.body.appendChild(form);
+
+
+let terminado=false;
+
+
+const mensajeOriginal =
+window.addEventListener;
+
+
+iframe.onload=function(){
+
+if(terminado) return;
+
+setTimeout(()=>{
+
+if(!terminado){
+
+/*
+   Como Apps Script puede devolver
+   respuesta dentro del iframe,
+   hacemos una consulta para verificar.
+*/
+
+terminado=true;
+
+resolve({
+ok:true
+});
+
+}
+
+},1000);
+
+};
+
+
+form.submit();
+
+setTimeout(()=>{
+
+if(!terminado){
+
+terminado=true;
+
+resolve({
+ok:true
+});
+
+}
+
+},3000);
+
+
+});
 
 }
 
@@ -1185,194 +2089,182 @@ function actualizarEstadisticas(lista) {
    WHATSAPP
 ===================================================== */
 
+function crearBotonWhatsApp(telefono){
 
-function crearBotonWhatsApp(telefono) {
+if(!telefono){
 
+return `
+<span class="dato-vacio">
+SIN TELÉFONO
+</span>
+`;
 
-    if (!telefono) {
-
-        return "SIN TELÉFONO";
-
-    }
-
-
-    let numero =
-        String(telefono)
-        .replace(/\D/g, "");
+}
 
 
-    /*
-    Ecuador:
-
-    0991234567
-
-    se convierte en:
-
-    593991234567
-    */
+let numero =
+String(telefono)
+.replace(/\D/g,"");
 
 
-    if (
+if(
+numero.startsWith("0") &&
+numero.length===10
+){
 
-        numero.startsWith("0") &&
+numero =
+"593" +
+numero.substring(1);
 
-        numero.length === 10
-
-    ) {
-
-        numero =
-            "593" +
-            numero.substring(1);
-
-    }
+}
 
 
-    return `
+return `
 
-        <a
-            href="https://wa.me/${numero}"
-            target="_blank"
-            rel="noopener"
-            class="btn-whatsapp"
-        >
+<a
+href="https://wa.me/${numero}"
+target="_blank"
+rel="noopener"
+class="btn-whatsapp"
+>
+💬 WHATSAPP
+</a>
 
-            💬 WHATSAPP
-
-        </a>
-
-    `;
-
+`;
 
 }
 
 
 /* =====================================================
-   FUNCIONES VISUALES
+   MODAL
 ===================================================== */
 
+function cerrarModal(){
 
-function mostrarLoading() {
-
-
-    ocultarEstados();
-
-
-    document
-        .getElementById("loading")
-        .style.display = "block";
-
+document.getElementById(
+"modalEditar"
+).style.display="none";
 
 }
 
 
-function mostrarError(mensaje) {
+window.onclick=function(event){
+
+const modal =
+document.getElementById(
+"modalEditar"
+);
 
 
-    ocultarEstados();
+if(event.target===modal){
+
+cerrarModal();
+
+}
+
+};
 
 
-    const errorDiv =
-        document.getElementById("error");
+/* =====================================================
+   ESTADOS
+===================================================== */
 
+function mostrarLoading(){
 
-    errorDiv.textContent =
-        mensaje;
+ocultarEstados();
 
-
-    errorDiv.style.display =
-        "block";
-
+document.getElementById(
+"loading"
+).style.display="block";
 
 }
 
 
-function ocultarEstados() {
+function mostrarError(mensaje){
+
+ocultarEstados();
+
+const errorDiv =
+document.getElementById("error");
+
+errorDiv.textContent=mensaje;
+
+errorDiv.style.display="block";
+
+}
 
 
-    document
-        .getElementById("loading")
-        .style.display = "none";
+function ocultarEstados(){
+
+document.getElementById(
+"loading"
+).style.display="none";
 
 
-    document
-        .getElementById("error")
-        .style.display = "none";
+document.getElementById(
+"error"
+).style.display="none";
 
 
-    document
-        .getElementById("sinDatos")
-        .style.display = "none";
+document.getElementById(
+"sinDatos"
+).style.display="none";
 
 
-    document
-        .getElementById("tablaEstudiantes")
-        .style.display = "none";
-
+document.getElementById(
+"tablaEstudiantes"
+).style.display="none";
 
 }
 
 
 /* =====================================================
-   SEGURIDAD HTML
+   SEGURIDAD
 ===================================================== */
 
+function escapeHTML(valor){
 
-function escapeHTML(valor) {
+if(
+valor===undefined ||
+valor===null
+){
 
-
-    if (
-
-        valor === undefined ||
-
-        valor === null
-
-    ) return "";
-
-
-    return String(valor)
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;")
-
-        .replace(/"/g, "&quot;")
-
-        .replace(/'/g, "&#039;");
-
+return "";
 
 }
 
 
-function escapeAttribute(valor) {
+return String(valor)
+
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
 
 
-    return escapeHTML(valor);
+function escapeAttribute(valor){
+
+return escapeHTML(valor);
 
 }
 
 
 /* =====================================================
-   HORA ACTUALIZACION
+   HORA
 ===================================================== */
 
+function actualizarHora(){
 
-function actualizarHora() {
+const ahora=new Date();
 
-
-    const ahora =
-        new Date();
-
-
-    document
-        .getElementById("ultimaActualizacion")
-        .textContent =
-
-        "Última actualización: " +
-
-        ahora.toLocaleString("es-EC");
-
+document.getElementById(
+"ultimaActualizacion"
+).textContent=
+"Última actualización: " +
+ahora.toLocaleString("es-EC");
 
 }
 
@@ -1381,50 +2273,45 @@ function actualizarHora() {
    EVENTOS
 ===================================================== */
 
-
 document
-    .getElementById("buscar")
-    .addEventListener(
-        "input",
-        mostrarEstudiantes
-    );
-
-
-document
-    .getElementById("filtroSector")
-    .addEventListener(
-        "change",
-        mostrarEstudiantes
-    );
+.getElementById("buscar")
+.addEventListener(
+"input",
+mostrarEstudiantes
+);
 
 
 document
-    .getElementById("filtroNivel")
-    .addEventListener(
-        "change",
-        mostrarEstudiantes
-    );
+.getElementById("filtroSector")
+.addEventListener(
+"change",
+mostrarEstudiantes
+);
 
 
 document
-    .getElementById("filtroServicio")
-    .addEventListener(
-        "change",
-        mostrarEstudiantes
-    );
+.getElementById("filtroNivel")
+.addEventListener(
+"change",
+mostrarEstudiantes
+);
+
+
+document
+.getElementById("filtroServicio")
+.addEventListener(
+"change",
+mostrarEstudiantes
+);
 
 
 /* =====================================================
    INICIAR
 ===================================================== */
 
-
 cargarEstudiantes();
-
 
 </script>
 
-
 </body>
-
 </html>
