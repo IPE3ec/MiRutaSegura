@@ -1,7 +1,7 @@
 {
   "name": "Mi Ruta Segura Padres",
   "short_name": "Padres",
-  "start_url": "padre.html",
+  "start_url": "padres.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f2f3f5",
