@@ -1,0 +1,17 @@
+{
+  "name": "Mi Ruta Segura Padres",
+  "short_name": "Padres",
+  "start_url": "padre.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f3f5",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "icon-padre.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
