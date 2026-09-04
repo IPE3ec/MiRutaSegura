@@ -2,898 +2,691 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#111111">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Conductor - Mi Ruta Segura</title>
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest-conductor.webmanifest">
+  <meta name="theme-color" content="#111111">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
-    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
-    html, body { width: 100%; height: 100%; margin: 0; background: #111; color: #111; }
-    body { overflow: hidden; }
-    #app { position: relative; width: 100vw; height: 100vh; }
-    #map { width: 100%; height: 100%; background: #dfe7df; }
-
-    .topbar {
-      position: absolute;
-      top: env(safe-area-inset-top, 0);
-      left: 0;
-      right: 0;
-      z-index: 1100;
-      padding: 10px;
-      pointer-events: none;
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, sans-serif; }
+    body { margin: 0; background: #f2f3f5; color: #111; }
+    #app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+    #map { width: 100%; height: 100%; }
+    .stats {
+      position: absolute; top: 10px; left: 10px; right: 10px; z-index: 900;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px;
     }
-
-    .status-card {
-      background: rgba(255,255,255,.97);
-      border-radius: 10px;
-      box-shadow: 0 4px 18px rgba(0,0,0,.28);
-      padding: 12px;
-      pointer-events: auto;
-      border-top: 5px solid #ffcc00;
-    }
-
-    .brand {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .brand strong {
-      background: #111;
-      color: #ffcc00;
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 14px;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .badge {
-      background: #e9ecef;
-      color: #111;
-      border-radius: 999px;
-      padding: 6px 9px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
-    }
-
-    .metric {
-      background: #f8f9fa;
-      border: 1px solid #e2e2e2;
-      border-radius: 7px;
-      padding: 7px 6px;
-      min-width: 0;
-    }
-
-    .metric span {
-      display: block;
-      color: #60646c;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-
-    .metric b {
-      display: block;
-      color: #111;
-      font-size: 13px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
+    .stat { background: rgba(17,17,17,.9); color: #fff; border-radius: 8px; padding: 8px; font-size: 11px; }
+    .stat b { display: block; color: #ffcc00; font-size: 15px; margin-top: 2px; }
     .panel {
-      position: absolute;
-      left: 10px;
-      right: 10px;
-      bottom: calc(10px + env(safe-area-inset-bottom, 0));
-      z-index: 1100;
-      background: rgba(255,255,255,.98);
-      border-radius: 12px;
-      box-shadow: 0 4px 22px rgba(0,0,0,.32);
-      max-height: 62vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transition: max-height .2s ease;
+      position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 1000;
+      max-height: 72vh; background: rgba(255,255,255,.98); border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.28); overflow: hidden;
+      display: flex; flex-direction: column;
     }
-
-    .panel.min {
-      max-height: 152px;
-    }
-
-    .panel.min .panel-body {
-      display: none;
-    }
-
-    .panel-head {
-      background: #111;
-      color: #ffcc00;
-      padding: 10px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .panel-title {
-      min-width: 0;
-    }
-
-    .panel-title b {
-      display: block;
-      font-size: 13px;
-      text-transform: uppercase;
-    }
-
-    .panel-title span {
-      display: block;
-      color: #fff4b8;
-      font-size: 12px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .panel-body {
-      padding: 10px;
-      overflow-y: auto;
-    }
-
-    .grid2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    label {
-      display: grid;
-      gap: 4px;
-      font-size: 12px;
-      color: #333;
-      font-weight: 800;
-    }
-
+    .panel.min { max-height: 176px; }
+    .panel.min .body, .panel.min .tabs { display: none; }
+    .head { background: #111; color: #ffcc00; padding: 12px; font-weight: 900; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+    .head small { display: block; color: #fff; font-weight: 600; margin-top: 2px; }
+    .head button { width: auto; margin: 0; background: #ffcc00; color: #111; }
+    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #d7d7d7; }
+    .tab { border: 0; background: #eee; padding: 10px 4px; font-size: 11px; font-weight: 900; cursor: pointer; }
+    .tab.active { background: #ffcc00; color: #111; }
+    .body { overflow-y: auto; padding: 10px; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    label { display: grid; gap: 4px; font-size: 12px; font-weight: 800; }
     select, input {
-      width: 100%;
-      border: 1px solid #c9c9c9;
-      border-radius: 7px;
-      background: #fff;
-      padding: 10px;
-      font-size: 14px;
+      width: 100%; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff;
+      padding: 10px; font-size: 13px;
     }
-
-    .btn {
-      border: 0;
-      border-radius: 8px;
-      padding: 11px 10px;
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-      cursor: pointer;
-      width: 100%;
+    button {
+      width: 100%; border: 0; border-radius: 6px; padding: 11px;
+      font-size: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-bottom: 8px;
     }
-
-    .btn-primary { background: #ffcc00; color: #111; border: 2px solid #111; }
-    .btn-dark { background: #111; color: #ffcc00; }
-    .btn-green { background: #22a447; color: #fff; }
-    .btn-red { background: #d63b3b; color: #fff; }
-    .btn-gray { background: #e9ecef; color: #111; border: 1px solid #bbb; }
-    .btn:disabled { opacity: .48; cursor: not-allowed; }
-
-    .notice {
-      display: none;
-      padding: 9px;
-      border-radius: 7px;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 8px;
+    button:disabled { background: #ccc !important; color: #777 !important; cursor: not-allowed; }
+    .primary { background: #111; color: #ffcc00; }
+    .success { background: #28a745; color: #fff; }
+    .danger { background: #dc3545; color: #fff; }
+    .soft { background: #e9ecef; color: #111; border: 1px solid #bbb; }
+    .warn { background: #ffcc00; color: #111; }
+    .notice { display: none; padding: 9px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; }
+    .notice.info { display: block; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .notice.ok { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .notice.error { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .card { background: #f8f9fa; border-left: 4px solid #ffcc00; border-radius: 6px; padding: 9px; margin-bottom: 8px; font-size: 12px; }
+    .card.current { border-left-color: #28a745; outline: 2px solid rgba(40,167,69,.35); }
+    .card.omitida { opacity: .55; border-left-color: #dc3545; }
+    .card strong { display: block; font-size: 13px; margin-bottom: 4px; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .actions button { margin-bottom: 0; padding: 9px; }
+    .route-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .route-table th, .route-table td { padding: 5px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
+    .destino {
+      background: #111; color: #fff; border-radius: 8px; padding: 10px; margin-bottom: 8px; font-size: 13px;
     }
-
-    .notice.ok { display: block; background: #d4edda; border: 1px solid #b7dfc1; color: #155724; }
-    .notice.warn { display: block; background: #fff3cd; border: 1px solid #ffe29a; color: #856404; }
-    .notice.err { display: block; background: #f8d7da; border: 1px solid #f0b9c0; color: #721c24; }
-
-    .current-stop {
-      background: #f8f9fa;
-      border-left: 5px solid #22a447;
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 8px;
-      line-height: 1.35;
-      font-size: 13px;
-    }
-
-    .current-stop b { font-size: 15px; }
-
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .stop-list {
-      border-top: 1px solid #e0e0e0;
-      padding-top: 8px;
-      display: grid;
-      gap: 7px;
-    }
-
-    .stop-card {
-      border-left: 4px solid #ffcc00;
-      background: #f8f9fa;
-      border-radius: 7px;
-      padding: 8px;
-      font-size: 12px;
-    }
-
-    .stop-card.done { border-left-color: #22a447; opacity: .72; }
-    .stop-card.active { border-left-color: #0066ff; outline: 2px solid #0066ff; }
-    .stop-card.skipped { border-left-color: #888; opacity: .62; }
-    .stop-card strong { display: block; font-size: 13px; margin-bottom: 3px; }
-
-    .counter-strip {
-      position: absolute;
-      right: 10px;
-      top: 132px;
-      z-index: 1000;
-      display: grid;
-      gap: 7px;
-      width: 92px;
-    }
-
-    .counter {
-      background: rgba(17,17,17,.92);
-      color: #ffcc00;
-      border-radius: 8px;
-      padding: 8px;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,.25);
-    }
-
-    .counter span { display: block; font-size: 10px; color: #fff7c7; text-transform: uppercase; font-weight: 800; }
-    .counter b { display: block; font-size: 17px; }
-
-    .numbered-icon {
-      background: #ffcc00;
-      color: #111;
-      border: 2px solid #111;
-      border-radius: 50%;
-      font-weight: 900;
-      text-align: center;
-      line-height: 27px;
-      font-size: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,.4);
-    }
-
-    .active-icon { background: #0066ff; color: #fff; border-color: #fff; }
-    .done-icon { background: #22a447; color: #fff; border-color: #fff; }
-    .fixed-icon {
-      border-radius: 50%;
-      font-weight: 900;
-      text-align: center;
-      line-height: 31px;
-      font-size: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,.4);
-    }
+    .destino b { color: #ffcc00; }
+    .numbered-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; font-weight: 900; text-align: center; line-height: 26px; font-size: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+    .current-icon { background: #28a745; color: #fff; border-color: #fff; }
+    .fixed-icon { border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; font-size: 15px; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
     .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; }
     .home-icon { background: #0066ff; color: #fff; border: 2px solid #fff; }
-    .gps-icon { background: #16a34a; color: #fff; border: 3px solid #fff; border-radius: 50%; font-weight: 900; text-align: center; line-height: 31px; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
-
-    @media (min-width: 840px) {
-      .panel {
-        left: 16px;
-        right: auto;
-        bottom: 16px;
-        width: 430px;
-        max-height: calc(100vh - 180px);
-      }
-      .panel.min { max-height: 150px; }
-    }
-
-    @media (max-width: 560px) {
-      .metrics { grid-template-columns: repeat(2, 1fr); }
-      .counter-strip { top: 190px; width: 78px; }
-      .counter b { font-size: 15px; }
+    .gps-icon { background: #16a34a; color: #fff; border: 3px solid #fff; border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+    @media (min-width: 850px) {
+      .panel { left: 16px; right: auto; top: 16px; bottom: 16px; width: 440px; max-height: none; }
+      .panel.min { max-height: 190px; }
+      .stats { left: 472px; right: 16px; grid-template-columns: repeat(4, minmax(100px, 160px)); }
     }
   </style>
 </head>
 <body>
   <div id="app">
+    <div class="stats">
+      <div class="stat">Modo<b id="statModo">Auto</b></div>
+      <div class="stat">Paradas<b id="statParadas">0</b></div>
+      <div class="stat">Km<b id="statKm">0.00</b></div>
+      <div class="stat">Tiempo<b id="statTiempo">0 min</b></div>
+    </div>
+
+    <div id="panel" class="panel">
+      <div class="head">
+        <div>
+          Mi Ruta Segura - Conductor
+          <small id="subtitulo">Sin recorrido activo</small>
+        </div>
+        <button onclick="togglePanel()" id="btnPanel">Minimizar</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-view="inicio" onclick="showView('inicio')">Inicio</button>
+        <button class="tab" data-view="lista" onclick="showView('lista')">Lista</button>
+        <button class="tab" data-view="ruta" onclick="showView('ruta')">Ruta</button>
+        <button class="tab" data-view="ajustes" onclick="showView('ajustes')">Ajustes</button>
+      </div>
+
+      <div class="body">
+        <div id="msg" class="notice"></div>
+
+        <section id="view-inicio" class="view active">
+          <div class="destino">
+            Destino actual: <b id="destinoActual">Sin iniciar</b><br>
+            Distancia: <b id="distanciaActual">0 m</b><br>
+            Estado: <b id="estadoRecorrido">Esperando</b>
+          </div>
+          <button class="primary" onclick="cargarDatos()">Cargar estudiantes</button>
+          <button class="success" id="btnCalcular" onclick="calcularRuta()" disabled>Calcular ruta</button>
+          <button class="warn" id="btnIniciar" onclick="iniciarRecorrido()" disabled>Iniciar recorrido</button>
+          <div class="grid2">
+            <button class="soft" id="btnNavegar" onclick="navegarActual()" disabled>Navegar actual</button>
+            <button class="soft" id="btnLlegada" onclick="confirmarLlegada()" disabled>Confirmar llegada</button>
+          </div>
+          <button class="danger" id="btnOmitirActual" onclick="omitirActual()" disabled>Omitir parada actual</button>
+        </section>
+
+        <section id="view-lista" class="view">
+          <div id="listaAlumnos"><p class="card">Carga los estudiantes para ver el listado.</p></div>
+        </section>
+
+        <section id="view-ruta" class="view">
+          <div id="resumenRuta" class="card">Todavía no hay ruta calculada.</div>
+          <div id="linksNavegacion"></div>
+          <div id="tablaTramos"></div>
+        </section>
+
+        <section id="view-ajustes" class="view">
+          <div class="grid2">
+            <label>Horario
+              <select id="modoRuta" onchange="seleccionarModoManual()">
+                <option value="auto">Automático por hora</option>
+                <option value="mananaEntrada">Mañana entrada</option>
+                <option value="tardeEntrada">Tarde entrada</option>
+                <option value="mananaSalida">Mañana salida</option>
+                <option value="tardeSalida">Tarde salida</option>
+              </select>
+            </label>
+            <label>Cálculo
+              <select id="tipoCalculo" onchange="limpiarRuta()">
+                <option value="logica">Lógica / ahorro</option>
+                <option value="rapida">Más rápida</option>
+              </select>
+            </label>
+            <label>Hora objetivo
+              <input id="horaObjetivo" type="time" value="06:50" onchange="limpiarRuta()">
+            </label>
+            <label>Radio llegada
+              <select id="radioLlegada">
+                <option value="50">50 m</option>
+                <option value="80" selected>80 m</option>
+                <option value="120">120 m</option>
+              </select>
+            </label>
+          </div>
+          <button class="soft" onclick="detectarModoPorHora(true)">Detectar horario actual</button>
+          <button class="soft" onclick="centrarMapa()">Centrar mapa</button>
+        </section>
+      </div>
+    </div>
     <div id="map"></div>
-
-    <div class="topbar">
-      <div class="status-card">
-        <div class="brand">
-          <strong>Conductor Ruta 7</strong>
-          <span class="badge" id="estado-app">Sin iniciar</span>
-        </div>
-        <div class="metrics">
-          <div class="metric"><span>Destino</span><b id="metric-destino">N/D</b></div>
-          <div class="metric"><span>Distancia</span><b id="metric-distancia">0 m</b></div>
-          <div class="metric"><span>ETA</span><b id="metric-eta">0 min</b></div>
-          <div class="metric"><span>Avance</span><b id="metric-avance">0/0</b></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="counter-strip">
-      <div class="counter"><span>Paradas</span><b id="contador-paradas">0</b></div>
-      <div class="counter"><span>Hechas</span><b id="contador-hechas">0</b></div>
-      <div class="counter"><span>Km</span><b id="contador-km">0</b></div>
-    </div>
-
-    <section id="panel" class="panel">
-      <div class="panel-head">
-        <div class="panel-title">
-          <b id="titulo-modo">Mañana entrada</b>
-          <span id="subtitulo-panel">Carga estudiantes y traza la ruta para iniciar.</span>
-        </div>
-        <button class="btn btn-gray" style="width:auto;margin:0" onclick="alternarPanel()" id="btn-panel">Min</button>
-      </div>
-
-      <div class="panel-body">
-        <div id="mensaje" class="notice"></div>
-
-        <div class="grid2">
-          <label>Recorrido
-            <select id="modoRuta" onchange="cambiarModo()">
-              <option value="mananaEntrada">Mañana entrada</option>
-              <option value="mananaSalida">Mañana salida</option>
-              <option value="tardeEntrada">Tarde entrada</option>
-              <option value="tardeSalida">Tarde salida</option>
-            </select>
-          </label>
-          <label>Hora objetivo
-            <input id="horaObjetivo" type="time" value="06:50" onchange="limpiarRuta()">
-          </label>
-        </div>
-
-        <div class="grid2">
-          <label>Orden de ruta
-            <select id="tipoCalculo" onchange="limpiarRuta()">
-              <option value="rapida">Más rápida por calles</option>
-              <option value="logica">Ahorro: más lejano primero</option>
-            </select>
-          </label>
-          <label>Radio llegada
-            <select id="radioLlegada">
-              <option value="60">60 m</option>
-              <option value="80" selected>80 m</option>
-              <option value="120">120 m</option>
-              <option value="180">180 m</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-dark" onclick="cargarDatos()">Cargar datos</button>
-          <button class="btn btn-primary" id="btn-trazar" onclick="trazarRuta()" disabled>Trazar ruta</button>
-        </div>
-
-        <div class="current-stop">
-          <b id="destino-actual">Destino no iniciado</b><br>
-          <span id="detalle-destino">Primero carga datos y traza la ruta.</span>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-green" id="btn-iniciar" onclick="iniciarRecorrido()" disabled>Iniciar</button>
-          <button class="btn btn-dark" id="btn-navegar" onclick="navegarDestinoActual()" disabled>Navegar</button>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="btn-llegada" onclick="confirmarLlegada()" disabled>Confirmar llegada</button>
-          <button class="btn btn-gray" id="btn-omitir" onclick="omitirParada()" disabled>Omitir parada</button>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-red" id="btn-finalizar" onclick="finalizarRecorrido()" disabled>Finalizar</button>
-          <button class="btn btn-gray" onclick="centrarMapa()">Centrar mapa</button>
-        </div>
-
-        <div class="stop-list" id="lista-paradas">
-          <p style="text-align:center;color:#777;font-size:12px;margin:6px 0">No hay paradas cargadas.</p>
-        </div>
-      </div>
-    </section>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaTAOEBeBGzSEJNy_1uXTQdTlehTfRgKaCJLcET_M__ryOtTn662jcWYVlnoHWGovSdw/exec";
-    const CASA_CONDUCTOR = { nombre: "Casa conductor", lat: -0.256837, lng: -78.558433 };
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxavsmUXvKo1DjuQirLMiu1ej4MixYyrNsToBlf_lip0XrK-9bDQRnqm-vRrpW6yw5PCw/exec";
+    const CASA_CONDUCTOR = { nombre: "Casa del conductor", lat: -0.256837, lng: -78.558433 };
     const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
-
     const MODOS = {
       mananaEntrada: { label: "Mañana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "06:50", color: "#0066ff" },
-      mananaSalida: { label: "Mañana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "12:30", color: "#22a447" },
-      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "12:45", color: "#8e44ad" },
-      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "18:00", color: "#f39c12" }
+      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "12:00", color: "#8e44ad" },
+      mananaSalida: { label: "Mañana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "12:30", color: "#28a745" },
+      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "17:00", color: "#f39c12" }
     };
 
-    let registros = [];
+    let modoActual = "mananaEntrada";
+    let estudiantes = [];
     let paradas = [];
-    let paradasOrdenadas = [];
+    let ordenadas = [];
     let tramos = [];
     let recorridoActivo = false;
     let indiceActual = -1;
-    let ubicacionActual = null;
     let watchId = null;
+    let ubicacionGps = null;
     let rutaLayer = null;
-    let markersLayer = L.layerGroup();
-    let fixedLayer = L.layerGroup();
     let gpsMarker = null;
-    let installPrompt = null;
-    let ultimoEnvioGps = 0;
+    const markers = L.layerGroup();
 
     const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: "© OpenStreetMap"
     }).addTo(map);
-    fixedLayer.addTo(map);
-    markersLayer.addTo(map);
-    colocarPuntosFijos();
-    registrarPwa();
+    markers.addTo(map);
+    ponerFijos();
+    detectarModoPorHora(false);
+    registrarServiceWorker();
 
-    window.addEventListener("beforeinstallprompt", event => {
-      event.preventDefault();
-      installPrompt = event;
-      mostrarMensaje("Puedes instalar esta PWA desde el navegador.", "warn");
-    });
-
-    function registrarPwa() {
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("sw-conductor.js").catch(console.warn);
-      }
+    function showView(view) {
+      document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
+      document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + view));
     }
 
-    function colocarPuntosFijos() {
-      fixedLayer.clearLayers();
-      const iconCasa = L.divIcon({ className: "fixed-icon home-icon", html: "C", iconSize: [33,33], iconAnchor: [16,16] });
-      const iconEscuela = L.divIcon({ className: "fixed-icon school-icon", html: "E", iconSize: [33,33], iconAnchor: [16,16] });
-      L.marker([CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], { icon: iconCasa }).bindPopup("<b>Casa del conductor</b>").addTo(fixedLayer);
-      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: iconEscuela }).bindPopup("<b>Escuela</b>").addTo(fixedLayer);
-    }
-
-    function cambiarModo() {
-      const config = configActual();
-      document.getElementById("horaObjetivo").value = config.hora;
-      document.getElementById("titulo-modo").textContent = config.label;
-      document.getElementById("subtitulo-panel").textContent = config.sentido === "entrada"
-        ? "Casa del conductor -> paradas -> escuela."
-        : "Escuela -> paradas en orden.";
-      limpiarRuta();
-      filtrarParadas();
-    }
-
-    function configActual() {
-      return MODOS[document.getElementById("modoRuta").value];
-    }
-
-    function alternarPanel(force) {
+    function togglePanel(forceMin) {
       const panel = document.getElementById("panel");
-      const min = typeof force === "boolean" ? force : !panel.classList.contains("min");
+      const min = typeof forceMin === "boolean" ? forceMin : !panel.classList.contains("min");
       panel.classList.toggle("min", min);
-      document.getElementById("btn-panel").textContent = min ? "Max" : "Min";
+      document.getElementById("btnPanel").textContent = min ? "Mostrar" : "Minimizar";
       setTimeout(() => map.invalidateSize(), 250);
     }
 
-    function mostrarMensaje(texto, tipo) {
-      const el = document.getElementById("mensaje");
-      el.textContent = texto;
-      el.className = "notice " + (tipo || "warn");
+    function detectarModoPorHora(mostrar) {
+      const manual = document.getElementById("modoRuta").value;
+      if (manual !== "auto" && !mostrar) {
+        modoActual = manual;
+        aplicarModo();
+        return;
+      }
+      const now = new Date();
+      const min = now.getHours() * 60 + now.getMinutes();
+      if (min >= 240 && min <= 420) modoActual = "mananaEntrada";
+      else if (min >= 630 && min < 720) modoActual = "tardeEntrada";
+      else if (min >= 720 && min <= 840) modoActual = "mananaSalida";
+      else if (min >= 990 && min <= 1080) modoActual = "tardeSalida";
+      else modoActual = "mananaEntrada";
+      aplicarModo();
+      if (mostrar) aviso("Horario detectado: " + MODOS[modoActual].label, "ok");
+    }
+
+    function seleccionarModoManual() {
+      const valor = document.getElementById("modoRuta").value;
+      if (valor === "auto") detectarModoPorHora(true);
+      else {
+        modoActual = valor;
+        aplicarModo();
+      }
+      if (estudiantes.length) filtrarParadas();
+      limpiarRuta();
+    }
+
+    function aplicarModo() {
+      const config = MODOS[modoActual];
+      document.getElementById("horaObjetivo").value = config.hora;
+      document.getElementById("statModo").textContent = config.label.replace(" ", "\n");
+      document.getElementById("subtitulo").textContent = config.label;
     }
 
     function cargarDatos() {
-      mostrarMensaje("Leyendo Google Sheets...", "warn");
-      document.getElementById("lista-paradas").innerHTML = "<p style='text-align:center;color:#777;font-size:12px'>Cargando...</p>";
-      jsonp(SCRIPT_URL + "?action=records")
-        .then(data => {
-          registros = (Array.isArray(data) ? data : (data.records || [])).map(normalizarRegistro);
-          filtrarParadas();
-        })
-        .catch(error => {
-          console.error(error);
-          mostrarMensaje("No se pudo conectar con Google Sheets. Revisa el /exec y la implementación nueva.", "err");
-        });
+      aviso("Leyendo Google Sheets...", "info");
+      cargarJsonp(SCRIPT_URL + "?action=records").then(data => {
+        const records = Array.isArray(data) ? data : (data.records || []);
+        estudiantes = records.map(normalizarRegistro);
+        filtrarParadas();
+        aviso("Datos cargados: " + estudiantes.length + " registros.", "ok");
+      }).catch(err => {
+        console.error(err);
+        aviso("No se pudo conectar con Google Sheets. Revisa URL /exec, doGet y permisos.", "error");
+      });
     }
 
-    function jsonp(url) {
+    function cargarJsonp(url) {
       return new Promise((resolve, reject) => {
-        const callback = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        const callbackName = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
         const script = document.createElement("script");
-        window[callback] = data => {
-          cleanup();
-          resolve(data);
-        };
-        script.onerror = () => {
-          cleanup();
-          reject(new Error("JSONP failed"));
-        };
-        script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + callback + "&t=" + Date.now();
+        const sep = url.includes("?") ? "&" : "?";
+        window[callbackName] = data => { cleanup(); resolve(data); };
+        script.onerror = () => { cleanup(); reject(new Error("JSONP fallo")); };
+        script.src = url + sep + "callback=" + callbackName + "&t=" + Date.now();
         document.body.appendChild(script);
         function cleanup() {
-          delete window[callback];
+          delete window[callbackName];
           if (script.parentNode) script.parentNode.removeChild(script);
         }
       });
     }
 
-    function normalizarRegistro(row) {
+    function normalizarRegistro(r) {
       return {
-        id: limpiar(row.id || row.fechaRegistro || row.fechaderegistro || row.estudiante),
-        estudiante: limpiar(row.estudiante || row.nombresestudiante || row.nombreestudiante),
-        representante: limpiar(row.representante || row.nombrerepresentante),
-        telefono: limpiar(row.telefono),
-        sector: limpiar(row.sector),
-        grado: limpiar(row.gradoano || row.grado),
-        horario: limpiar(row.tipodeservicio || row.horario || row.horarioservicio || row.tiposervicio),
-        servicio: limpiar(row.servicio || "COMPLETO"),
-        estado: limpiar(row.estado),
-        valor: limpiar(row.valor),
-        urlMaps: limpiar(row.enlacegooglemaps || row.urlmaps || row.url_maps || row.ubicacion || row.url)
+        estudiante: clean(r.estudiante || r.nombresestudiante || r.nombreestudiante || r.nombre),
+        representante: clean(r.representante || r.nombrerepresentante),
+        telefono: clean(r.telefono),
+        sector: clean(r.sector),
+        grado: clean(r.gradoano || r.grado),
+        horario: clean(r.tipodeservicio || r.horario || r.horarioservicio || r.tiposervicio),
+        servicio: clean(r.servicio || "COMPLETO"),
+        estado: clean(r.estado),
+        valor: clean(r.valor),
+        urlMaps: clean(r.enlacegooglemaps || r.urlmaps || r.url_maps || r.ubicacion || r.url)
       };
     }
 
     function filtrarParadas() {
-      const config = configActual();
-      paradas = registros
-        .filter(x => coincideHorario(x.horario, config.horario))
-        .filter(x => coincideServicio(x.servicio, config.servicio))
-        .map(x => ({ ...x, coords: extraerCoordenadas(x.urlMaps) }))
-        .filter(x => x.coords)
-        .map(x => ({ ...x, lat: x.coords.lat, lng: x.coords.lng, completado: false, omitido: false }));
-
-      document.getElementById("contador-paradas").textContent = paradas.length;
-      document.getElementById("btn-trazar").disabled = paradas.length === 0;
-      limpiarRuta();
-      renderizarParadas(paradas);
-
-      if (paradas.length) mostrarMensaje(paradas.length + " paradas listas para " + config.label + ".", "ok");
-      else mostrarMensaje("No hay paradas válidas para " + config.label + ".", "err");
-    }
-
-    async function trazarRuta() {
-      if (!paradas.length) return;
-      const config = configActual();
-      const btn = document.getElementById("btn-trazar");
-      btn.disabled = true;
-      btn.textContent = "Calculando...";
-
-      try {
-        if (document.getElementById("tipoCalculo").value === "rapida") {
-          await trazarRutaRapida(config);
-        } else {
-          paradasOrdenadas = ordenarRutaLogica(config, paradas);
-          await trazarPorOrden(config, paradasOrdenadas);
-        }
-        document.getElementById("btn-iniciar").disabled = false;
-        actualizarMetricasGenerales();
-        renderizarParadas(paradasOrdenadas);
-        mostrarMensaje("Ruta calculada. Presiona Iniciar para comenzar parada por parada.", "ok");
-        alternarPanel(true);
-      } catch (error) {
-        console.error(error);
-        mostrarMensaje("No se pudo calcular con OSRM. Intenta de nuevo.", "err");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Trazar ruta";
-      }
-    }
-
-    async function trazarRutaRapida(config) {
-      const puntos = config.sentido === "entrada" ? [config.inicio, ...paradas, config.fin] : [config.inicio, ...paradas];
-      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
-      const destination = config.sentido === "entrada" ? "last" : "any";
-      const url = "https://router.project-osrm.org/trip/v1/driving/" + coords + "?source=first&destination=" + destination + "&roundtrip=false&overview=full&geometries=geojson";
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!data.trips || !data.trips.length || !data.waypoints) throw new Error("OSRM trip failed");
-      const order = data.waypoints
-        .map((wp, originalIndex) => ({ originalIndex, order: wp.waypoint_index }))
-        .sort((a, b) => a.order - b.order)
-        .map(x => x.originalIndex);
-      paradasOrdenadas = order
-        .filter(i => i !== 0)
-        .filter(i => !(config.sentido === "entrada" && i === puntos.length - 1))
-        .map(i => puntos[i]);
-      procesarRoute(data.trips[0], config);
-    }
-
-    async function trazarPorOrden(config, ordenadas) {
-      const puntos = config.sentido === "entrada" ? [config.inicio, ...ordenadas, config.fin] : [config.inicio, ...ordenadas];
-      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
-      const url = "https://router.project-osrm.org/route/v1/driving/" + coords + "?overview=full&geometries=geojson&steps=false";
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!data.routes || !data.routes.length) throw new Error("OSRM route failed");
-      procesarRoute(data.routes[0], config);
-    }
-
-    function procesarRoute(route, config) {
-      if (rutaLayer) map.removeLayer(rutaLayer);
-      rutaLayer = L.geoJSON(route.geometry, { style: { color: config.color, weight: 6, opacity: .88 } }).addTo(map);
-      tramos = (route.legs || []).map(leg => ({ km: leg.distance / 1000, min: leg.duration / 60 }));
-      calcularHorarios(route);
-      map.fitBounds(rutaLayer.getBounds(), { padding: [45,45] });
-    }
-
-    function ordenarRutaLogica(config, puntos) {
-      if (config.sentido === "entrada") {
-        const pendientes = [...puntos].sort((a, b) => distanciaKm(ESCUELA.lat, ESCUELA.lng, b.lat, b.lng) - distanciaKm(ESCUELA.lat, ESCUELA.lng, a.lat, a.lng));
-        const orden = [];
-        let actual = pendientes.shift();
-        if (actual) orden.push(actual);
-        while (pendientes.length) {
-          let idx = 0;
-          let best = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
-          for (let i = 1; i < pendientes.length; i++) {
-            const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
-            if (d < best) { best = d; idx = i; }
-          }
-          actual = pendientes.splice(idx, 1)[0];
-          orden.push(actual);
-        }
-        return orden;
-      }
-      return ordenarPorCercania(config.inicio, puntos);
-    }
-
-    function calcularHorarios(route) {
-      const config = configActual();
-      const objetivo = horaAMinutos(document.getElementById("horaObjetivo").value || config.hora);
-      const total = Math.round(route.duration / 60);
-      const salida = config.sentido === "entrada" ? objetivo - total : objetivo;
-      let acum = 0;
-      paradasOrdenadas.forEach((p, i) => {
-        acum += Math.round((tramos[i] && tramos[i].min) || 0);
-        p.horaAprox = minutosAHora(salida + acum);
-        p.tramoKm = tramos[i] ? tramos[i].km : 0;
-        p.tramoMin = tramos[i] ? tramos[i].min : 0;
-      });
-    }
-
-    function iniciarRecorrido() {
-      if (!paradasOrdenadas.length) {
-        alert("Primero traza la ruta.");
-        return;
-      }
-      recorridoActivo = true;
-      indiceActual = 0;
-      document.getElementById("btn-iniciar").disabled = true;
-      document.getElementById("btn-finalizar").disabled = false;
-      document.getElementById("btn-llegada").disabled = false;
-      document.getElementById("btn-omitir").disabled = false;
-      document.getElementById("btn-navegar").disabled = false;
-      document.getElementById("estado-app").textContent = "En recorrido";
-      iniciarGps();
-      actualizarDestino();
-      enviarEvento("start", { modo: document.getElementById("modoRuta").value, totalParadas: paradasOrdenadas.length });
-      navegarDestinoActual();
-      alternarPanel(true);
-    }
-
-    function iniciarGps() {
-      if (!navigator.geolocation) {
-        mostrarMensaje("Este celular no permite GPS en navegador.", "err");
-        return;
-      }
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-      watchId = navigator.geolocation.watchPosition(pos => {
-        ubicacionActual = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy || 0 };
-        actualizarGpsMarker();
-        evaluarLlegada();
-        enviarUbicacionCadaTiempo();
-      }, err => {
-        console.warn(err);
-        mostrarMensaje("Activa permiso de ubicación para detectar llegadas.", "warn");
-      }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 12000 });
-    }
-
-    function actualizarGpsMarker() {
-      if (!ubicacionActual) return;
-      const icon = L.divIcon({ className: "gps-icon", html: "G", iconSize: [36,36], iconAnchor: [18,18] });
-      const latlng = [ubicacionActual.lat, ubicacionActual.lng];
-      if (gpsMarker) gpsMarker.setLatLng(latlng);
-      else gpsMarker = L.marker(latlng, { icon }).bindPopup("GPS conductor").addTo(map);
-    }
-
-    function evaluarLlegada() {
-      if (!recorridoActivo || !ubicacionActual || indiceActual < 0) return;
-      const destino = paradasOrdenadas[indiceActual];
-      if (!destino) return;
-      const metros = distanciaKm(ubicacionActual.lat, ubicacionActual.lng, destino.lat, destino.lng) * 1000;
-      const eta = estimarMinutos(metros);
-      document.getElementById("metric-distancia").textContent = formatoDistancia(metros);
-      document.getElementById("metric-eta").textContent = eta + " min";
-      document.getElementById("detalle-destino").textContent = "Distancia: " + formatoDistancia(metros) + " | ETA: " + eta + " min | Hora aprox: " + (destino.horaAprox || "N/D");
-      if (metros <= Number(document.getElementById("radioLlegada").value || 80)) {
-        confirmarLlegada();
-      }
-    }
-
-    function confirmarLlegada() {
-      if (!recorridoActivo) return;
-      const destino = paradasOrdenadas[indiceActual];
-      if (!destino) return;
-      destino.completado = true;
-      enviarEvento("arrived_stop", { parada: indiceActual + 1, estudiante: destino.estudiante, telefono: destino.telefono });
-      indiceActual += 1;
-      if (indiceActual >= paradasOrdenadas.length) {
-        finalizarRecorrido();
-        return;
-      }
-      actualizarDestino();
-      navegarDestinoActual();
-    }
-
-    function omitirParada() {
-      if (!recorridoActivo) return;
-      const destino = paradasOrdenadas[indiceActual];
-      if (!destino) return;
-      destino.omitido = true;
-      enviarEvento("skip_stop", { parada: indiceActual + 1, estudiante: destino.estudiante });
-      indiceActual += 1;
-      if (indiceActual >= paradasOrdenadas.length) {
-        finalizarRecorrido();
-        return;
-      }
-      actualizarDestino();
-      navegarDestinoActual();
-    }
-
-    function actualizarDestino() {
-      const destino = paradasOrdenadas[indiceActual];
-      if (!destino) return;
-      document.getElementById("destino-actual").textContent = "#" + (indiceActual + 1) + " " + destino.estudiante;
-      document.getElementById("metric-destino").textContent = "#" + (indiceActual + 1);
-      document.getElementById("metric-avance").textContent = indiceActual + "/" + paradasOrdenadas.length;
-      document.getElementById("contador-hechas").textContent = indiceActual;
-      renderizarParadas(paradasOrdenadas);
-      map.flyTo([destino.lat, destino.lng], 16);
-    }
-
-    function navegarDestinoActual() {
-      const destino = paradasOrdenadas[indiceActual];
-      if (!destino) return;
-      const origen = ubicacionActual ? ubicacionActual.lat + "," + ubicacionActual.lng : configActual().inicio.lat + "," + configActual().inicio.lng;
-      const url = "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(origen) + "&destination=" + encodeURIComponent(destino.lat + "," + destino.lng) + "&travelmode=driving";
-      window.open(url, "_blank");
-    }
-
-    function finalizarRecorrido() {
-      recorridoActivo = false;
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
-      }
-      document.getElementById("estado-app").textContent = "Finalizado";
-      document.getElementById("metric-destino").textContent = "Fin";
-      document.getElementById("metric-distancia").textContent = "0 m";
-      document.getElementById("metric-eta").textContent = "0 min";
-      document.getElementById("metric-avance").textContent = paradasOrdenadas.length + "/" + paradasOrdenadas.length;
-      document.getElementById("contador-hechas").textContent = paradasOrdenadas.length;
-      document.getElementById("destino-actual").textContent = "Recorrido finalizado";
-      document.getElementById("detalle-destino").textContent = "Todas las paradas fueron procesadas.";
-      document.getElementById("btn-iniciar").disabled = false;
-      document.getElementById("btn-finalizar").disabled = true;
-      document.getElementById("btn-llegada").disabled = true;
-      document.getElementById("btn-omitir").disabled = true;
-      document.getElementById("btn-navegar").disabled = true;
-      renderizarParadas(paradasOrdenadas);
-      enviarEvento("finish", { totalParadas: paradasOrdenadas.length });
-      mostrarMensaje("Recorrido finalizado.", "ok");
-    }
-
-    function renderizarParadas(lista) {
-      markersLayer.clearLayers();
-      const cont = document.getElementById("lista-paradas");
-      cont.innerHTML = "";
-      if (!lista.length) {
-        cont.innerHTML = "<p style='text-align:center;color:#777;font-size:12px;margin:6px 0'>No hay paradas cargadas.</p>";
-        return;
-      }
-      lista.forEach((p, i) => {
-        const active = recorridoActivo && i === indiceActual;
-        const cls = active ? "numbered-icon active-icon" : (p.completado ? "numbered-icon done-icon" : "numbered-icon");
-        const icon = L.divIcon({ className: cls, html: i + 1, iconSize: [31,31], iconAnchor: [15,15] });
-        L.marker([p.lat, p.lng], { icon }).bindPopup("<b>#" + (i + 1) + " " + escapar(p.estudiante) + "</b><br>" + escapar(p.sector) + "<br>Hora: " + escapar(p.horaAprox || "Sin calcular")).addTo(markersLayer);
-
-        const card = document.createElement("div");
-        card.className = "stop-card" + (active ? " active" : "") + (p.completado ? " done" : "") + (p.omitido ? " skipped" : "");
-        card.innerHTML = "<strong>#" + (i + 1) + " " + escapar(p.estudiante || "Estudiante") + "</strong>"
-          + "<div>Sector: " + escapar(p.sector || "N/D") + "</div>"
-          + "<div>Hora aprox: " + escapar(p.horaAprox || "Sin calcular") + "</div>"
-          + "<div>Tramo: " + ((p.tramoKm || 0).toFixed ? (p.tramoKm || 0).toFixed(2) : "0.00") + " km | " + Math.round(p.tramoMin || 0) + " min</div>";
-        card.onclick = () => map.flyTo([p.lat, p.lng], 17);
-        cont.appendChild(card);
-      });
-    }
-
-    function actualizarMetricasGenerales() {
-      const totalKm = tramos.reduce((sum, t) => sum + t.km, 0);
-      const totalMin = tramos.reduce((sum, t) => sum + t.min, 0);
-      document.getElementById("contador-km").textContent = totalKm.toFixed(1);
-      document.getElementById("metric-eta").textContent = Math.round(totalMin) + " min";
-      document.getElementById("metric-avance").textContent = "0/" + paradasOrdenadas.length;
-      document.getElementById("contador-hechas").textContent = "0";
-    }
-
-    function enviarUbicacionCadaTiempo() {
-      const now = Date.now();
-      if (now - ultimoEnvioGps < 15000) return;
-      ultimoEnvioGps = now;
-      enviarEvento("location", { lat: ubicacionActual.lat, lng: ubicacionActual.lng, accuracy: ubicacionActual.accuracy, paradaActual: indiceActual + 1 });
-    }
-
-    function enviarEvento(action, extra) {
-      const payload = Object.assign({
-        action,
-        conductor: "Ruta 7",
-        modo: document.getElementById("modoRuta").value,
-        timestamp: new Date().toISOString()
-      }, extra || {});
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(payload).toString()
-      }).catch(console.warn);
-    }
-
-    function limpiarRuta() {
-      if (rutaLayer) {
-        map.removeLayer(rutaLayer);
-        rutaLayer = null;
-      }
-      paradasOrdenadas = [];
-      tramos = [];
-      document.getElementById("btn-iniciar").disabled = true;
-      document.getElementById("metric-destino").textContent = "N/D";
-      document.getElementById("metric-distancia").textContent = "0 m";
-      document.getElementById("metric-eta").textContent = "0 min";
-      document.getElementById("metric-avance").textContent = "0/0";
-      document.getElementById("contador-km").textContent = "0";
-    }
-
-    function centrarMapa() {
-      const pts = (paradasOrdenadas.length ? paradasOrdenadas : paradas).map(p => [p.lat, p.lng]);
-      const bounds = [[CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], [ESCUELA.lat, ESCUELA.lng], ...pts];
-      map.fitBounds(bounds, { padding: [45,45] });
+      const c = MODOS[modoActual];
+      paradas = estudiantes
+        .filter(e => coincideHorario(e.horario, c.horario))
+        .filter(e => coincideServicio(e.servicio, c.servicio))
+        .filter(e => normalizar(e.estado) !== "OMITIDO")
+        .map(e => ({ ...e, coords: extraerCoordenadas(e.urlMaps), omitida: false }))
+        .filter(e => e.coords)
+        .map(e => ({ ...e, lat: e.coords.lat, lng: e.coords.lng }));
+      document.getElementById("btnCalcular").disabled = paradas.length === 0;
+      actualizarStats(0, 0, paradas.length);
+      renderLista(paradas, false);
+      centrarMapa();
+      if (!paradas.length) aviso("No hay estudiantes con ubicación válida para " + c.label + ".", "error");
     }
 
     function coincideHorario(valor, buscado) {
-      return normalizarTexto(valor).includes(buscado);
+      return normalizar(valor).includes(buscado);
     }
 
     function coincideServicio(valor, buscado) {
-      const txt = normalizarTexto(valor || "COMPLETO");
+      const txt = normalizar(valor || "COMPLETO");
       if (!txt || txt.includes("COMPLETO")) return true;
       if (buscado === "INGRESO") return txt.includes("INGRESO") || txt.includes("ENTRADA") || txt.includes("SOLO EN LA MANANA");
       if (buscado === "SALIDA") return txt.includes("SALIDA") || txt.includes("SOLO SALIDA");
       return true;
     }
 
+    async function calcularRuta() {
+      if (!paradas.length) return;
+      const tipo = document.getElementById("tipoCalculo").value;
+      const c = MODOS[modoActual];
+      aviso("Calculando ruta...", "info");
+      try {
+        if (tipo === "rapida") await rutaRapida(c);
+        else {
+          ordenadas = ordenarLogica(c, paradas.filter(p => !p.omitida));
+          await trazarOrden(c, ordenadas);
+        }
+        document.getElementById("btnIniciar").disabled = false;
+        renderLista(ordenadas, true);
+        showView("inicio");
+        togglePanel(true);
+        aviso("Ruta lista. Puedes iniciar recorrido.", "ok");
+      } catch (err) {
+        console.error(err);
+        aviso("No se pudo calcular por calles. Revisa internet o intenta ruta lógica.", "error");
+      }
+    }
+
+    function ordenarLogica(c, puntos) {
+      if (c.sentido === "entrada") {
+        const pendientes = [...puntos].sort((a, b) => distanciaKm(ESCUELA.lat, ESCUELA.lng, b.lat, b.lng) - distanciaKm(ESCUELA.lat, ESCUELA.lng, a.lat, a.lng));
+        const orden = [];
+        let actual = pendientes.shift();
+        if (actual) orden.push(actual);
+        while (pendientes.length) {
+          const idx = indiceMasCercano(actual, pendientes);
+          actual = pendientes.splice(idx, 1)[0];
+          orden.push(actual);
+        }
+        return orden;
+      }
+      return ordenarPorCercania(c.inicio, puntos);
+    }
+
+    async function rutaRapida(c) {
+      const puntos = c.sentido === "entrada" ? [c.inicio, ...paradas.filter(p => !p.omitida), c.fin] : [c.inicio, ...paradas.filter(p => !p.omitida)];
+      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
+      const dest = c.sentido === "entrada" ? "last" : "any";
+      const url = "https://router.project-osrm.org/trip/v1/driving/" + coords + "?source=first&destination=" + dest + "&roundtrip=false&overview=full&geometries=geojson";
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.trips || !data.trips.length || !data.waypoints) throw new Error("OSRM trip sin datos");
+      const indices = data.waypoints
+        .map((wp, originalIndex) => ({ originalIndex, orden: wp.waypoint_index }))
+        .sort((a, b) => a.orden - b.orden)
+        .map(x => x.originalIndex);
+      ordenadas = indices
+        .filter(i => i !== 0 && !(c.sentido === "entrada" && i === puntos.length - 1))
+        .map(i => puntos[i]);
+      procesarRoute(data.trips[0], c);
+    }
+
+    async function trazarOrden(c, orden) {
+      const puntos = c.sentido === "entrada" ? [c.inicio, ...orden, c.fin] : [c.inicio, ...orden];
+      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
+      const url = "https://router.project-osrm.org/route/v1/driving/" + coords + "?overview=full&geometries=geojson&steps=false";
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.routes || !data.routes.length) throw new Error("OSRM route sin datos");
+      procesarRoute(data.routes[0], c);
+    }
+
+    function procesarRoute(route, c) {
+      tramos = (route.legs || []).map((leg, i) => ({ index: i + 1, km: leg.distance / 1000, min: leg.duration / 60 }));
+      if (rutaLayer) map.removeLayer(rutaLayer);
+      rutaLayer = L.geoJSON(route.geometry, { style: { color: c.color, weight: 6, opacity: .86 } }).addTo(map);
+      map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
+      actualizarStats(route.distance / 1000, route.duration / 60, ordenadas.length);
+      mostrarResumen(route);
+      mostrarLinksRuta();
+      pintarMarcadores(ordenadas, true);
+    }
+
+    function iniciarRecorrido() {
+      if (!ordenadas.length) {
+        alert("Primero calcula la ruta.");
+        return;
+      }
+      recorridoActivo = true;
+      indiceActual = 0;
+      document.getElementById("btnLlegada").disabled = false;
+      document.getElementById("btnNavegar").disabled = false;
+      document.getElementById("btnOmitirActual").disabled = false;
+      activarGps();
+      actualizarDestino();
+      enviarEvento("inicio_recorrido", {});
+      navegarActual();
+    }
+
+    function activarGps() {
+      if (!navigator.geolocation) {
+        aviso("Este celular no permite GPS en el navegador.", "error");
+        return;
+      }
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+      watchId = navigator.geolocation.watchPosition(pos => {
+        ubicacionGps = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy || 0 };
+        pintarGps();
+        evaluarLlegada();
+        enviarUbicacion();
+      }, err => {
+        console.error(err);
+        aviso("No se pudo leer GPS. Revisa permisos de ubicación.", "error");
+      }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 12000 });
+    }
+
+    function pintarGps() {
+      if (!ubicacionGps) return;
+      const icon = L.divIcon({ className: "gps-icon", html: "G", iconSize: [34, 34], iconAnchor: [17, 17] });
+      const pos = [ubicacionGps.lat, ubicacionGps.lng];
+      if (gpsMarker) gpsMarker.setLatLng(pos);
+      else gpsMarker = L.marker(pos, { icon }).addTo(map).bindPopup("Ubicación del conductor");
+    }
+
+    function evaluarLlegada() {
+      if (!recorridoActivo || !ubicacionGps) return;
+      const destino = ordenadas[indiceActual];
+      if (!destino) return;
+      const metros = distanciaKm(ubicacionGps.lat, ubicacionGps.lng, destino.lat, destino.lng) * 1000;
+      document.getElementById("distanciaActual").textContent = metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km";
+      const radio = Number(document.getElementById("radioLlegada").value || 80);
+      if (metros <= radio) confirmarLlegada();
+    }
+
+    function confirmarLlegada() {
+      if (!recorridoActivo || indiceActual < 0) return;
+      const destino = ordenadas[indiceActual];
+      if (!destino) return;
+      enviarEvento("llegada_parada", { estudiante: destino.estudiante, parada: indiceActual + 1 });
+      indiceActual += 1;
+      if (indiceActual >= ordenadas.length) {
+        finalizarRecorrido();
+        return;
+      }
+      actualizarDestino();
+      navegarActual();
+    }
+
+    function omitirActual() {
+      const destino = ordenadas[indiceActual];
+      if (!destino || !confirm("¿Omitir esta parada y avanzar a la siguiente?")) return;
+      destino.omitida = true;
+      enviarEvento("omitir_parada", { estudiante: destino.estudiante, parada: indiceActual + 1 });
+      confirmarLlegada();
+    }
+
+    function omitirParada(index) {
+      const est = ordenadas[index];
+      if (!est || !confirm("¿Omitir parada de " + est.estudiante + "?")) return;
+      est.omitida = true;
+      enviarEvento("omitir_parada", { estudiante: est.estudiante, parada: index + 1 });
+      ordenadas = ordenadas.filter(p => !p.omitida);
+      renderLista(ordenadas, true);
+      pintarMarcadores(ordenadas, true);
+      if (indiceActual >= ordenadas.length) finalizarRecorrido();
+      else actualizarDestino();
+    }
+
+    function actualizarDestino() {
+      const destino = ordenadas[indiceActual];
+      if (!destino) return;
+      document.getElementById("destinoActual").textContent = "#" + (indiceActual + 1) + " " + destino.estudiante;
+      document.getElementById("estadoRecorrido").textContent = "En camino";
+      document.getElementById("subtitulo").textContent = "Siguiente: " + destino.estudiante;
+      renderLista(ordenadas, true);
+      pintarMarcadores(ordenadas, true);
+      map.flyTo([destino.lat, destino.lng], 16);
+    }
+
+    function navegarActual() {
+      const destino = ordenadas[indiceActual];
+      if (!destino) return;
+      const origen = ubicacionGps ? ubicacionGps.lat + "," + ubicacionGps.lng : MODOS[modoActual].inicio.lat + "," + MODOS[modoActual].inicio.lng;
+      const url = "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(origen) + "&destination=" + encodeURIComponent(destino.lat + "," + destino.lng) + "&travelmode=driving";
+      window.open(url, "_blank");
+    }
+
+    function finalizarRecorrido() {
+      recorridoActivo = false;
+      indiceActual = -1;
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+      watchId = null;
+      document.getElementById("destinoActual").textContent = "Recorrido finalizado";
+      document.getElementById("estadoRecorrido").textContent = "Finalizado";
+      document.getElementById("btnLlegada").disabled = true;
+      document.getElementById("btnNavegar").disabled = true;
+      document.getElementById("btnOmitirActual").disabled = true;
+      enviarEvento("fin_recorrido", {});
+      aviso("Recorrido finalizado.", "ok");
+    }
+
+    function renderLista(items, conOrden) {
+      const lista = document.getElementById("listaAlumnos");
+      lista.innerHTML = "";
+      pintarMarcadores(items, conOrden);
+      if (!items.length) {
+        lista.innerHTML = '<p class="card">No hay estudiantes para este horario.</p>';
+        return;
+      }
+      const horarios = conOrden ? calcularHorarios() : [];
+      items.forEach((e, i) => {
+        const card = document.createElement("div");
+        card.className = "card" + (i === indiceActual ? " current" : "") + (e.omitida ? " omitida" : "");
+        const tel = telefonoInternacional(e.telefono);
+        card.innerHTML = `
+          <strong>#${i + 1} ${esc(e.estudiante || "Estudiante")}</strong>
+          <div><b>Hora aprox:</b> ${esc(horarios[i] || "Sin calcular")}</div>
+          <div><b>Sector:</b> ${esc(e.sector || "Sin sector")}</div>
+          <div><b>Dirección:</b> ${esc((e.callePrincipal || "") + " " + (e.calleSecundaria || ""))}</div>
+          <div><b>Representante:</b> ${esc(e.representante || "Sin representante")}</div>
+          <div><b>Teléfono:</b> ${esc(e.telefono || "Sin teléfono")}</div>
+          <div class="actions">
+            <button class="primary" onclick="event.stopPropagation(); location.href='tel:${tel}'">Llamar</button>
+            <button class="soft" onclick="event.stopPropagation(); window.open('https://wa.me/${tel}', '_blank')">WhatsApp</button>
+            <button class="soft" onclick="event.stopPropagation(); navegarParada(${i})">Navegar</button>
+            <button class="danger" onclick="event.stopPropagation(); omitirParada(${i})">Omitir</button>
+          </div>
+        `;
+        card.onclick = () => map.flyTo([e.lat, e.lng], 17);
+        lista.appendChild(card);
+      });
+    }
+
+    function navegarParada(i) {
+      const e = ordenadas[i] || paradas[i];
+      if (!e) return;
+      window.open("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(e.lat + "," + e.lng) + "&travelmode=driving", "_blank");
+    }
+
+    function pintarMarcadores(items, conOrden) {
+      markers.clearLayers();
+      items.forEach((p, i) => {
+        const current = conOrden && i === indiceActual;
+        const icon = L.divIcon({ className: "numbered-icon" + (current ? " current-icon" : ""), html: i + 1, iconSize: [28, 28], iconAnchor: [14, 14] });
+        L.marker([p.lat, p.lng], { icon }).bindPopup(`
+          <strong>#${i + 1} ${esc(p.estudiante)}</strong><br>
+          Teléfono: <a href="tel:${telefonoInternacional(p.telefono)}">${esc(p.telefono)}</a><br>
+          Sector: ${esc(p.sector)}<br>
+          <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=driving','_blank')">Navegar</button>
+        `).addTo(markers);
+      });
+    }
+
+    function mostrarResumen(route) {
+      const horarios = calcularHorarios();
+      const c = MODOS[modoActual];
+      document.getElementById("resumenRuta").innerHTML = `
+        <strong>${esc(c.label)}</strong><br>
+        Tipo: ${esc(document.getElementById("tipoCalculo").selectedOptions[0].textContent)}<br>
+        Salida calculada: <b>${horarios.salida}</b><br>
+        Llegada calculada: <b>${horarios.llegada}</b><br>
+        Paradas: <b>${ordenadas.length}</b><br>
+        Km total: <b>${(route.distance / 1000).toFixed(2)} km</b><br>
+        Tiempo total: <b>${Math.round(route.duration / 60)} min</b>
+      `;
+      const filas = tramos.map((t, i) => `<tr><td>${i + 1}</td><td>${esc(nombreTramo(i, true))} - ${esc(nombreTramo(i, false))}</td><td>${t.km.toFixed(2)}</td><td>${Math.round(t.min)} min</td></tr>`).join("");
+      document.getElementById("tablaTramos").innerHTML = `<table class="route-table"><thead><tr><th>#</th><th>Tramo</th><th>Km</th><th>Tiempo</th></tr></thead><tbody>${filas}</tbody></table>`;
+    }
+
+    function calcularHorarios() {
+      const c = MODOS[modoActual];
+      const total = tramos.reduce((s, t) => s + Math.round(t.min), 0);
+      const objetivo = horaAMin(document.getElementById("horaObjetivo").value || c.hora);
+      const salida = c.sentido === "entrada" ? objetivo - total : objetivo;
+      let acum = 0;
+      const paradasHora = ordenadas.map((_, i) => {
+        acum += Math.round((tramos[i] && tramos[i].min) || 0);
+        return minAHora(salida + acum);
+      });
+      paradasHora.salida = minAHora(salida);
+      paradasHora.llegada = c.sentido === "entrada" ? minAHora(objetivo) : minAHora(salida + total);
+      return paradasHora;
+    }
+
+    function mostrarLinksRuta() {
+      const cont = document.getElementById("linksNavegacion");
+      cont.innerHTML = "";
+      crearLinksRutaCompleta().forEach((link, i, arr) => {
+        const btn = document.createElement("button");
+        btn.className = "primary";
+        btn.textContent = arr.length === 1 ? "Navegar ruta completa" : "Navegar tramo " + (i + 1);
+        btn.onclick = () => window.open(link, "_blank");
+        cont.appendChild(btn);
+      });
+    }
+
+    function crearLinksRutaCompleta() {
+      const c = MODOS[modoActual];
+      const puntos = c.sentido === "entrada" ? [c.inicio, ...ordenadas, c.fin] : [c.inicio, ...ordenadas];
+      const max = 10;
+      const links = [];
+      for (let i = 0; i < puntos.length - 1; i += max - 1) {
+        const tramo = puntos.slice(i, i + max);
+        if (tramo.length < 2) continue;
+        const origen = tramo[0];
+        const destino = tramo[tramo.length - 1];
+        const inter = tramo.slice(1, -1);
+        let url = "https://www.google.com/maps/dir/?api=1&origin=" + origen.lat + "," + origen.lng + "&destination=" + destino.lat + "," + destino.lng + "&travelmode=driving";
+        if (inter.length) url += "&waypoints=" + encodeURIComponent(inter.map(p => p.lat + "," + p.lng).join("|"));
+        links.push(url);
+      }
+      return links;
+    }
+
+    function ponerFijos() {
+      const home = L.divIcon({ className: "fixed-icon home-icon", html: "C", iconSize: [32, 32], iconAnchor: [16, 16] });
+      const school = L.divIcon({ className: "fixed-icon school-icon", html: "E", iconSize: [32, 32], iconAnchor: [16, 16] });
+      L.marker([CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], { icon: home }).bindPopup("Casa del conductor").addTo(map);
+      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: school }).bindPopup("Escuela").addTo(map);
+    }
+
+    function nombreTramo(i, desde) {
+      const c = MODOS[modoActual];
+      const puntos = c.sentido === "entrada" ? [c.inicio, ...ordenadas, c.fin] : [c.inicio, ...ordenadas];
+      const p = desde ? puntos[i] : puntos[i + 1];
+      return p ? (p.nombre || p.estudiante || "Parada") : "N/D";
+    }
+
+    function limpiarRuta() {
+      if (rutaLayer) map.removeLayer(rutaLayer);
+      rutaLayer = null;
+      ordenadas = [];
+      tramos = [];
+      document.getElementById("btnIniciar").disabled = true;
+      document.getElementById("resumenRuta").textContent = "Todavía no hay ruta calculada.";
+      document.getElementById("tablaTramos").innerHTML = "";
+      document.getElementById("linksNavegacion").innerHTML = "";
+      actualizarStats(0, 0, paradas.length);
+    }
+
+    function centrarMapa() {
+      const pts = (ordenadas.length ? ordenadas : paradas).map(p => [p.lat, p.lng]);
+      map.fitBounds([[CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], [ESCUELA.lat, ESCUELA.lng], ...pts], { padding: [45, 45] });
+    }
+
+    function actualizarStats(km, min, count) {
+      document.getElementById("statParadas").textContent = count || 0;
+      document.getElementById("statKm").textContent = Number(km || 0).toFixed(2);
+      document.getElementById("statTiempo").textContent = Math.round(min || 0) + " min";
+    }
+
+    function enviarUbicacion() {
+      if (!ubicacionGps) return;
+      enviarEvento("ubicacion", { lat: ubicacionGps.lat, lng: ubicacionGps.lng, precision: ubicacionGps.accuracy, modo: modoActual });
+    }
+
+    function enviarEvento(tipo, extra) {
+      const payload = { action: "event", tipo, fecha: new Date().toISOString(), modo: modoActual, ...extra };
+      fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams(payload) }).catch(() => {});
+    }
+
+    function registrarServiceWorker() {
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw-conductor.js").catch(() => {});
+    }
+
     function extraerCoordenadas(texto) {
-      const valor = limpiar(texto).replace(/"/g, "").replace(/\n/g, " ");
-      if (!valor) return null;
+      const valor = clean(texto).replace(/"/g, "").replace(/\n/g, " ");
       let m = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
       if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
       m = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
@@ -904,52 +697,59 @@
     }
 
     function ordenarPorCercania(inicio, puntos) {
-      const pendientes = [...puntos];
-      const orden = [];
+      const pendientes = [...puntos], orden = [];
       let actual = inicio;
       while (pendientes.length) {
-        let idx = 0;
-        let best = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
-        for (let i = 1; i < pendientes.length; i++) {
-          const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
-          if (d < best) { best = d; idx = i; }
-        }
+        const idx = indiceMasCercano(actual, pendientes);
         actual = pendientes.splice(idx, 1)[0];
         orden.push(actual);
       }
       return orden;
     }
 
-    function distanciaKm(lat1, lng1, lat2, lng2) {
+    function indiceMasCercano(actual, pendientes) {
+      let idx = 0, dist = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
+      for (let i = 1; i < pendientes.length; i++) {
+        const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
+        if (d < dist) { dist = d; idx = i; }
+      }
+      return idx;
+    }
+
+    function distanciaKm(a, b, c, d) {
       const R = 6371;
-      const dLat = rad(lat2 - lat1);
-      const dLng = rad(lng2 - lng1);
-      const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLng / 2) ** 2;
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const dLat = rad(c - a);
+      const dLng = rad(d - b);
+      const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
     }
 
-    function estimarMinutos(metros) {
-      return Math.max(1, Math.round((metros / 1000) / 25 * 60));
+    function horaAMin(hora) {
+      const p = String(hora || "00:00").split(":").map(Number);
+      return (p[0] || 0) * 60 + (p[1] || 0);
     }
 
-    function formatoDistancia(metros) {
-      return metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km";
-    }
-
-    function horaAMinutos(hora) {
-      const parts = String(hora || "00:00").split(":").map(Number);
-      return (parts[0] || 0) * 60 + (parts[1] || 0);
-    }
-
-    function minutosAHora(min) {
+    function minAHora(min) {
       const total = ((Math.round(min) % 1440) + 1440) % 1440;
       return String(Math.floor(total / 60)).padStart(2, "0") + ":" + String(total % 60).padStart(2, "0");
     }
 
-    function limpiar(v) { return String(v || "").trim(); }
-    function normalizarTexto(v) { return limpiar(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
-    function rad(v) { return v * Math.PI / 180; }
-    function escapar(v) {
+    function telefonoInternacional(tel) {
+      const n = clean(tel).replace(/\D/g, "");
+      if (!n) return "";
+      return n.startsWith("0") ? "593" + n.slice(1) : "593" + n;
+    }
+
+    function aviso(texto, tipo) {
+      const el = document.getElementById("msg");
+      el.textContent = texto;
+      el.className = "notice " + (tipo || "info");
+    }
+
+    function clean(v) { return String(v || "").trim(); }
+    function normalizar(v) { return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    function rad(n) { return n * Math.PI / 180; }
+    function esc(v) {
       return String(v || "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -957,11 +757,6 @@
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
-
-    window.addEventListener("load", () => {
-      cambiarModo();
-      setTimeout(() => map.invalidateSize(), 300);
-    });
   </script>
 </body>
 </html>
