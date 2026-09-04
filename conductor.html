@@ -12,19 +12,11 @@
     body { margin: 0; background: #f2f3f5; color: #111; }
     #app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
     #map { width: 100%; height: 100%; }
-    .stats {
-      position: absolute; top: 10px; left: 10px; right: 10px; z-index: 900;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px;
-    }
-    .stat { background: rgba(17,17,17,.9); color: #fff; border-radius: 8px; padding: 8px; font-size: 11px; }
+    .stats { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 900; display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
+    .stat { background: rgba(17,17,17,.92); color: #fff; border-radius: 8px; padding: 8px; font-size: 11px; }
     .stat b { display: block; color: #ffcc00; font-size: 15px; margin-top: 2px; }
-    .panel {
-      position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 1000;
-      max-height: 72vh; background: rgba(255,255,255,.98); border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,.28); overflow: hidden;
-      display: flex; flex-direction: column;
-    }
-    .panel.min { max-height: 176px; }
+    .panel { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 1000; max-height: 75vh; background: rgba(255,255,255,.98); border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,.28); overflow: hidden; display: flex; flex-direction: column; }
+    .panel.min { max-height: 174px; }
     .panel.min .body, .panel.min .tabs { display: none; }
     .head { background: #111; color: #ffcc00; padding: 12px; font-weight: 900; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
     .head small { display: block; color: #fff; font-weight: 600; margin-top: 2px; }
@@ -37,14 +29,8 @@
     .view.active { display: block; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     label { display: grid; gap: 4px; font-size: 12px; font-weight: 800; }
-    select, input {
-      width: 100%; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff;
-      padding: 10px; font-size: 13px;
-    }
-    button {
-      width: 100%; border: 0; border-radius: 6px; padding: 11px;
-      font-size: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-bottom: 8px;
-    }
+    select, input { width: 100%; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; padding: 10px; font-size: 13px; }
+    button { width: 100%; border: 0; border-radius: 6px; padding: 11px; font-size: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; }
     button:disabled { background: #ccc !important; color: #777 !important; cursor: not-allowed; }
     .primary { background: #111; color: #ffcc00; }
     .success { background: #28a745; color: #fff; }
@@ -55,708 +41,407 @@
     .notice.info { display: block; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .notice.ok { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .notice.error { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .card { background: #f8f9fa; border-left: 4px solid #ffcc00; border-radius: 6px; padding: 9px; margin-bottom: 8px; font-size: 12px; }
+    .card { background: #f8f9fa; border-left: 4px solid #ffcc00; border-radius: 6px; padding: 9px; margin-bottom: 8px; font-size: 12px; line-height: 1.45; }
     .card.current { border-left-color: #28a745; outline: 2px solid rgba(40,167,69,.35); }
     .card.omitida { opacity: .55; border-left-color: #dc3545; }
     .card strong { display: block; font-size: 13px; margin-bottom: 4px; }
-    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-    .actions button { margin-bottom: 0; padding: 9px; }
-    .route-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    .route-table th, .route-table td { padding: 5px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
-    .destino {
-      background: #111; color: #fff; border-radius: 8px; padding: 10px; margin-bottom: 8px; font-size: 13px;
-    }
-    .destino b { color: #ffcc00; }
-    .numbered-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; font-weight: 900; text-align: center; line-height: 26px; font-size: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
-    .current-icon { background: #28a745; color: #fff; border-color: #fff; }
-    .fixed-icon { border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; font-size: 15px; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px; }
+    .numbered-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; font-weight: 900; text-align: center; line-height: 26px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
+    .gps-icon { background: #28a745; color: #fff; border: 2px solid #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 900; }
+    .fixed-icon { border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
     .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; }
     .home-icon { background: #0066ff; color: #fff; border: 2px solid #fff; }
-    .gps-icon { background: #16a34a; color: #fff; border: 3px solid #fff; border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
-    @media (min-width: 850px) {
-      .panel { left: 16px; right: auto; top: 16px; bottom: 16px; width: 440px; max-height: none; }
-      .panel.min { max-height: 190px; }
-      .stats { left: 472px; right: 16px; grid-template-columns: repeat(4, minmax(100px, 160px)); }
-    }
+    @media (min-width: 780px) { .panel { left: 14px; right: auto; width: 430px; } }
+    @media (max-width: 520px) { .stats { grid-template-columns: repeat(2,1fr); } .panel { max-height: 70vh; } }
   </style>
 </head>
 <body>
   <div id="app">
     <div class="stats">
-      <div class="stat">Modo<b id="statModo">Auto</b></div>
+      <div class="stat">Modo<b id="statModo">-</b></div>
       <div class="stat">Paradas<b id="statParadas">0</b></div>
-      <div class="stat">Km<b id="statKm">0.00</b></div>
-      <div class="stat">Tiempo<b id="statTiempo">0 min</b></div>
-    </div>
-
-    <div id="panel" class="panel">
-      <div class="head">
-        <div>
-          Mi Ruta Segura - Conductor
-          <small id="subtitulo">Sin recorrido activo</small>
-        </div>
-        <button onclick="togglePanel()" id="btnPanel">Minimizar</button>
-      </div>
-
-      <div class="tabs">
-        <button class="tab active" data-view="inicio" onclick="showView('inicio')">Inicio</button>
-        <button class="tab" data-view="lista" onclick="showView('lista')">Lista</button>
-        <button class="tab" data-view="ruta" onclick="showView('ruta')">Ruta</button>
-        <button class="tab" data-view="ajustes" onclick="showView('ajustes')">Ajustes</button>
-      </div>
-
-      <div class="body">
-        <div id="msg" class="notice"></div>
-
-        <section id="view-inicio" class="view active">
-          <div class="destino">
-            Destino actual: <b id="destinoActual">Sin iniciar</b><br>
-            Distancia: <b id="distanciaActual">0 m</b><br>
-            Estado: <b id="estadoRecorrido">Esperando</b>
-          </div>
-          <button class="primary" onclick="cargarDatos()">Cargar estudiantes</button>
-          <button class="success" id="btnCalcular" onclick="calcularRuta()" disabled>Calcular ruta</button>
-          <button class="warn" id="btnIniciar" onclick="iniciarRecorrido()" disabled>Iniciar recorrido</button>
-          <div class="grid2">
-            <button class="soft" id="btnNavegar" onclick="navegarActual()" disabled>Navegar actual</button>
-            <button class="soft" id="btnLlegada" onclick="confirmarLlegada()" disabled>Confirmar llegada</button>
-          </div>
-          <button class="danger" id="btnOmitirActual" onclick="omitirActual()" disabled>Omitir parada actual</button>
-        </section>
-
-        <section id="view-lista" class="view">
-          <div id="listaAlumnos"><p class="card">Carga los estudiantes para ver el listado.</p></div>
-        </section>
-
-        <section id="view-ruta" class="view">
-          <div id="resumenRuta" class="card">Todavía no hay ruta calculada.</div>
-          <div id="linksNavegacion"></div>
-          <div id="tablaTramos"></div>
-        </section>
-
-        <section id="view-ajustes" class="view">
-          <div class="grid2">
-            <label>Horario
-              <select id="modoRuta" onchange="seleccionarModoManual()">
-                <option value="auto">Automático por hora</option>
-                <option value="mananaEntrada">Mañana entrada</option>
-                <option value="tardeEntrada">Tarde entrada</option>
-                <option value="mananaSalida">Mañana salida</option>
-                <option value="tardeSalida">Tarde salida</option>
-              </select>
-            </label>
-            <label>Cálculo
-              <select id="tipoCalculo" onchange="limpiarRuta()">
-                <option value="logica">Lógica / ahorro</option>
-                <option value="rapida">Más rápida</option>
-              </select>
-            </label>
-            <label>Hora objetivo
-              <input id="horaObjetivo" type="time" value="06:50" onchange="limpiarRuta()">
-            </label>
-            <label>Radio llegada
-              <select id="radioLlegada">
-                <option value="50">50 m</option>
-                <option value="80" selected>80 m</option>
-                <option value="120">120 m</option>
-              </select>
-            </label>
-          </div>
-          <button class="soft" onclick="detectarModoPorHora(true)">Detectar horario actual</button>
-          <button class="soft" onclick="centrarMapa()">Centrar mapa</button>
-        </section>
-      </div>
+      <div class="stat">Siguiente<b id="statActual">-</b></div>
+      <div class="stat">ETA<b id="statEta">-</b></div>
     </div>
     <div id="map"></div>
+    <section class="panel" id="panel">
+      <div class="head">
+        <div>Conductor Ruta 7<small id="subtitulo">Detectando horario...</small></div>
+        <button onclick="togglePanel()">Panel</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="tab('ruta')">Ruta</button>
+        <button class="tab" onclick="tab('lista')">Lista/PDF</button>
+        <button class="tab" onclick="tab('avisos')">Avisos</button>
+        <button class="tab" onclick="tab('ajustes')">Ajustes</button>
+      </div>
+      <div class="body">
+        <div id="msg" class="notice"></div>
+        <div id="view-ruta" class="view active">
+          <button class="primary" onclick="cargarDatos()">Cargar estudiantes</button>
+          <button class="success" onclick="calcularRuta()" id="btnCalcular" disabled>Calcular ruta</button>
+          <button class="warn" onclick="iniciarRecorrido()" id="btnIniciar" disabled>Iniciar recorrido</button>
+          <button class="primary" onclick="navegarActual()" id="btnNav" disabled>Navegar al destino actual</button>
+          <div class="grid2">
+            <button class="success" onclick="confirmarLlegada()" id="btnLlegada" disabled>Confirmar llegada</button>
+            <button class="danger" onclick="omitirActual()" id="btnOmitir" disabled>Omitir parada</button>
+          </div>
+          <div id="resumen"></div>
+        </div>
+        <div id="view-lista" class="view">
+          <div class="grid2">
+            <label>Buscar<input id="filtroTexto" oninput="renderLista()" placeholder="Nombre, sector, telefono"></label>
+            <label>Servicio<select id="filtroServicio" onchange="renderLista()"><option value="">Todos</option><option>COMPLETO</option><option>INGRESO</option><option>SALIDA</option></select></label>
+          </div>
+          <button class="primary" onclick="generarPdf()">Generar PDF del listado filtrado</button>
+          <div id="lista"></div>
+        </div>
+        <div id="view-avisos" class="view">
+          <button class="primary" onclick="leerEventosPadres()">Actualizar avisos</button>
+          <div id="avisos"></div>
+        </div>
+        <div id="view-ajustes" class="view">
+          <div class="grid2">
+            <label>Recorrido<select id="modo" onchange="seleccionarModo(this.value)"></select></label>
+            <label>Calculo<select id="calculo"><option value="logica">Logica/ahorro</option><option value="rapida">Mas rapida</option></select></label>
+          </div>
+          <label>Hora objetivo<input id="horaObjetivo" type="time"></label>
+          <button class="soft" onclick="detectarModoHorario()">Detectar horario actual</button>
+          <button class="soft" onclick="centrarMapa()">Centrar mapa</button>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhefclDIHwrXVVHabv67jQahJpQapsKkFA339A7ExWwyTDYEoxvhbJmDBg-DeY78KXSQ/exec";
-    const CASA_CONDUCTOR = { nombre: "Casa del conductor", lat: -0.256837, lng: -78.558433 };
+    const CASA_CONDUCTOR = { nombre: "Casa conductor", lat: -0.256837, lng: -78.558433 };
     const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
     const MODOS = {
-      mananaEntrada: { label: "Mañana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "06:50", color: "#0066ff" },
-      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "12:00", color: "#8e44ad" },
-      mananaSalida: { label: "Mañana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "12:30", color: "#28a745" },
-      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "17:00", color: "#f39c12" }
+      mananaEntrada: { label: "Manana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "06:50", color: "#0066ff" },
+      mananaSalida: { label: "Manana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "12:30", color: "#28a745" },
+      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "12:45", color: "#8e44ad" },
+      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "16:30", color: "#f39c12" }
     };
-
     let modoActual = "mananaEntrada";
-    let estudiantes = [];
+    let runId = "";
+    let registros = [];
     let paradas = [];
-    let ordenadas = [];
-    let tramos = [];
+    let orden = [];
+    let omitidas = new Set();
+    let indiceActual = 0;
     let recorridoActivo = false;
-    let indiceActual = -1;
-    let watchId = null;
     let ubicacionGps = null;
-    let rutaLayer = null;
+    let watchId = null;
+    let routeLayer = null;
     let gpsMarker = null;
-    const markers = L.layerGroup();
+    let markers = L.layerGroup();
+    let eventosVistos = new Set();
 
     const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "© OpenStreetMap"
-    }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "OpenStreetMap" }).addTo(map);
     markers.addTo(map);
-    ponerFijos();
-    detectarModoPorHora(false);
-    registrarServiceWorker();
+    init();
 
-    function showView(view) {
-      document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
-      document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + view));
+    function init() {
+      const sel = document.getElementById("modo");
+      Object.keys(MODOS).forEach(k => sel.add(new Option(MODOS[k].label, k)));
+      detectarModoHorario();
+      colocarFijos();
+      registrarSW();
+      setInterval(() => { if (recorridoActivo) enviarUbicacion(); }, 12000);
+      setInterval(leerEventosPadres, 10000);
     }
 
-    function togglePanel(forceMin) {
-      const panel = document.getElementById("panel");
-      const min = typeof forceMin === "boolean" ? forceMin : !panel.classList.contains("min");
-      panel.classList.toggle("min", min);
-      document.getElementById("btnPanel").textContent = min ? "Mostrar" : "Minimizar";
-      setTimeout(() => map.invalidateSize(), 250);
-    }
-
-    function detectarModoPorHora(mostrar) {
-      const manual = document.getElementById("modoRuta").value;
-      if (manual !== "auto" && !mostrar) {
-        modoActual = manual;
-        aplicarModo();
-        return;
-      }
+    function detectarModoHorario() {
       const now = new Date();
-      const min = now.getHours() * 60 + now.getMinutes();
-      if (min >= 240 && min <= 420) modoActual = "mananaEntrada";
-      else if (min >= 630 && min < 720) modoActual = "tardeEntrada";
-      else if (min >= 720 && min <= 840) modoActual = "mananaSalida";
-      else if (min >= 900 && min <= 1080) modoActual = "tardeSalida";
-      else modoActual = "mananaEntrada";
-      aplicarModo();
-      if (mostrar) aviso("Horario detectado: " + MODOS[modoActual].label, "ok");
+      const m = now.getHours() * 60 + now.getMinutes();
+      let modo = "mananaEntrada";
+      if (m >= 240 && m < 420) modo = "mananaEntrada";
+      else if (m >= 630 && m < 720) modo = "tardeEntrada";
+      else if (m >= 720 && m < 840) modo = "mananaSalida";
+      else if (m >= 900 && m < 1080) modo = "tardeSalida";
+      seleccionarModo(modo);
     }
 
-    function seleccionarModoManual() {
-      const valor = document.getElementById("modoRuta").value;
-      if (valor === "auto") detectarModoPorHora(true);
-      else {
-        modoActual = valor;
-        aplicarModo();
-      }
-      if (estudiantes.length) filtrarParadas();
-      limpiarRuta();
+    function seleccionarModo(modo) {
+      modoActual = modo;
+      document.getElementById("modo").value = modo;
+      document.getElementById("horaObjetivo").value = MODOS[modo].hora;
+      document.getElementById("statModo").textContent = MODOS[modo].label;
+      document.getElementById("subtitulo").textContent = MODOS[modo].label;
+      if (registros.length) filtrarParadas();
     }
 
-    function aplicarModo() {
-      const config = MODOS[modoActual];
-      document.getElementById("horaObjetivo").value = config.hora;
-      document.getElementById("statModo").textContent = config.label.replace(" ", "\n");
-      document.getElementById("subtitulo").textContent = config.label;
+    function colocarFijos() {
+      const home = L.divIcon({ className: "fixed-icon home-icon", html: "C", iconSize: [32,32], iconAnchor: [16,16] });
+      const school = L.divIcon({ className: "fixed-icon school-icon", html: "E", iconSize: [32,32], iconAnchor: [16,16] });
+      L.marker([CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], { icon: home }).bindPopup("Casa conductor").addTo(map);
+      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: school }).bindPopup("Escuela").addTo(map);
     }
 
     function cargarDatos() {
       aviso("Leyendo Google Sheets...", "info");
-      cargarJsonp(SCRIPT_URL + "?action=records").then(data => {
-        const records = Array.isArray(data) ? data : (data.records || []);
-        estudiantes = records.map(normalizarRegistro);
+      jsonp(SCRIPT_URL + "?action=records").then(data => {
+        registros = (Array.isArray(data) ? data : data.records || []).map(normalizarRegistro);
         filtrarParadas();
-        aviso("Datos cargados: " + estudiantes.length + " registros.", "ok");
-      }).catch(err => {
-        console.error(err);
-        aviso("No se pudo conectar con Google Sheets. Revisa URL /exec, doGet y permisos.", "error");
-      });
-    }
-
-    function cargarJsonp(url) {
-      return new Promise((resolve, reject) => {
-        const callbackName = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
-        const script = document.createElement("script");
-        const sep = url.includes("?") ? "&" : "?";
-        window[callbackName] = data => { cleanup(); resolve(data); };
-        script.onerror = () => { cleanup(); reject(new Error("JSONP fallo")); };
-        script.src = url + sep + "callback=" + callbackName + "&t=" + Date.now();
-        document.body.appendChild(script);
-        function cleanup() {
-          delete window[callbackName];
-          if (script.parentNode) script.parentNode.removeChild(script);
-        }
-      });
-    }
-
-    function normalizarRegistro(r) {
-      return {
-        estudiante: clean(r.estudiante || r.nombresestudiante || r.nombreestudiante || r.nombre),
-        representante: clean(r.representante || r.nombrerepresentante),
-        telefono: clean(r.telefono),
-        sector: clean(r.sector),
-        grado: clean(r.gradoano || r.grado),
-        horario: clean(r.tipodeservicio || r.horario || r.horarioservicio || r.tiposervicio),
-        servicio: clean(r.servicio || "COMPLETO"),
-        estado: clean(r.estado),
-        valor: clean(r.valor),
-        urlMaps: clean(r.enlacegooglemaps || r.urlmaps || r.url_maps || r.ubicacion || r.url)
-      };
+        aviso("Datos cargados: " + registros.length + " registros.", "ok");
+      }).catch(() => aviso("No se pudo leer Google Sheets.", "error"));
     }
 
     function filtrarParadas() {
-      const c = MODOS[modoActual];
-      paradas = estudiantes
-        .filter(e => coincideHorario(e.horario, c.horario))
-        .filter(e => coincideServicio(e.servicio, c.servicio))
-        .filter(e => normalizar(e.estado) !== "OMITIDO")
-        .map(e => ({ ...e, coords: extraerCoordenadas(e.urlMaps), omitida: false }))
-        .filter(e => e.coords)
-        .map(e => ({ ...e, lat: e.coords.lat, lng: e.coords.lng }));
+      const cfg = MODOS[modoActual];
+      paradas = registros.filter(r => coincideHorario(r.horario, cfg.horario) && coincideServicio(r.servicio, cfg.servicio))
+        .map(r => ({ ...r, coords: extraerCoordenadas(r.urlMaps) }))
+        .filter(r => r.coords)
+        .map(r => ({ ...r, lat: r.coords.lat, lng: r.coords.lng }));
+      orden = [];
       document.getElementById("btnCalcular").disabled = paradas.length === 0;
-      actualizarStats(0, 0, paradas.length);
-      renderLista(paradas, false);
-      centrarMapa();
-      if (!paradas.length) aviso("No hay estudiantes con ubicación válida para " + c.label + ".", "error");
-    }
-
-    function coincideHorario(valor, buscado) {
-      return normalizar(valor).includes(buscado);
-    }
-
-    function coincideServicio(valor, buscado) {
-      const txt = normalizar(valor || "COMPLETO");
-      if (!txt || txt.includes("COMPLETO")) return true;
-      if (buscado === "INGRESO") return txt.includes("INGRESO") || txt.includes("ENTRADA") || txt.includes("SOLO EN LA MANANA");
-      if (buscado === "SALIDA") return txt.includes("SALIDA") || txt.includes("SOLO SALIDA");
-      return true;
+      document.getElementById("statParadas").textContent = paradas.length;
+      renderLista();
+      pintarMarcadores(paradas);
     }
 
     async function calcularRuta() {
       if (!paradas.length) return;
-      const tipo = document.getElementById("tipoCalculo").value;
-      const c = MODOS[modoActual];
-      aviso("Calculando ruta...", "info");
+      const cfg = MODOS[modoActual];
       try {
-        if (tipo === "rapida") await rutaRapida(c);
-        else {
-          ordenadas = ordenarLogica(c, paradas.filter(p => !p.omitida));
-          await trazarOrden(c, ordenadas);
-        }
-        document.getElementById("btnIniciar").disabled = false;
-        renderLista(ordenadas, true);
-        showView("inicio");
-        togglePanel(true);
-        aviso("Ruta lista. Puedes iniciar recorrido.", "ok");
-      } catch (err) {
-        console.error(err);
-        aviso("No se pudo calcular por calles. Revisa internet o intenta ruta lógica.", "error");
+        orden = document.getElementById("calculo").value === "rapida" ? await ordenarRapida(cfg) : ordenarLogica(cfg, paradas);
+      } catch (e) {
+        orden = ordenarLogica(cfg, paradas);
       }
-    }
-
-    function ordenarLogica(c, puntos) {
-      if (c.sentido === "entrada") {
-        const pendientes = [...puntos].sort((a, b) => distanciaKm(ESCUELA.lat, ESCUELA.lng, b.lat, b.lng) - distanciaKm(ESCUELA.lat, ESCUELA.lng, a.lat, a.lng));
-        const orden = [];
-        let actual = pendientes.shift();
-        if (actual) orden.push(actual);
-        while (pendientes.length) {
-          const idx = indiceMasCercano(actual, pendientes);
-          actual = pendientes.splice(idx, 1)[0];
-          orden.push(actual);
-        }
-        return orden;
-      }
-      return ordenarPorCercania(c.inicio, puntos);
-    }
-
-    async function rutaRapida(c) {
-      const puntos = c.sentido === "entrada" ? [c.inicio, ...paradas.filter(p => !p.omitida), c.fin] : [c.inicio, ...paradas.filter(p => !p.omitida)];
-      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
-      const dest = c.sentido === "entrada" ? "last" : "any";
-      const url = "https://router.project-osrm.org/trip/v1/driving/" + coords + "?source=first&destination=" + dest + "&roundtrip=false&overview=full&geometries=geojson";
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!data.trips || !data.trips.length || !data.waypoints) throw new Error("OSRM trip sin datos");
-      const indices = data.waypoints
-        .map((wp, originalIndex) => ({ originalIndex, orden: wp.waypoint_index }))
-        .sort((a, b) => a.orden - b.orden)
-        .map(x => x.originalIndex);
-      ordenadas = indices
-        .filter(i => i !== 0 && !(c.sentido === "entrada" && i === puntos.length - 1))
-        .map(i => puntos[i]);
-      procesarRoute(data.trips[0], c);
-    }
-
-    async function trazarOrden(c, orden) {
-      const puntos = c.sentido === "entrada" ? [c.inicio, ...orden, c.fin] : [c.inicio, ...orden];
-      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
-      const url = "https://router.project-osrm.org/route/v1/driving/" + coords + "?overview=full&geometries=geojson&steps=false";
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!data.routes || !data.routes.length) throw new Error("OSRM route sin datos");
-      procesarRoute(data.routes[0], c);
-    }
-
-    function procesarRoute(route, c) {
-      tramos = (route.legs || []).map((leg, i) => ({ index: i + 1, km: leg.distance / 1000, min: leg.duration / 60 }));
-      if (rutaLayer) map.removeLayer(rutaLayer);
-      rutaLayer = L.geoJSON(route.geometry, { style: { color: c.color, weight: 6, opacity: .86 } }).addTo(map);
-      map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
-      actualizarStats(route.distance / 1000, route.duration / 60, ordenadas.length);
-      mostrarResumen(route);
-      mostrarLinksRuta();
-      pintarMarcadores(ordenadas, true);
+      await trazarRuta(cfg);
+      indiceActual = 0;
+      renderLista();
+      document.getElementById("btnIniciar").disabled = false;
+      document.getElementById("btnNav").disabled = false;
+      document.getElementById("resumen").innerHTML = "<div class='card'><strong>Ruta lista</strong>Paradas: " + orden.length + "</div>";
+      togglePanel(true);
     }
 
     function iniciarRecorrido() {
-      if (!ordenadas.length) {
-        alert("Primero calcula la ruta.");
-        return;
-      }
+      if (!orden.length) return;
       recorridoActivo = true;
-      indiceActual = 0;
+      runId = modoActual + "-" + Date.now();
+      indiceActual = siguientePendiente(0);
       document.getElementById("btnLlegada").disabled = false;
-      document.getElementById("btnNavegar").disabled = false;
-      document.getElementById("btnOmitirActual").disabled = false;
-      activarGps();
-      actualizarDestino();
-      enviarEvento("inicio_recorrido", {});
+      document.getElementById("btnOmitir").disabled = false;
+      enviarEvento("inicio_recorrido", { runId, mensaje: "Recorrido iniciado" });
+      iniciarGps();
+      actualizarActual();
       navegarActual();
+      leerEventosPadres();
     }
 
-    function activarGps() {
-      if (!navigator.geolocation) {
-        aviso("Este celular no permite GPS en el navegador.", "error");
-        return;
-      }
+    function iniciarGps() {
+      if (!navigator.geolocation) return aviso("Este celular no tiene GPS disponible.", "error");
       if (watchId) navigator.geolocation.clearWatch(watchId);
       watchId = navigator.geolocation.watchPosition(pos => {
-        ubicacionGps = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy || 0 };
+        ubicacionGps = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy };
         pintarGps();
-        evaluarLlegada();
         enviarUbicacion();
-      }, err => {
-        console.error(err);
-        aviso("No se pudo leer GPS. Revisa permisos de ubicación.", "error");
-      }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 12000 });
+        revisarLlegadaAutomatica();
+      }, () => aviso("Activa permiso de ubicacion GPS.", "error"), { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 });
     }
 
-    function pintarGps() {
-      if (!ubicacionGps) return;
-      const icon = L.divIcon({ className: "gps-icon", html: "G", iconSize: [34, 34], iconAnchor: [17, 17] });
-      const pos = [ubicacionGps.lat, ubicacionGps.lng];
-      if (gpsMarker) gpsMarker.setLatLng(pos);
-      else gpsMarker = L.marker(pos, { icon }).addTo(map).bindPopup("Ubicación del conductor");
-    }
-
-    function evaluarLlegada() {
-      if (!recorridoActivo || !ubicacionGps) return;
-      const destino = ordenadas[indiceActual];
-      if (!destino) return;
-      const metros = distanciaKm(ubicacionGps.lat, ubicacionGps.lng, destino.lat, destino.lng) * 1000;
-      document.getElementById("distanciaActual").textContent = metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km";
-      const radio = Number(document.getElementById("radioLlegada").value || 80);
-      if (metros <= radio) confirmarLlegada();
+    function revisarLlegadaAutomatica() {
+      const actual = orden[indiceActual];
+      if (!recorridoActivo || !actual || !ubicacionGps) return;
+      const metros = distanciaKm(ubicacionGps.lat, ubicacionGps.lng, actual.lat, actual.lng) * 1000;
+      document.getElementById("statEta").textContent = Math.max(1, Math.round(metros / 260)) + " min";
+      if (metros <= 70) confirmarLlegada();
     }
 
     function confirmarLlegada() {
-      if (!recorridoActivo || indiceActual < 0) return;
-      const destino = ordenadas[indiceActual];
-      if (!destino) return;
-      enviarEvento("llegada_parada", { estudiante: destino.estudiante, parada: indiceActual + 1 });
-      indiceActual += 1;
-      if (indiceActual >= ordenadas.length) {
-        finalizarRecorrido();
-        return;
-      }
-      actualizarDestino();
-      navegarActual();
+      const actual = orden[indiceActual];
+      if (!actual) return finalizarRecorrido();
+      enviarEvento("llegada_parada", { runId, estudiante: actual.estudiante, telefono: actual.telefono, parada: String(indiceActual + 1), lat: actual.lat, lng: actual.lng, mensaje: "Conductor llego a la parada" });
+      indiceActual = siguientePendiente(indiceActual + 1);
+      actualizarActual();
+      if (orden[indiceActual]) navegarActual(); else finalizarRecorrido();
     }
 
     function omitirActual() {
-      const destino = ordenadas[indiceActual];
-      if (!destino || !confirm("¿Omitir esta parada y avanzar a la siguiente?")) return;
-      destino.omitida = true;
-      enviarEvento("omitir_parada", { estudiante: destino.estudiante, parada: indiceActual + 1 });
-      confirmarLlegada();
+      const actual = orden[indiceActual];
+      if (!actual) return;
+      omitidas.add(actual.telefono || actual.estudiante);
+      enviarEvento("omitir_parada", { runId, estudiante: actual.estudiante, telefono: actual.telefono, parada: String(indiceActual + 1), mensaje: "Parada omitida por conductor" });
+      indiceActual = siguientePendiente(indiceActual + 1);
+      actualizarActual();
+      renderLista();
+      if (orden[indiceActual]) navegarActual(); else finalizarRecorrido();
     }
 
-    function omitirParada(index) {
-      const est = ordenadas[index];
-      if (!est || !confirm("¿Omitir parada de " + est.estudiante + "?")) return;
-      est.omitida = true;
-      enviarEvento("omitir_parada", { estudiante: est.estudiante, parada: index + 1 });
-      ordenadas = ordenadas.filter(p => !p.omitida);
-      renderLista(ordenadas, true);
-      pintarMarcadores(ordenadas, true);
-      if (indiceActual >= ordenadas.length) finalizarRecorrido();
-      else actualizarDestino();
-    }
-
-    function actualizarDestino() {
-      const destino = ordenadas[indiceActual];
-      if (!destino) return;
-      document.getElementById("destinoActual").textContent = "#" + (indiceActual + 1) + " " + destino.estudiante;
-      document.getElementById("estadoRecorrido").textContent = "En camino";
-      document.getElementById("subtitulo").textContent = "Siguiente: " + destino.estudiante;
-      renderLista(ordenadas, true);
-      pintarMarcadores(ordenadas, true);
-      map.flyTo([destino.lat, destino.lng], 16);
-    }
-
-    function navegarActual() {
-      const destino = ordenadas[indiceActual];
-      if (!destino) return;
-      const origen = ubicacionGps ? ubicacionGps.lat + "," + ubicacionGps.lng : MODOS[modoActual].inicio.lat + "," + MODOS[modoActual].inicio.lng;
-      const url = "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(origen) + "&destination=" + encodeURIComponent(destino.lat + "," + destino.lng) + "&travelmode=driving";
-      window.open(url, "_blank");
+    function siguientePendiente(i) {
+      while (i < orden.length && omitidas.has(orden[i].telefono || orden[i].estudiante)) i++;
+      return i;
     }
 
     function finalizarRecorrido() {
       recorridoActivo = false;
-      indiceActual = -1;
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-      document.getElementById("destinoActual").textContent = "Recorrido finalizado";
-      document.getElementById("estadoRecorrido").textContent = "Finalizado";
-      document.getElementById("btnLlegada").disabled = true;
-      document.getElementById("btnNavegar").disabled = true;
-      document.getElementById("btnOmitirActual").disabled = true;
-      enviarEvento("fin_recorrido", {});
+      enviarEvento("fin_recorrido", { runId, mensaje: "Recorrido finalizado" });
       aviso("Recorrido finalizado.", "ok");
+      document.getElementById("btnLlegada").disabled = true;
+      document.getElementById("btnOmitir").disabled = true;
+      document.getElementById("statActual").textContent = "Fin";
     }
 
-    function renderLista(items, conOrden) {
-      const lista = document.getElementById("listaAlumnos");
-      lista.innerHTML = "";
-      pintarMarcadores(items, conOrden);
-      if (!items.length) {
-        lista.innerHTML = '<p class="card">No hay estudiantes para este horario.</p>';
-        return;
-      }
-      const horarios = conOrden ? calcularHorarios() : [];
-      items.forEach((e, i) => {
-        const card = document.createElement("div");
-        card.className = "card" + (i === indiceActual ? " current" : "") + (e.omitida ? " omitida" : "");
-        const tel = telefonoInternacional(e.telefono);
-        card.innerHTML = `
-          <strong>#${i + 1} ${esc(e.estudiante || "Estudiante")}</strong>
-          <div><b>Hora aprox:</b> ${esc(horarios[i] || "Sin calcular")}</div>
-          <div><b>Sector:</b> ${esc(e.sector || "Sin sector")}</div>
-          <div><b>Dirección:</b> ${esc((e.callePrincipal || "") + " " + (e.calleSecundaria || ""))}</div>
-          <div><b>Representante:</b> ${esc(e.representante || "Sin representante")}</div>
-          <div><b>Teléfono:</b> ${esc(e.telefono || "Sin teléfono")}</div>
-          <div class="actions">
-            <button class="primary" onclick="event.stopPropagation(); location.href='tel:${tel}'">Llamar</button>
-            <button class="soft" onclick="event.stopPropagation(); window.open('https://wa.me/${tel}', '_blank')">WhatsApp</button>
-            <button class="soft" onclick="event.stopPropagation(); navegarParada(${i})">Navegar</button>
-            <button class="danger" onclick="event.stopPropagation(); omitirParada(${i})">Omitir</button>
-          </div>
-        `;
-        card.onclick = () => map.flyTo([e.lat, e.lng], 17);
-        lista.appendChild(card);
+    function actualizarActual() {
+      const actual = orden[indiceActual];
+      document.getElementById("statActual").textContent = actual ? "#" + (indiceActual + 1) : "Fin";
+      pintarMarcadores(orden.length ? orden : paradas);
+    }
+
+    function navegarActual() {
+      const actual = orden[indiceActual] || orden[0];
+      if (!actual) return;
+      window.open("https://www.google.com/maps/dir/?api=1&destination=" + actual.lat + "," + actual.lng + "&travelmode=driving", "_blank");
+    }
+
+    function leerEventosPadres() {
+      jsonp(SCRIPT_URL + "?action=events").then(data => {
+        const eventos = (data.events || []).filter(e => String(e.tipo || "").startsWith("padre_"));
+        const box = document.getElementById("avisos");
+        if (!eventos.length) box.innerHTML = "<div class='card'>Sin avisos de padres.</div>";
+        eventos.slice(-20).reverse().forEach(e => {
+          const key = [e.fechaservidor, e.tipo, e.telefono, e.estudiante].join("|");
+          if (!eventosVistos.has(key)) {
+            eventosVistos.add(key);
+            avisoSonoro("Aviso de padre: " + (e.estudiante || e.telefono || ""));
+          }
+        });
+        box.innerHTML = eventos.slice(-20).reverse().map(e => "<div class='card'><strong>" + esc(e.tipo) + "</strong>" + esc(e.estudiante || "") + "<br>" + esc(e.mensaje || "") + "<br><small>" + esc(e.fechaservidor || "") + "</small></div>").join("");
+        aplicarOmisionesPadres(eventos);
+      }).catch(() => {});
+    }
+
+    function aplicarOmisionesPadres(eventos) {
+      eventos.forEach(e => {
+        if (e.tipo === "padre_no_asiste" || e.tipo === "padre_retiro_escuela") {
+          const tel = normalizarTelefono(e.telefono);
+          orden.forEach(p => { if (normalizarTelefono(p.telefono) === tel) omitidas.add(p.telefono || p.estudiante); });
+        }
       });
+      renderLista();
     }
 
-    function navegarParada(i) {
-      const e = ordenadas[i] || paradas[i];
-      if (!e) return;
-      window.open("https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(e.lat + "," + e.lng) + "&travelmode=driving", "_blank");
+    function renderLista() {
+      const texto = normalizar(document.getElementById("filtroTexto")?.value || "");
+      const serv = normalizar(document.getElementById("filtroServicio")?.value || "");
+      const base = orden.length ? orden : paradas;
+      const filtrada = base.filter(p => (!texto || normalizar([p.estudiante,p.sector,p.telefono].join(" ")).includes(texto)) && (!serv || normalizar(p.servicio).includes(serv)));
+      document.getElementById("lista").innerHTML = filtrada.map((p, i) => cardAlumno(p, base.indexOf(p) + 1)).join("") || "<div class='card'>Sin alumnos.</div>";
     }
 
-    function pintarMarcadores(items, conOrden) {
+    function cardAlumno(p, n) {
+      const omitida = omitidas.has(p.telefono || p.estudiante);
+      const tel = telefonoInternacional(p.telefono);
+      return "<div class='card " + (omitida ? "omitida" : "") + "'><strong>#" + n + " " + esc(p.estudiante) + "</strong>Sector: " + esc(p.sector) + "<br>Telefono: " + esc(p.telefono) + "<br>Servicio: " + esc(p.servicio) + "<div class='actions'><button class='soft' onclick=\"window.open('tel:" + tel + "')\">Llamar</button><button class='soft' onclick=\"window.open('https://wa.me/" + tel + "')\">WhatsApp</button></div></div>";
+    }
+
+    function generarPdf() {
+      const base = orden.length ? orden : paradas;
+      const html = "<!doctype html><html><head><title>Listado Ruta 7</title><style>body{font-family:Arial;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:6px;font-size:12px}h2{margin:0 0 10px}</style></head><body><h2>Listado Ruta 7 - " + MODOS[modoActual].label + "</h2><table><thead><tr><th>#</th><th>Estudiante</th><th>Sector</th><th>Telefono</th><th>Servicio</th><th>Estado</th></tr></thead><tbody>" + base.map((p,i)=>"<tr><td>"+(i+1)+"</td><td>"+esc(p.estudiante)+"</td><td>"+esc(p.sector)+"</td><td>"+esc(p.telefono)+"</td><td>"+esc(p.servicio)+"</td><td></td></tr>").join("") + "</tbody></table><script>window.print()<\/script></body></html>";
+      const w = window.open("", "_blank");
+      w.document.write(html);
+      w.document.close();
+    }
+
+    async function ordenarRapida(cfg) {
+      const puntos = cfg.sentido === "entrada" ? [cfg.inicio, ...paradas, cfg.fin] : [cfg.inicio, ...paradas];
+      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
+      const dest = cfg.sentido === "entrada" ? "last" : "any";
+      const data = await fetch("https://router.project-osrm.org/trip/v1/driving/" + coords + "?source=first&destination=" + dest + "&roundtrip=false&overview=false").then(r => r.json());
+      if (!data.waypoints) throw new Error("Sin ruta rapida");
+      return data.waypoints.map((wp, idx) => ({ idx, order: wp.waypoint_index })).sort((a,b)=>a.order-b.order).map(x=>x.idx)
+        .filter(i => i !== 0 && !(cfg.sentido === "entrada" && i === puntos.length - 1)).map(i => puntos[i]);
+    }
+
+    function ordenarLogica(cfg, puntos) {
+      if (cfg.sentido === "entrada") {
+        const pendientes = [...puntos].sort((a,b)=>distanciaKm(ESCUELA.lat,ESCUELA.lng,b.lat,b.lng)-distanciaKm(ESCUELA.lat,ESCUELA.lng,a.lat,a.lng));
+        return ordenarDesde(pendientes.shift(), pendientes);
+      }
+      return ordenarDesde(cfg.inicio, [...puntos]);
+    }
+
+    function ordenarDesde(inicio, pendientes) {
+      const ordenados = [];
+      let actual = inicio;
+      if (actual && actual.estudiante) ordenados.push(actual);
+      while (pendientes.length) {
+        let best = 0, d = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
+        for (let i=1;i<pendientes.length;i++) { const nd = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng); if (nd < d) { d = nd; best = i; } }
+        actual = pendientes.splice(best, 1)[0];
+        ordenados.push(actual);
+      }
+      return ordenados;
+    }
+
+    async function trazarRuta(cfg) {
+      const puntos = cfg.sentido === "entrada" ? [cfg.inicio, ...orden, cfg.fin] : [cfg.inicio, ...orden];
+      const url = "https://router.project-osrm.org/route/v1/driving/" + puntos.map(p=>p.lng+","+p.lat).join(";") + "?overview=full&geometries=geojson";
+      const data = await fetch(url).then(r=>r.json());
+      if (!data.routes || !data.routes[0]) return;
+      if (routeLayer) map.removeLayer(routeLayer);
+      routeLayer = L.geoJSON(data.routes[0].geometry, { style: { color: cfg.color, weight: 6, opacity: .85 } }).addTo(map);
+      map.fitBounds(routeLayer.getBounds(), { padding: [45,45] });
+    }
+
+    function pintarMarcadores(lista) {
       markers.clearLayers();
-      items.forEach((p, i) => {
-        const current = conOrden && i === indiceActual;
-        const icon = L.divIcon({ className: "numbered-icon" + (current ? " current-icon" : ""), html: i + 1, iconSize: [28, 28], iconAnchor: [14, 14] });
-        L.marker([p.lat, p.lng], { icon }).bindPopup(`
-          <strong>#${i + 1} ${esc(p.estudiante)}</strong><br>
-          Teléfono: <a href="tel:${telefonoInternacional(p.telefono)}">${esc(p.telefono)}</a><br>
-          Sector: ${esc(p.sector)}<br>
-          <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=driving','_blank')">Navegar</button>
-        `).addTo(markers);
+      lista.forEach((p,i)=>{
+        const icon = L.divIcon({ className: "numbered-icon", html: i+1, iconSize:[28,28], iconAnchor:[14,14] });
+        markers.addLayer(L.marker([p.lat,p.lng], { icon }).bindPopup("#" + (i+1) + " " + esc(p.estudiante) + "<br>Tel: " + esc(p.telefono)));
       });
     }
 
-    function mostrarResumen(route) {
-      const horarios = calcularHorarios();
-      const c = MODOS[modoActual];
-      document.getElementById("resumenRuta").innerHTML = `
-        <strong>${esc(c.label)}</strong><br>
-        Tipo: ${esc(document.getElementById("tipoCalculo").selectedOptions[0].textContent)}<br>
-        Salida calculada: <b>${horarios.salida}</b><br>
-        Llegada calculada: <b>${horarios.llegada}</b><br>
-        Paradas: <b>${ordenadas.length}</b><br>
-        Km total: <b>${(route.distance / 1000).toFixed(2)} km</b><br>
-        Tiempo total: <b>${Math.round(route.duration / 60)} min</b>
-      `;
-      const filas = tramos.map((t, i) => `<tr><td>${i + 1}</td><td>${esc(nombreTramo(i, true))} - ${esc(nombreTramo(i, false))}</td><td>${t.km.toFixed(2)}</td><td>${Math.round(t.min)} min</td></tr>`).join("");
-      document.getElementById("tablaTramos").innerHTML = `<table class="route-table"><thead><tr><th>#</th><th>Tramo</th><th>Km</th><th>Tiempo</th></tr></thead><tbody>${filas}</tbody></table>`;
-    }
-
-    function calcularHorarios() {
-      const c = MODOS[modoActual];
-      const total = tramos.reduce((s, t) => s + Math.round(t.min), 0);
-      const objetivo = horaAMin(document.getElementById("horaObjetivo").value || c.hora);
-      const salida = c.sentido === "entrada" ? objetivo - total : objetivo;
-      let acum = 0;
-      const paradasHora = ordenadas.map((_, i) => {
-        acum += Math.round((tramos[i] && tramos[i].min) || 0);
-        return minAHora(salida + acum);
-      });
-      paradasHora.salida = minAHora(salida);
-      paradasHora.llegada = c.sentido === "entrada" ? minAHora(objetivo) : minAHora(salida + total);
-      return paradasHora;
-    }
-
-    function mostrarLinksRuta() {
-      const cont = document.getElementById("linksNavegacion");
-      cont.innerHTML = "";
-      crearLinksRutaCompleta().forEach((link, i, arr) => {
-        const btn = document.createElement("button");
-        btn.className = "primary";
-        btn.textContent = arr.length === 1 ? "Navegar ruta completa" : "Navegar tramo " + (i + 1);
-        btn.onclick = () => window.open(link, "_blank");
-        cont.appendChild(btn);
-      });
-    }
-
-    function crearLinksRutaCompleta() {
-      const c = MODOS[modoActual];
-      const puntos = c.sentido === "entrada" ? [c.inicio, ...ordenadas, c.fin] : [c.inicio, ...ordenadas];
-      const max = 10;
-      const links = [];
-      for (let i = 0; i < puntos.length - 1; i += max - 1) {
-        const tramo = puntos.slice(i, i + max);
-        if (tramo.length < 2) continue;
-        const origen = tramo[0];
-        const destino = tramo[tramo.length - 1];
-        const inter = tramo.slice(1, -1);
-        let url = "https://www.google.com/maps/dir/?api=1&origin=" + origen.lat + "," + origen.lng + "&destination=" + destino.lat + "," + destino.lng + "&travelmode=driving";
-        if (inter.length) url += "&waypoints=" + encodeURIComponent(inter.map(p => p.lat + "," + p.lng).join("|"));
-        links.push(url);
-      }
-      return links;
-    }
-
-    function ponerFijos() {
-      const home = L.divIcon({ className: "fixed-icon home-icon", html: "C", iconSize: [32, 32], iconAnchor: [16, 16] });
-      const school = L.divIcon({ className: "fixed-icon school-icon", html: "E", iconSize: [32, 32], iconAnchor: [16, 16] });
-      L.marker([CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], { icon: home }).bindPopup("Casa del conductor").addTo(map);
-      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: school }).bindPopup("Escuela").addTo(map);
-    }
-
-    function nombreTramo(i, desde) {
-      const c = MODOS[modoActual];
-      const puntos = c.sentido === "entrada" ? [c.inicio, ...ordenadas, c.fin] : [c.inicio, ...ordenadas];
-      const p = desde ? puntos[i] : puntos[i + 1];
-      return p ? (p.nombre || p.estudiante || "Parada") : "N/D";
-    }
-
-    function limpiarRuta() {
-      if (rutaLayer) map.removeLayer(rutaLayer);
-      rutaLayer = null;
-      ordenadas = [];
-      tramos = [];
-      document.getElementById("btnIniciar").disabled = true;
-      document.getElementById("resumenRuta").textContent = "Todavía no hay ruta calculada.";
-      document.getElementById("tablaTramos").innerHTML = "";
-      document.getElementById("linksNavegacion").innerHTML = "";
-      actualizarStats(0, 0, paradas.length);
-    }
-
-    function centrarMapa() {
-      const pts = (ordenadas.length ? ordenadas : paradas).map(p => [p.lat, p.lng]);
-      map.fitBounds([[CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], [ESCUELA.lat, ESCUELA.lng], ...pts], { padding: [45, 45] });
-    }
-
-    function actualizarStats(km, min, count) {
-      document.getElementById("statParadas").textContent = count || 0;
-      document.getElementById("statKm").textContent = Number(km || 0).toFixed(2);
-      document.getElementById("statTiempo").textContent = Math.round(min || 0) + " min";
+    function pintarGps() {
+      const icon = L.divIcon({ className: "gps-icon", html: "G", iconSize:[28,28], iconAnchor:[14,14] });
+      if (!gpsMarker) gpsMarker = L.marker([ubicacionGps.lat, ubicacionGps.lng], { icon }).addTo(map);
+      else gpsMarker.setLatLng([ubicacionGps.lat, ubicacionGps.lng]);
     }
 
     function enviarUbicacion() {
       if (!ubicacionGps) return;
-      enviarEvento("ubicacion", { lat: ubicacionGps.lat, lng: ubicacionGps.lng, precision: ubicacionGps.accuracy, modo: modoActual });
+      enviarEvento("ubicacion", { runId, lat: ubicacionGps.lat, lng: ubicacionGps.lng, precision: ubicacionGps.accuracy, mensaje: "Ubicacion conductor" });
     }
 
     function enviarEvento(tipo, extra) {
-      const payload = { action: "event", tipo, fecha: new Date().toISOString(), modo: modoActual, ...extra };
-      fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams(payload) }).catch(() => {});
+      const payload = { action: "event", tipo, modo: modoActual, fecha: new Date().toISOString(), ...extra };
+      fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams(payload) }).catch(()=>{});
     }
 
-    function registrarServiceWorker() {
-      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw-conductor.js").catch(() => {});
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+        const s = document.createElement("script");
+        window[cb] = data => { cleanup(); resolve(data); };
+        s.onerror = () => { cleanup(); reject(new Error("JSONP fallo")); };
+        s.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb + "&t=" + Date.now();
+        document.body.appendChild(s);
+        function cleanup(){ delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
+      });
     }
 
-    function extraerCoordenadas(texto) {
-      const valor = clean(texto).replace(/"/g, "").replace(/\n/g, " ");
-      let m = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
-      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
-      m = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
-      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
-      m = valor.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
-      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
-      return null;
-    }
-
-    function ordenarPorCercania(inicio, puntos) {
-      const pendientes = [...puntos], orden = [];
-      let actual = inicio;
-      while (pendientes.length) {
-        const idx = indiceMasCercano(actual, pendientes);
-        actual = pendientes.splice(idx, 1)[0];
-        orden.push(actual);
-      }
-      return orden;
-    }
-
-    function indiceMasCercano(actual, pendientes) {
-      let idx = 0, dist = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
-      for (let i = 1; i < pendientes.length; i++) {
-        const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
-        if (d < dist) { dist = d; idx = i; }
-      }
-      return idx;
-    }
-
-    function distanciaKm(a, b, c, d) {
-      const R = 6371;
-      const dLat = rad(c - a);
-      const dLng = rad(d - b);
-      const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(dLng / 2) ** 2;
-      return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
-    }
-
-    function horaAMin(hora) {
-      const p = String(hora || "00:00").split(":").map(Number);
-      return (p[0] || 0) * 60 + (p[1] || 0);
-    }
-
-    function minAHora(min) {
-      const total = ((Math.round(min) % 1440) + 1440) % 1440;
-      return String(Math.floor(total / 60)).padStart(2, "0") + ":" + String(total % 60).padStart(2, "0");
-    }
-
-    function telefonoInternacional(tel) {
-      const n = clean(tel).replace(/\D/g, "");
-      if (!n) return "";
-      return n.startsWith("0") ? "593" + n.slice(1) : "593" + n;
-    }
-
-    function aviso(texto, tipo) {
-      const el = document.getElementById("msg");
-      el.textContent = texto;
-      el.className = "notice " + (tipo || "info");
-    }
-
-    function clean(v) { return String(v || "").trim(); }
-    function normalizar(v) { return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
-    function rad(n) { return n * Math.PI / 180; }
-    function esc(v) {
-      return String(v || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+    function coincideHorario(v,h){ return normalizar(v).includes(h); }
+    function coincideServicio(v,s){ const t = normalizar(v || "COMPLETO"); return !t || t.includes("COMPLETO") || (s === "INGRESO" && (t.includes("INGRESO") || t.includes("ENTRADA") || t.includes("MANANA"))) || (s === "SALIDA" && t.includes("SALIDA")); }
+    function normalizarRegistro(r){ return { token: clean(r.token), estudiante: clean(r.estudiante||r.nombresestudiante), representante: clean(r.representante), telefono: clean(r.telefono), sector: clean(r.sector), horario: clean(r.tipodeservicio||r.horario||r.tiposervicio), servicio: clean(r.servicio||"COMPLETO"), estado: clean(r.estado), valor: clean(r.valor), urlMaps: clean(r.enlacegooglemaps||r.urlmaps||r.url_maps) }; }
+    function extraerCoordenadas(t){ const v=clean(t).replace(/"/g," ").replace(/\n/g," "); let m=v.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i)||v.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i)||v.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/); return m ? {lat:+m[1], lng:+m[2]} : null; }
+    function distanciaKm(a,b,c,d){ const R=6371, dLat=rad(c-a), dLng=rad(d-b); const x=Math.sin(dLat/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); }
+    function centrarMapa(){ const pts=[CASA_CONDUCTOR,ESCUELA,...(orden.length?orden:paradas)].map(p=>[p.lat,p.lng]); map.fitBounds(pts,{padding:[45,45]}); }
+    function tab(id){ document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active")); event.target.classList.add("active"); document.querySelectorAll(".view").forEach(v=>v.classList.remove("active")); document.getElementById("view-"+id).classList.add("active"); }
+    function togglePanel(forceMin){ const p=document.getElementById("panel"); p.classList.toggle("min", typeof forceMin==="boolean" ? forceMin : !p.classList.contains("min")); setTimeout(()=>map.invalidateSize(),250); }
+    function aviso(t, tipo){ const el=document.getElementById("msg"); el.textContent=t; el.className="notice "+(tipo||"info"); }
+    function avisoSonoro(t){ aviso(t,"info"); try{ if(Notification.permission==="granted") new Notification(t); const c=new (AudioContext||webkitAudioContext)(), o=c.createOscillator(), g=c.createGain(); o.frequency.value=880; g.gain.value=.08; o.connect(g); g.connect(c.destination); o.start(); setTimeout(()=>{o.stop();c.close();},350); }catch(e){} }
+    function registrarSW(){ if("serviceWorker" in navigator) navigator.serviceWorker.register("sw-conductor.js").catch(()=>{}); if("Notification" in window && Notification.permission==="default") Notification.requestPermission(); }
+    function telefonoInternacional(t){ let n=clean(t).replace(/\D/g,""); if(n.startsWith("593")) return n; if(n.startsWith("0")) return "593"+n.slice(1); return "593"+n; }
+    function normalizarTelefono(t){ let n=clean(t).replace(/\D/g,""); if(n.startsWith("593")) n=n.slice(3); if(n.startsWith("0")) n=n.slice(1); return n; }
+    function normalizar(v){ return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+    function clean(v){ return String(v||"").trim(); }
+    function rad(n){ return n*Math.PI/180; }
+    function esc(v){ return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
   </script>
 </body>
 </html>
