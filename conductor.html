@@ -1,1581 +1,967 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color"
-          content="#2563eb">
-
-    <meta name="description"
-          content="Aplicación para conductores de transporte escolar">
-
-    <title>Conductor - Mi Transporte</title>
-
-
-    <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-
-        body {
-            background: #f1f5f9;
-            color: #1e293b;
-        }
-
-
-        /* =========================
-           APP
-        ========================= */
-
-        .app {
-
-            width: 100%;
-
-            max-width: 480px;
-
-            min-height: 100vh;
-
-            margin: auto;
-
-            background: #ffffff;
-
-            padding-bottom: 90px;
-
-        }
-
-
-        /* =========================
-           HEADER
-        ========================= */
-
-        .header {
-
-            background: #2563eb;
-
-            color: white;
-
-            padding: 22px 20px;
-
-            border-radius:
-                0 0 25px 25px;
-
-        }
-
-
-        .header-top {
-
-            display: flex;
-
-            justify-content:
-                space-between;
-
-            align-items: center;
-
-        }
-
-
-        .logo {
-
-            font-size: 21px;
-
-            font-weight: bold;
-
-        }
-
-
-        .driver-icon {
-
-            width: 42px;
-
-            height: 42px;
-
-            background:
-                rgba(255,255,255,0.20);
-
-            border-radius: 50%;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 21px;
-
-        }
-
-
-        .driver-info {
-
-            margin-top: 18px;
-
-        }
-
-
-        .driver-info small {
-
-            opacity: 0.8;
-
-        }
-
-
-        .driver-info h2 {
-
-            margin-top: 4px;
-
-            font-size: 23px;
-
-        }
-
-
-        /* =========================
-           CONTENT
-        ========================= */
-
-        .content {
-
-            padding: 20px;
-
-        }
-
-
-        /* =========================
-           STATUS
-        ========================= */
-
-        .status-card {
-
-            padding: 16px;
-
-            border-radius: 17px;
-
-            background: #f8fafc;
-
-            border: 1px solid #e2e8f0;
-
-            margin-bottom: 18px;
-
-        }
-
-
-        .status-top {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-        }
-
-
-        .status-dot {
-
-            width: 13px;
-
-            height: 13px;
-
-            background: #94a3b8;
-
-            border-radius: 50%;
-
-        }
-
-
-        .status-dot.active {
-
-            background: #22c55e;
-
-            box-shadow:
-                0 0 0 5px
-                rgba(34,197,94,0.12);
-
-        }
-
-
-        .status-title {
-
-            font-weight: bold;
-
-        }
-
-
-        .status-description {
-
-            font-size: 12px;
-
-            color: #64748b;
-
-            margin-top: 5px;
-
-        }
-
-
-        /* =========================
-           VEHICLE
-        ========================= */
-
-        .vehicle-card {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 15px;
-
-            padding: 18px;
-
-            border: 1px solid #e2e8f0;
-
-            border-radius: 18px;
-
-            margin-bottom: 18px;
-
-        }
-
-
-        .vehicle-icon {
-
-            width: 60px;
-
-            height: 60px;
-
-            background: #dbeafe;
-
-            border-radius: 15px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 31px;
-
-        }
-
-
-        .vehicle-name {
-
-            font-size: 18px;
-
-            font-weight: bold;
-
-        }
-
-
-        .vehicle-details {
-
-            font-size: 13px;
-
-            color: #64748b;
-
-            margin-top: 4px;
-
-        }
-
-
-        /* =========================
-           GPS
-        ========================= */
-
-        .gps-card {
-
-            background: #eff6ff;
-
-            border: 1px solid #bfdbfe;
-
-            border-radius: 18px;
-
-            padding: 18px;
-
-            margin-bottom: 18px;
-
-        }
-
-
-        .gps-title {
-
-            font-size: 15px;
-
-            font-weight: bold;
-
-            margin-bottom: 14px;
-
-        }
-
-
-        .gps-row {
-
-            display: flex;
-
-            justify-content:
-                space-between;
-
-            padding: 8px 0;
-
-            border-bottom:
-                1px solid #dbeafe;
-
-            font-size: 13px;
-
-        }
-
-
-        .gps-row:last-child {
-
-            border-bottom: none;
-
-        }
-
-
-        .gps-label {
-
-            color: #64748b;
-
-        }
-
-
-        .gps-value {
-
-            font-weight: bold;
-
-        }
-
-
-        /* =========================
-           RECORRIDO
-        ========================= */
-
-        .route-card {
-
-            border: 1px solid #e2e8f0;
-
-            border-radius: 18px;
-
-            padding: 18px;
-
-            margin-bottom: 18px;
-
-        }
-
-
-        .route-title {
-
-            font-size: 17px;
-
-            font-weight: bold;
-
-            margin-bottom: 15px;
-
-        }
-
-
-        .route-stop {
-
-            display: flex;
-
-            gap: 12px;
-
-            position: relative;
-
-            padding-bottom: 18px;
-
-        }
-
-
-        .route-stop:last-child {
-
-            padding-bottom: 0;
-
-        }
-
-
-        .route-line {
-
-            position: absolute;
-
-            left: 15px;
-
-            top: 32px;
-
-            width: 2px;
-
-            height: 100%;
-
-            background: #cbd5e1;
-
-        }
-
-
-        .route-stop:last-child
-        .route-line {
-
-            display: none;
-
-        }
-
-
-        .stop-number {
-
-            width: 32px;
-
-            height: 32px;
-
-            min-width: 32px;
-
-            background: #dbeafe;
-
-            color: #2563eb;
-
-            border-radius: 50%;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-weight: bold;
-
-            z-index: 2;
-
-        }
-
-
-        .stop-number.current {
-
-            background: #2563eb;
-
-            color: white;
-
-        }
-
-
-        .stop-text strong {
-
-            display: block;
-
-            font-size: 14px;
-
-        }
-
-
-        .stop-text span {
-
-            display: block;
-
-            margin-top: 4px;
-
-            font-size: 12px;
-
-            color: #64748b;
-
-        }
-
-
-        /* =========================
-           ESTADISTICAS
-        ========================= */
-
-        .stats {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, 1fr);
-
-            gap: 12px;
-
-            margin-bottom: 20px;
-
-        }
-
-
-        .stat {
-
-            background: #f8fafc;
-
-            border: 1px solid #e2e8f0;
-
-            border-radius: 16px;
-
-            padding: 16px;
-
-            text-align: center;
-
-        }
-
-
-        .stat-icon {
-
-            font-size: 23px;
-
-        }
-
-
-        .stat-number {
-
-            font-size: 22px;
-
-            font-weight: bold;
-
-            margin-top: 5px;
-
-        }
-
-
-        .stat-label {
-
-            color: #64748b;
-
-            font-size: 11px;
-
-            margin-top: 3px;
-
-        }
-
-
-        /* =========================
-           BOTONES
-        ========================= */
-
-        .button {
-
-            width: 100%;
-
-            border: none;
-
-            padding: 16px;
-
-            border-radius: 14px;
-
-            font-size: 16px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-
-            margin-bottom: 12px;
-
-        }
-
-
-        .start-button {
-
-            background: #16a34a;
-
-            color: white;
-
-        }
-
-
-        .stop-button {
-
-            background: #dc2626;
-
-            color: white;
-
-            display: none;
-
-        }
-
-
-        .location-button {
-
-            background: #eff6ff;
-
-            color: #2563eb;
-
-            border: 1px solid #bfdbfe;
-
-        }
-
-
-        .button:active {
-
-            transform: scale(0.98);
-
-        }
-
-
-        /* =========================
-           NAV
-        ========================= */
-
-        .bottom-nav {
-
-            position: fixed;
-
-            bottom: 0;
-
-            width: 100%;
-
-            max-width: 480px;
-
-            height: 70px;
-
-            background: white;
-
-            border-top:
-                1px solid #e2e8f0;
-
-            display: flex;
-
-            justify-content:
-                space-around;
-
-            align-items: center;
-
-            z-index: 100;
-
-        }
-
-
-        .nav-item {
-
-            text-align: center;
-
-            color: #64748b;
-
-            font-size: 11px;
-
-            cursor: pointer;
-
-        }
-
-
-        .nav-item div {
-
-            font-size: 22px;
-
-            margin-bottom: 3px;
-
-        }
-
-
-        .nav-item.active {
-
-            color: #2563eb;
-
-            font-weight: bold;
-
-        }
-
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (min-width: 600px) {
-
-            body {
-
-                padding: 20px;
-
-            }
-
-
-            .app {
-
-                border-radius: 25px;
-
-                overflow: hidden;
-
-                box-shadow:
-                    0 10px 40px
-                    rgba(0,0,0,0.1);
-
-            }
-
-        }
-
-    </style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#111111">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Conductor - Mi Ruta Segura</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+    html, body { width: 100%; height: 100%; margin: 0; background: #111; color: #111; }
+    body { overflow: hidden; }
+    #app { position: relative; width: 100vw; height: 100vh; }
+    #map { width: 100%; height: 100%; background: #dfe7df; }
+
+    .topbar {
+      position: absolute;
+      top: env(safe-area-inset-top, 0);
+      left: 0;
+      right: 0;
+      z-index: 1100;
+      padding: 10px;
+      pointer-events: none;
+    }
+
+    .status-card {
+      background: rgba(255,255,255,.97);
+      border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.28);
+      padding: 12px;
+      pointer-events: auto;
+      border-top: 5px solid #ffcc00;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .brand strong {
+      background: #111;
+      color: #ffcc00;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge {
+      background: #e9ecef;
+      color: #111;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+    }
+
+    .metric {
+      background: #f8f9fa;
+      border: 1px solid #e2e2e2;
+      border-radius: 7px;
+      padding: 7px 6px;
+      min-width: 0;
+    }
+
+    .metric span {
+      display: block;
+      color: #60646c;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .metric b {
+      display: block;
+      color: #111;
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .panel {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: calc(10px + env(safe-area-inset-bottom, 0));
+      z-index: 1100;
+      background: rgba(255,255,255,.98);
+      border-radius: 12px;
+      box-shadow: 0 4px 22px rgba(0,0,0,.32);
+      max-height: 62vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: max-height .2s ease;
+    }
+
+    .panel.min {
+      max-height: 152px;
+    }
+
+    .panel.min .panel-body {
+      display: none;
+    }
+
+    .panel-head {
+      background: #111;
+      color: #ffcc00;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .panel-title {
+      min-width: 0;
+    }
+
+    .panel-title b {
+      display: block;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .panel-title span {
+      display: block;
+      color: #fff4b8;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .panel-body {
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    label {
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+      color: #333;
+      font-weight: 800;
+    }
+
+    select, input {
+      width: 100%;
+      border: 1px solid #c9c9c9;
+      border-radius: 7px;
+      background: #fff;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-primary { background: #ffcc00; color: #111; border: 2px solid #111; }
+    .btn-dark { background: #111; color: #ffcc00; }
+    .btn-green { background: #22a447; color: #fff; }
+    .btn-red { background: #d63b3b; color: #fff; }
+    .btn-gray { background: #e9ecef; color: #111; border: 1px solid #bbb; }
+    .btn:disabled { opacity: .48; cursor: not-allowed; }
+
+    .notice {
+      display: none;
+      padding: 9px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .notice.ok { display: block; background: #d4edda; border: 1px solid #b7dfc1; color: #155724; }
+    .notice.warn { display: block; background: #fff3cd; border: 1px solid #ffe29a; color: #856404; }
+    .notice.err { display: block; background: #f8d7da; border: 1px solid #f0b9c0; color: #721c24; }
+
+    .current-stop {
+      background: #f8f9fa;
+      border-left: 5px solid #22a447;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      line-height: 1.35;
+      font-size: 13px;
+    }
+
+    .current-stop b { font-size: 15px; }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .stop-list {
+      border-top: 1px solid #e0e0e0;
+      padding-top: 8px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .stop-card {
+      border-left: 4px solid #ffcc00;
+      background: #f8f9fa;
+      border-radius: 7px;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .stop-card.done { border-left-color: #22a447; opacity: .72; }
+    .stop-card.active { border-left-color: #0066ff; outline: 2px solid #0066ff; }
+    .stop-card.skipped { border-left-color: #888; opacity: .62; }
+    .stop-card strong { display: block; font-size: 13px; margin-bottom: 3px; }
+
+    .counter-strip {
+      position: absolute;
+      right: 10px;
+      top: 132px;
+      z-index: 1000;
+      display: grid;
+      gap: 7px;
+      width: 92px;
+    }
+
+    .counter {
+      background: rgba(17,17,17,.92);
+      color: #ffcc00;
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,.25);
+    }
+
+    .counter span { display: block; font-size: 10px; color: #fff7c7; text-transform: uppercase; font-weight: 800; }
+    .counter b { display: block; font-size: 17px; }
+
+    .numbered-icon {
+      background: #ffcc00;
+      color: #111;
+      border: 2px solid #111;
+      border-radius: 50%;
+      font-weight: 900;
+      text-align: center;
+      line-height: 27px;
+      font-size: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,.4);
+    }
+
+    .active-icon { background: #0066ff; color: #fff; border-color: #fff; }
+    .done-icon { background: #22a447; color: #fff; border-color: #fff; }
+    .fixed-icon {
+      border-radius: 50%;
+      font-weight: 900;
+      text-align: center;
+      line-height: 31px;
+      font-size: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,.4);
+    }
+    .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; }
+    .home-icon { background: #0066ff; color: #fff; border: 2px solid #fff; }
+    .gps-icon { background: #16a34a; color: #fff; border: 3px solid #fff; border-radius: 50%; font-weight: 900; text-align: center; line-height: 31px; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+
+    @media (min-width: 840px) {
+      .panel {
+        left: 16px;
+        right: auto;
+        bottom: 16px;
+        width: 430px;
+        max-height: calc(100vh - 180px);
+      }
+      .panel.min { max-height: 150px; }
+    }
+
+    @media (max-width: 560px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .counter-strip { top: 190px; width: 78px; }
+      .counter b { font-size: 15px; }
+    }
+  </style>
 </head>
-
-
 <body>
+  <div id="app">
+    <div id="map"></div>
 
+    <div class="topbar">
+      <div class="status-card">
+        <div class="brand">
+          <strong>Conductor Ruta 7</strong>
+          <span class="badge" id="estado-app">Sin iniciar</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span>Destino</span><b id="metric-destino">N/D</b></div>
+          <div class="metric"><span>Distancia</span><b id="metric-distancia">0 m</b></div>
+          <div class="metric"><span>ETA</span><b id="metric-eta">0 min</b></div>
+          <div class="metric"><span>Avance</span><b id="metric-avance">0/0</b></div>
+        </div>
+      </div>
+    </div>
 
-<div class="app">
+    <div class="counter-strip">
+      <div class="counter"><span>Paradas</span><b id="contador-paradas">0</b></div>
+      <div class="counter"><span>Hechas</span><b id="contador-hechas">0</b></div>
+      <div class="counter"><span>Km</span><b id="contador-km">0</b></div>
+    </div>
 
+    <section id="panel" class="panel">
+      <div class="panel-head">
+        <div class="panel-title">
+          <b id="titulo-modo">Mañana entrada</b>
+          <span id="subtitulo-panel">Carga estudiantes y traza la ruta para iniciar.</span>
+        </div>
+        <button class="btn btn-gray" style="width:auto;margin:0" onclick="alternarPanel()" id="btn-panel">Min</button>
+      </div>
 
-    <!-- =========================
-         HEADER
-    ========================= -->
+      <div class="panel-body">
+        <div id="mensaje" class="notice"></div>
 
-    <header class="header">
-
-        <div class="header-top">
-
-            <div class="logo">
-                🚌 Mi Transporte
-            </div>
-
-            <div class="driver-icon">
-                👨‍✈️
-            </div>
-
+        <div class="grid2">
+          <label>Recorrido
+            <select id="modoRuta" onchange="cambiarModo()">
+              <option value="mananaEntrada">Mañana entrada</option>
+              <option value="mananaSalida">Mañana salida</option>
+              <option value="tardeEntrada">Tarde entrada</option>
+              <option value="tardeSalida">Tarde salida</option>
+            </select>
+          </label>
+          <label>Hora objetivo
+            <input id="horaObjetivo" type="time" value="06:50" onchange="limpiarRuta()">
+          </label>
         </div>
 
-
-        <div class="driver-info">
-
-            <small>
-                Conductor
-            </small>
-
-            <h2>
-                Carlos Rodríguez
-            </h2>
-
+        <div class="grid2">
+          <label>Orden de ruta
+            <select id="tipoCalculo" onchange="limpiarRuta()">
+              <option value="rapida">Más rápida por calles</option>
+              <option value="logica">Ahorro: más lejano primero</option>
+            </select>
+          </label>
+          <label>Radio llegada
+            <select id="radioLlegada">
+              <option value="60">60 m</option>
+              <option value="80" selected>80 m</option>
+              <option value="120">120 m</option>
+              <option value="180">180 m</option>
+            </select>
+          </label>
         </div>
 
-    </header>
-
-
-
-    <!-- =========================
-         CONTENIDO
-    ========================= -->
-
-    <main class="content">
-
-
-        <!-- ESTADO -->
-
-        <div class="status-card">
-
-            <div class="status-top">
-
-                <div
-                    id="statusDot"
-                    class="status-dot">
-                </div>
-
-                <div>
-
-                    <div
-                        id="statusTitle"
-                        class="status-title">
-
-                        Recorrido detenido
-
-                    </div>
-
-                    <div
-                        id="statusDescription"
-                        class="status-description">
-
-                        Inicie el recorrido
-                        para compartir su ubicación.
-
-                    </div>
-
-                </div>
-
-            </div>
-
+        <div class="actions">
+          <button class="btn btn-dark" onclick="cargarDatos()">Cargar datos</button>
+          <button class="btn btn-primary" id="btn-trazar" onclick="trazarRuta()" disabled>Trazar ruta</button>
         </div>
 
-
-
-        <!-- VEHICULO -->
-
-        <div class="vehicle-card">
-
-            <div class="vehicle-icon">
-                🚌
-            </div>
-
-            <div>
-
-                <div class="vehicle-name">
-                    Bus Escolar #03
-                </div>
-
-                <div class="vehicle-details">
-                    Placa: ABC-1234
-                </div>
-
-            </div>
-
+        <div class="current-stop">
+          <b id="destino-actual">Destino no iniciado</b><br>
+          <span id="detalle-destino">Primero carga datos y traza la ruta.</span>
         </div>
 
-
-
-        <!-- GPS -->
-
-        <div class="gps-card">
-
-            <div class="gps-title">
-                📍 Información GPS
-            </div>
-
-
-            <div class="gps-row">
-
-                <span class="gps-label">
-                    Latitud
-                </span>
-
-                <span
-                    id="latitude"
-                    class="gps-value">
-
-                    --
-
-                </span>
-
-            </div>
-
-
-            <div class="gps-row">
-
-                <span class="gps-label">
-                    Longitud
-                </span>
-
-                <span
-                    id="longitude"
-                    class="gps-value">
-
-                    --
-
-                </span>
-
-            </div>
-
-
-            <div class="gps-row">
-
-                <span class="gps-label">
-                    Velocidad
-                </span>
-
-                <span
-                    id="speed"
-                    class="gps-value">
-
-                    -- km/h
-
-                </span>
-
-            </div>
-
-
-            <div class="gps-row">
-
-                <span class="gps-label">
-                    Precisión
-                </span>
-
-                <span
-                    id="accuracy"
-                    class="gps-value">
-
-                    -- metros
-
-                </span>
-
-            </div>
-
+        <div class="actions">
+          <button class="btn btn-green" id="btn-iniciar" onclick="iniciarRecorrido()" disabled>Iniciar</button>
+          <button class="btn btn-dark" id="btn-navegar" onclick="navegarDestinoActual()" disabled>Navegar</button>
         </div>
 
-
-
-        <!-- ESTADISTICAS -->
-
-        <div class="stats">
-
-
-            <div class="stat">
-
-                <div class="stat-icon">
-                    👦
-                </div>
-
-                <div
-                    class="stat-number"
-                    id="students">
-
-                    0
-
-                </div>
-
-                <div class="stat-label">
-                    Estudiantes
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-icon">
-                    📍
-                </div>
-
-                <div
-                    class="stat-number"
-                    id="stops">
-
-                    0
-
-                </div>
-
-                <div class="stat-label">
-                    Paradas realizadas
-                </div>
-
-            </div>
-
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-llegada" onclick="confirmarLlegada()" disabled>Confirmar llegada</button>
+          <button class="btn btn-gray" id="btn-omitir" onclick="omitirParada()" disabled>Omitir parada</button>
         </div>
 
-
-
-        <!-- RECORRIDO -->
-
-        <div class="route-card">
-
-            <div class="route-title">
-                🗺️ Recorrido de hoy
-            </div>
-
-
-            <!-- PARADA 1 -->
-
-            <div class="route-stop">
-
-                <div class="route-line"></div>
-
-                <div
-                    class="stop-number current">
-
-                    1
-
-                </div>
-
-                <div class="stop-text">
-
-                    <strong>
-                        Escuela Principal
-                    </strong>
-
-                    <span>
-                        Inicio del recorrido
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- PARADA 2 -->
-
-            <div class="route-stop">
-
-                <div class="route-line"></div>
-
-                <div class="stop-number">
-                    2
-                </div>
-
-                <div class="stop-text">
-
-                    <strong>
-                        Av. Principal
-                    </strong>
-
-                    <span>
-                        3 estudiantes
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- PARADA 3 -->
-
-            <div class="route-stop">
-
-                <div class="route-line"></div>
-
-                <div class="stop-number">
-                    3
-                </div>
-
-                <div class="stop-text">
-
-                    <strong>
-                        Calle 5
-                    </strong>
-
-                    <span>
-                        2 estudiantes
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- PARADA 4 -->
-
-            <div class="route-stop">
-
-                <div class="stop-number">
-                    4
-                </div>
-
-                <div class="stop-text">
-
-                    <strong>
-                        Urbanización Los Pinos
-                    </strong>
-
-                    <span>
-                        4 estudiantes
-                    </span>
-
-                </div>
-
-            </div>
-
+        <div class="actions">
+          <button class="btn btn-red" id="btn-finalizar" onclick="finalizarRecorrido()" disabled>Finalizar</button>
+          <button class="btn btn-gray" onclick="centrarMapa()">Centrar mapa</button>
         </div>
 
-
-
-        <!-- BOTON GPS -->
-
-        <button
-            class="button location-button"
-            onclick="obtenerUbicacion()">
-
-            📍 Comprobar GPS
-
-        </button>
-
-
-
-        <!-- INICIAR -->
-
-        <button
-            id="startButton"
-            class="button start-button"
-            onclick="iniciarRecorrido()">
-
-            ▶️ Iniciar recorrido
-
-        </button>
-
-
-
-        <!-- DETENER -->
-
-        <button
-            id="stopButton"
-            class="button stop-button"
-            onclick="detenerRecorrido()">
-
-            ⏹️ Finalizar recorrido
-
-        </button>
-
-
-    </main>
-
-
-
-    <!-- =========================
-         MENU
-    ========================= -->
-
-    <nav class="bottom-nav">
-
-
-        <div
-            class="nav-item active"
-            onclick="inicio()">
-
-            <div>🏠</div>
-
-            Inicio
-
+        <div class="stop-list" id="lista-paradas">
+          <p style="text-align:center;color:#777;font-size:12px;margin:6px 0">No hay paradas cargadas.</p>
         </div>
-
-
-        <div
-            class="nav-item"
-            onclick="mostrarRuta()">
-
-            <div>🗺️</div>
-
-            Ruta
-
-        </div>
-
-
-        <div
-            class="nav-item"
-            onclick="mostrarEstudiantes()">
-
-            <div>👦</div>
-
-            Estudiantes
-
-        </div>
-
-
-        <div
-            class="nav-item"
-            onclick="cerrarSesion()">
-
-            <div>🚪</div>
-
-            Salir
-
-        </div>
-
-
-    </nav>
-
-
-</div>
-
-
-
-<script>
-
-
-/* ==========================================
-   VARIABLES
-========================================== */
-
-let recorridoActivo = false;
-
-let watchID = null;
-
-let estudiantes = 9;
-
-let paradasRealizadas = 0;
-
-
-
-/* ==========================================
-   INICIAR RECORRIDO
-========================================== */
-
-function iniciarRecorrido() {
-
-
-    if (!navigator.geolocation) {
-
-        alert(
-            "❌ Este dispositivo no permite utilizar GPS."
-        );
-
-        return;
-
-    }
-
-
-    recorridoActivo = true;
-
-
-    document
-        .getElementById("startButton")
-        .style.display = "none";
-
-
-    document
-        .getElementById("stopButton")
-        .style.display = "block";
-
-
-    document
-        .getElementById("statusDot")
-        .classList.add("active");
-
-
-    document
-        .getElementById("statusTitle")
-        .innerText =
-        "Recorrido en curso";
-
-
-    document
-        .getElementById("statusDescription")
-        .innerText =
-        "Compartiendo ubicación GPS.";
-
-
-    document
-        .getElementById("students")
-        .innerText =
-        estudiantes;
-
-
-    iniciarGPS();
-
-
-    alert(
-        "🚌 Recorrido iniciado.\n\nEl GPS está activo."
-    );
-
-}
-
-
-
-/* ==========================================
-   GPS
-========================================== */
-
-function iniciarGPS() {
-
-
-    watchID =
-        navigator.geolocation.watchPosition(
-
-            actualizarUbicacion,
-
-            errorGPS,
-
-            {
-
-                enableHighAccuracy: true,
-
-                maximumAge: 5000,
-
-                timeout: 10000
-
-            }
-
-        );
-
-}
-
-
-
-/* ==========================================
-   ACTUALIZAR UBICACIÓN
-========================================== */
-
-function actualizarUbicacion(position) {
-
-
-    const latitude =
-        position.coords.latitude;
-
-
-    const longitude =
-        position.coords.longitude;
-
-
-    const accuracy =
-        position.coords.accuracy;
-
-
-    let speed =
-        position.coords.speed;
-
-
-    if (speed === null) {
-
-        speed = 0;
-
-    } else {
-
-        speed =
-            speed * 3.6;
-
-    }
-
-
-    document
-        .getElementById("latitude")
-        .innerText =
-        latitude.toFixed(6);
-
-
-    document
-        .getElementById("longitude")
-        .innerText =
-        longitude.toFixed(6);
-
-
-    document
-        .getElementById("accuracy")
-        .innerText =
-        accuracy.toFixed(1)
-        + " metros";
-
-
-    document
-        .getElementById("speed")
-        .innerText =
-        speed.toFixed(1)
-        + " km/h";
-
-
-    console.log(
-        "GPS:",
-        latitude,
-        longitude
-    );
-
-
-    /*
-        EN LA SIGUIENTE ETAPA:
-
-        Aquí enviaremos:
-
-        latitude
-        longitude
-        speed
-        accuracy
-
-        al servidor mediante:
-
-        fetch()
-
-        o WebSocket.
-
-        Así los padres podrán ver
-        el bus en tiempo real.
-    */
-
-}
-
-
-
-/* ==========================================
-   ERROR GPS
-========================================== */
-
-function errorGPS(error) {
-
-
-    let mensaje =
-        "No se pudo obtener la ubicación.";
-
-
-    switch (error.code) {
-
-        case 1:
-
-            mensaje =
-                "❌ Permiso de ubicación rechazado.";
-
-            break;
-
-
-        case 2:
-
-            mensaje =
-                "❌ Ubicación no disponible.";
-
-            break;
-
-
-        case 3:
-
-            mensaje =
-                "❌ Tiempo de espera agotado.";
-
-            break;
-
-    }
-
-
-    alert(mensaje);
-
-}
-
-
-
-/* ==========================================
-   COMPROBAR GPS
-========================================== */
-
-function obtenerUbicacion() {
-
-
-    if (!navigator.geolocation) {
-
-        alert(
-            "❌ GPS no disponible."
-        );
-
-        return;
-
-    }
-
-
-    navigator.geolocation.getCurrentPosition(
-
-        actualizarUbicacion,
-
-        errorGPS,
-
-        {
-
-            enableHighAccuracy: true,
-
-            timeout: 10000
-
-        }
-
-    );
-
-}
-
-
-
-/* ==========================================
-   DETENER RECORRIDO
-========================================== */
-
-function detenerRecorrido() {
-
-
-    const confirmar =
-        confirm(
-            "¿Desea finalizar el recorrido?"
-        );
-
-
-    if (!confirmar) {
-
-        return;
-
-    }
-
-
-    recorridoActivo = false;
-
-
-    if (watchID !== null) {
-
-        navigator
-            .geolocation
-            .clearWatch(watchID);
-
-        watchID = null;
-
-    }
-
-
-    document
-        .getElementById("startButton")
-        .style.display = "block";
-
-
-    document
-        .getElementById("stopButton")
-        .style.display = "none";
-
-
-    document
-        .getElementById("statusDot")
-        .classList.remove("active");
-
-
-    document
-        .getElementById("statusTitle")
-        .innerText =
-        "Recorrido finalizado";
-
-
-    document
-        .getElementById("statusDescription")
-        .innerText =
-        "El recorrido ha terminado.";
-
-
-    alert(
-        "✅ Recorrido finalizado."
-    );
-
-}
-
-
-
-/* ==========================================
-   MENU
-========================================== */
-
-function inicio() {
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
-
+      </div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxavsmUXvKo1DjuQirLMiu1ej4MixYyrNsToBlf_lip0XrK-9bDQRnqm-vRrpW6yw5PCw/exec";
+    const CASA_CONDUCTOR = { nombre: "Casa conductor", lat: -0.256837, lng: -78.558433 };
+    const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
+
+    const MODOS = {
+      mananaEntrada: { label: "Mañana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "06:50", color: "#0066ff" },
+      mananaSalida: { label: "Mañana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "12:30", color: "#22a447" },
+      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "12:45", color: "#8e44ad" },
+      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "18:00", color: "#f39c12" }
+    };
+
+    let registros = [];
+    let paradas = [];
+    let paradasOrdenadas = [];
+    let tramos = [];
+    let recorridoActivo = false;
+    let indiceActual = -1;
+    let ubicacionActual = null;
+    let watchId = null;
+    let rutaLayer = null;
+    let markersLayer = L.layerGroup();
+    let fixedLayer = L.layerGroup();
+    let gpsMarker = null;
+    let installPrompt = null;
+    let ultimoEnvioGps = 0;
+
+    const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap"
+    }).addTo(map);
+    fixedLayer.addTo(map);
+    markersLayer.addTo(map);
+    colocarPuntosFijos();
+    registrarPwa();
+
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      installPrompt = event;
+      mostrarMensaje("Puedes instalar esta PWA desde el navegador.", "warn");
     });
 
-}
-
-
-
-function mostrarRuta() {
-
-    alert(
-        "🗺️ En la siguiente versión mostraremos el mapa real de la ruta."
-    );
-
-}
-
-
-
-function mostrarEstudiantes() {
-
-    alert(
-        "👦 Estudiantes asignados: "
-        + estudiantes
-    );
-
-}
-
-
-
-function cerrarSesion() {
-
-
-    const confirmar =
-        confirm(
-            "¿Desea cerrar sesión?"
-        );
-
-
-    if (confirmar) {
-
-        window.location.href =
-            "login.html";
-
+    function registrarPwa() {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw-conductor.js").catch(console.warn);
+      }
     }
 
-}
+    function colocarPuntosFijos() {
+      fixedLayer.clearLayers();
+      const iconCasa = L.divIcon({ className: "fixed-icon home-icon", html: "C", iconSize: [33,33], iconAnchor: [16,16] });
+      const iconEscuela = L.divIcon({ className: "fixed-icon school-icon", html: "E", iconSize: [33,33], iconAnchor: [16,16] });
+      L.marker([CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], { icon: iconCasa }).bindPopup("<b>Casa del conductor</b>").addTo(fixedLayer);
+      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: iconEscuela }).bindPopup("<b>Escuela</b>").addTo(fixedLayer);
+    }
 
+    function cambiarModo() {
+      const config = configActual();
+      document.getElementById("horaObjetivo").value = config.hora;
+      document.getElementById("titulo-modo").textContent = config.label;
+      document.getElementById("subtitulo-panel").textContent = config.sentido === "entrada"
+        ? "Casa del conductor -> paradas -> escuela."
+        : "Escuela -> paradas en orden.";
+      limpiarRuta();
+      filtrarParadas();
+    }
 
-</script>
+    function configActual() {
+      return MODOS[document.getElementById("modoRuta").value];
+    }
 
+    function alternarPanel(force) {
+      const panel = document.getElementById("panel");
+      const min = typeof force === "boolean" ? force : !panel.classList.contains("min");
+      panel.classList.toggle("min", min);
+      document.getElementById("btn-panel").textContent = min ? "Max" : "Min";
+      setTimeout(() => map.invalidateSize(), 250);
+    }
 
+    function mostrarMensaje(texto, tipo) {
+      const el = document.getElementById("mensaje");
+      el.textContent = texto;
+      el.className = "notice " + (tipo || "warn");
+    }
+
+    function cargarDatos() {
+      mostrarMensaje("Leyendo Google Sheets...", "warn");
+      document.getElementById("lista-paradas").innerHTML = "<p style='text-align:center;color:#777;font-size:12px'>Cargando...</p>";
+      jsonp(SCRIPT_URL + "?action=records")
+        .then(data => {
+          registros = (Array.isArray(data) ? data : (data.records || [])).map(normalizarRegistro);
+          filtrarParadas();
+        })
+        .catch(error => {
+          console.error(error);
+          mostrarMensaje("No se pudo conectar con Google Sheets. Revisa el /exec y la implementación nueva.", "err");
+        });
+    }
+
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const callback = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        const script = document.createElement("script");
+        window[callback] = data => {
+          cleanup();
+          resolve(data);
+        };
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("JSONP failed"));
+        };
+        script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + callback + "&t=" + Date.now();
+        document.body.appendChild(script);
+        function cleanup() {
+          delete window[callback];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+      });
+    }
+
+    function normalizarRegistro(row) {
+      return {
+        id: limpiar(row.id || row.fechaRegistro || row.fechaderegistro || row.estudiante),
+        estudiante: limpiar(row.estudiante || row.nombresestudiante || row.nombreestudiante),
+        representante: limpiar(row.representante || row.nombrerepresentante),
+        telefono: limpiar(row.telefono),
+        sector: limpiar(row.sector),
+        grado: limpiar(row.gradoano || row.grado),
+        horario: limpiar(row.tipodeservicio || row.horario || row.horarioservicio || row.tiposervicio),
+        servicio: limpiar(row.servicio || "COMPLETO"),
+        estado: limpiar(row.estado),
+        valor: limpiar(row.valor),
+        urlMaps: limpiar(row.enlacegooglemaps || row.urlmaps || row.url_maps || row.ubicacion || row.url)
+      };
+    }
+
+    function filtrarParadas() {
+      const config = configActual();
+      paradas = registros
+        .filter(x => coincideHorario(x.horario, config.horario))
+        .filter(x => coincideServicio(x.servicio, config.servicio))
+        .map(x => ({ ...x, coords: extraerCoordenadas(x.urlMaps) }))
+        .filter(x => x.coords)
+        .map(x => ({ ...x, lat: x.coords.lat, lng: x.coords.lng, completado: false, omitido: false }));
+
+      document.getElementById("contador-paradas").textContent = paradas.length;
+      document.getElementById("btn-trazar").disabled = paradas.length === 0;
+      limpiarRuta();
+      renderizarParadas(paradas);
+
+      if (paradas.length) mostrarMensaje(paradas.length + " paradas listas para " + config.label + ".", "ok");
+      else mostrarMensaje("No hay paradas válidas para " + config.label + ".", "err");
+    }
+
+    async function trazarRuta() {
+      if (!paradas.length) return;
+      const config = configActual();
+      const btn = document.getElementById("btn-trazar");
+      btn.disabled = true;
+      btn.textContent = "Calculando...";
+
+      try {
+        if (document.getElementById("tipoCalculo").value === "rapida") {
+          await trazarRutaRapida(config);
+        } else {
+          paradasOrdenadas = ordenarRutaLogica(config, paradas);
+          await trazarPorOrden(config, paradasOrdenadas);
+        }
+        document.getElementById("btn-iniciar").disabled = false;
+        actualizarMetricasGenerales();
+        renderizarParadas(paradasOrdenadas);
+        mostrarMensaje("Ruta calculada. Presiona Iniciar para comenzar parada por parada.", "ok");
+        alternarPanel(true);
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje("No se pudo calcular con OSRM. Intenta de nuevo.", "err");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Trazar ruta";
+      }
+    }
+
+    async function trazarRutaRapida(config) {
+      const puntos = config.sentido === "entrada" ? [config.inicio, ...paradas, config.fin] : [config.inicio, ...paradas];
+      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
+      const destination = config.sentido === "entrada" ? "last" : "any";
+      const url = "https://router.project-osrm.org/trip/v1/driving/" + coords + "?source=first&destination=" + destination + "&roundtrip=false&overview=full&geometries=geojson";
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.trips || !data.trips.length || !data.waypoints) throw new Error("OSRM trip failed");
+      const order = data.waypoints
+        .map((wp, originalIndex) => ({ originalIndex, order: wp.waypoint_index }))
+        .sort((a, b) => a.order - b.order)
+        .map(x => x.originalIndex);
+      paradasOrdenadas = order
+        .filter(i => i !== 0)
+        .filter(i => !(config.sentido === "entrada" && i === puntos.length - 1))
+        .map(i => puntos[i]);
+      procesarRoute(data.trips[0], config);
+    }
+
+    async function trazarPorOrden(config, ordenadas) {
+      const puntos = config.sentido === "entrada" ? [config.inicio, ...ordenadas, config.fin] : [config.inicio, ...ordenadas];
+      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
+      const url = "https://router.project-osrm.org/route/v1/driving/" + coords + "?overview=full&geometries=geojson&steps=false";
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.routes || !data.routes.length) throw new Error("OSRM route failed");
+      procesarRoute(data.routes[0], config);
+    }
+
+    function procesarRoute(route, config) {
+      if (rutaLayer) map.removeLayer(rutaLayer);
+      rutaLayer = L.geoJSON(route.geometry, { style: { color: config.color, weight: 6, opacity: .88 } }).addTo(map);
+      tramos = (route.legs || []).map(leg => ({ km: leg.distance / 1000, min: leg.duration / 60 }));
+      calcularHorarios(route);
+      map.fitBounds(rutaLayer.getBounds(), { padding: [45,45] });
+    }
+
+    function ordenarRutaLogica(config, puntos) {
+      if (config.sentido === "entrada") {
+        const pendientes = [...puntos].sort((a, b) => distanciaKm(ESCUELA.lat, ESCUELA.lng, b.lat, b.lng) - distanciaKm(ESCUELA.lat, ESCUELA.lng, a.lat, a.lng));
+        const orden = [];
+        let actual = pendientes.shift();
+        if (actual) orden.push(actual);
+        while (pendientes.length) {
+          let idx = 0;
+          let best = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
+          for (let i = 1; i < pendientes.length; i++) {
+            const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
+            if (d < best) { best = d; idx = i; }
+          }
+          actual = pendientes.splice(idx, 1)[0];
+          orden.push(actual);
+        }
+        return orden;
+      }
+      return ordenarPorCercania(config.inicio, puntos);
+    }
+
+    function calcularHorarios(route) {
+      const config = configActual();
+      const objetivo = horaAMinutos(document.getElementById("horaObjetivo").value || config.hora);
+      const total = Math.round(route.duration / 60);
+      const salida = config.sentido === "entrada" ? objetivo - total : objetivo;
+      let acum = 0;
+      paradasOrdenadas.forEach((p, i) => {
+        acum += Math.round((tramos[i] && tramos[i].min) || 0);
+        p.horaAprox = minutosAHora(salida + acum);
+        p.tramoKm = tramos[i] ? tramos[i].km : 0;
+        p.tramoMin = tramos[i] ? tramos[i].min : 0;
+      });
+    }
+
+    function iniciarRecorrido() {
+      if (!paradasOrdenadas.length) {
+        alert("Primero traza la ruta.");
+        return;
+      }
+      recorridoActivo = true;
+      indiceActual = 0;
+      document.getElementById("btn-iniciar").disabled = true;
+      document.getElementById("btn-finalizar").disabled = false;
+      document.getElementById("btn-llegada").disabled = false;
+      document.getElementById("btn-omitir").disabled = false;
+      document.getElementById("btn-navegar").disabled = false;
+      document.getElementById("estado-app").textContent = "En recorrido";
+      iniciarGps();
+      actualizarDestino();
+      enviarEvento("start", { modo: document.getElementById("modoRuta").value, totalParadas: paradasOrdenadas.length });
+      navegarDestinoActual();
+      alternarPanel(true);
+    }
+
+    function iniciarGps() {
+      if (!navigator.geolocation) {
+        mostrarMensaje("Este celular no permite GPS en navegador.", "err");
+        return;
+      }
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+      watchId = navigator.geolocation.watchPosition(pos => {
+        ubicacionActual = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy || 0 };
+        actualizarGpsMarker();
+        evaluarLlegada();
+        enviarUbicacionCadaTiempo();
+      }, err => {
+        console.warn(err);
+        mostrarMensaje("Activa permiso de ubicación para detectar llegadas.", "warn");
+      }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 12000 });
+    }
+
+    function actualizarGpsMarker() {
+      if (!ubicacionActual) return;
+      const icon = L.divIcon({ className: "gps-icon", html: "G", iconSize: [36,36], iconAnchor: [18,18] });
+      const latlng = [ubicacionActual.lat, ubicacionActual.lng];
+      if (gpsMarker) gpsMarker.setLatLng(latlng);
+      else gpsMarker = L.marker(latlng, { icon }).bindPopup("GPS conductor").addTo(map);
+    }
+
+    function evaluarLlegada() {
+      if (!recorridoActivo || !ubicacionActual || indiceActual < 0) return;
+      const destino = paradasOrdenadas[indiceActual];
+      if (!destino) return;
+      const metros = distanciaKm(ubicacionActual.lat, ubicacionActual.lng, destino.lat, destino.lng) * 1000;
+      const eta = estimarMinutos(metros);
+      document.getElementById("metric-distancia").textContent = formatoDistancia(metros);
+      document.getElementById("metric-eta").textContent = eta + " min";
+      document.getElementById("detalle-destino").textContent = "Distancia: " + formatoDistancia(metros) + " | ETA: " + eta + " min | Hora aprox: " + (destino.horaAprox || "N/D");
+      if (metros <= Number(document.getElementById("radioLlegada").value || 80)) {
+        confirmarLlegada();
+      }
+    }
+
+    function confirmarLlegada() {
+      if (!recorridoActivo) return;
+      const destino = paradasOrdenadas[indiceActual];
+      if (!destino) return;
+      destino.completado = true;
+      enviarEvento("arrived_stop", { parada: indiceActual + 1, estudiante: destino.estudiante, telefono: destino.telefono });
+      indiceActual += 1;
+      if (indiceActual >= paradasOrdenadas.length) {
+        finalizarRecorrido();
+        return;
+      }
+      actualizarDestino();
+      navegarDestinoActual();
+    }
+
+    function omitirParada() {
+      if (!recorridoActivo) return;
+      const destino = paradasOrdenadas[indiceActual];
+      if (!destino) return;
+      destino.omitido = true;
+      enviarEvento("skip_stop", { parada: indiceActual + 1, estudiante: destino.estudiante });
+      indiceActual += 1;
+      if (indiceActual >= paradasOrdenadas.length) {
+        finalizarRecorrido();
+        return;
+      }
+      actualizarDestino();
+      navegarDestinoActual();
+    }
+
+    function actualizarDestino() {
+      const destino = paradasOrdenadas[indiceActual];
+      if (!destino) return;
+      document.getElementById("destino-actual").textContent = "#" + (indiceActual + 1) + " " + destino.estudiante;
+      document.getElementById("metric-destino").textContent = "#" + (indiceActual + 1);
+      document.getElementById("metric-avance").textContent = indiceActual + "/" + paradasOrdenadas.length;
+      document.getElementById("contador-hechas").textContent = indiceActual;
+      renderizarParadas(paradasOrdenadas);
+      map.flyTo([destino.lat, destino.lng], 16);
+    }
+
+    function navegarDestinoActual() {
+      const destino = paradasOrdenadas[indiceActual];
+      if (!destino) return;
+      const origen = ubicacionActual ? ubicacionActual.lat + "," + ubicacionActual.lng : configActual().inicio.lat + "," + configActual().inicio.lng;
+      const url = "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(origen) + "&destination=" + encodeURIComponent(destino.lat + "," + destino.lng) + "&travelmode=driving";
+      window.open(url, "_blank");
+    }
+
+    function finalizarRecorrido() {
+      recorridoActivo = false;
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+      document.getElementById("estado-app").textContent = "Finalizado";
+      document.getElementById("metric-destino").textContent = "Fin";
+      document.getElementById("metric-distancia").textContent = "0 m";
+      document.getElementById("metric-eta").textContent = "0 min";
+      document.getElementById("metric-avance").textContent = paradasOrdenadas.length + "/" + paradasOrdenadas.length;
+      document.getElementById("contador-hechas").textContent = paradasOrdenadas.length;
+      document.getElementById("destino-actual").textContent = "Recorrido finalizado";
+      document.getElementById("detalle-destino").textContent = "Todas las paradas fueron procesadas.";
+      document.getElementById("btn-iniciar").disabled = false;
+      document.getElementById("btn-finalizar").disabled = true;
+      document.getElementById("btn-llegada").disabled = true;
+      document.getElementById("btn-omitir").disabled = true;
+      document.getElementById("btn-navegar").disabled = true;
+      renderizarParadas(paradasOrdenadas);
+      enviarEvento("finish", { totalParadas: paradasOrdenadas.length });
+      mostrarMensaje("Recorrido finalizado.", "ok");
+    }
+
+    function renderizarParadas(lista) {
+      markersLayer.clearLayers();
+      const cont = document.getElementById("lista-paradas");
+      cont.innerHTML = "";
+      if (!lista.length) {
+        cont.innerHTML = "<p style='text-align:center;color:#777;font-size:12px;margin:6px 0'>No hay paradas cargadas.</p>";
+        return;
+      }
+      lista.forEach((p, i) => {
+        const active = recorridoActivo && i === indiceActual;
+        const cls = active ? "numbered-icon active-icon" : (p.completado ? "numbered-icon done-icon" : "numbered-icon");
+        const icon = L.divIcon({ className: cls, html: i + 1, iconSize: [31,31], iconAnchor: [15,15] });
+        L.marker([p.lat, p.lng], { icon }).bindPopup("<b>#" + (i + 1) + " " + escapar(p.estudiante) + "</b><br>" + escapar(p.sector) + "<br>Hora: " + escapar(p.horaAprox || "Sin calcular")).addTo(markersLayer);
+
+        const card = document.createElement("div");
+        card.className = "stop-card" + (active ? " active" : "") + (p.completado ? " done" : "") + (p.omitido ? " skipped" : "");
+        card.innerHTML = "<strong>#" + (i + 1) + " " + escapar(p.estudiante || "Estudiante") + "</strong>"
+          + "<div>Sector: " + escapar(p.sector || "N/D") + "</div>"
+          + "<div>Hora aprox: " + escapar(p.horaAprox || "Sin calcular") + "</div>"
+          + "<div>Tramo: " + ((p.tramoKm || 0).toFixed ? (p.tramoKm || 0).toFixed(2) : "0.00") + " km | " + Math.round(p.tramoMin || 0) + " min</div>";
+        card.onclick = () => map.flyTo([p.lat, p.lng], 17);
+        cont.appendChild(card);
+      });
+    }
+
+    function actualizarMetricasGenerales() {
+      const totalKm = tramos.reduce((sum, t) => sum + t.km, 0);
+      const totalMin = tramos.reduce((sum, t) => sum + t.min, 0);
+      document.getElementById("contador-km").textContent = totalKm.toFixed(1);
+      document.getElementById("metric-eta").textContent = Math.round(totalMin) + " min";
+      document.getElementById("metric-avance").textContent = "0/" + paradasOrdenadas.length;
+      document.getElementById("contador-hechas").textContent = "0";
+    }
+
+    function enviarUbicacionCadaTiempo() {
+      const now = Date.now();
+      if (now - ultimoEnvioGps < 15000) return;
+      ultimoEnvioGps = now;
+      enviarEvento("location", { lat: ubicacionActual.lat, lng: ubicacionActual.lng, accuracy: ubicacionActual.accuracy, paradaActual: indiceActual + 1 });
+    }
+
+    function enviarEvento(action, extra) {
+      const payload = Object.assign({
+        action,
+        conductor: "Ruta 7",
+        modo: document.getElementById("modoRuta").value,
+        timestamp: new Date().toISOString()
+      }, extra || {});
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(payload).toString()
+      }).catch(console.warn);
+    }
+
+    function limpiarRuta() {
+      if (rutaLayer) {
+        map.removeLayer(rutaLayer);
+        rutaLayer = null;
+      }
+      paradasOrdenadas = [];
+      tramos = [];
+      document.getElementById("btn-iniciar").disabled = true;
+      document.getElementById("metric-destino").textContent = "N/D";
+      document.getElementById("metric-distancia").textContent = "0 m";
+      document.getElementById("metric-eta").textContent = "0 min";
+      document.getElementById("metric-avance").textContent = "0/0";
+      document.getElementById("contador-km").textContent = "0";
+    }
+
+    function centrarMapa() {
+      const pts = (paradasOrdenadas.length ? paradasOrdenadas : paradas).map(p => [p.lat, p.lng]);
+      const bounds = [[CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], [ESCUELA.lat, ESCUELA.lng], ...pts];
+      map.fitBounds(bounds, { padding: [45,45] });
+    }
+
+    function coincideHorario(valor, buscado) {
+      return normalizarTexto(valor).includes(buscado);
+    }
+
+    function coincideServicio(valor, buscado) {
+      const txt = normalizarTexto(valor || "COMPLETO");
+      if (!txt || txt.includes("COMPLETO")) return true;
+      if (buscado === "INGRESO") return txt.includes("INGRESO") || txt.includes("ENTRADA") || txt.includes("SOLO EN LA MANANA");
+      if (buscado === "SALIDA") return txt.includes("SALIDA") || txt.includes("SOLO SALIDA");
+      return true;
+    }
+
+    function extraerCoordenadas(texto) {
+      const valor = limpiar(texto).replace(/"/g, "").replace(/\n/g, " ");
+      if (!valor) return null;
+      let m = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
+      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
+      m = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
+      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
+      m = valor.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
+      return null;
+    }
+
+    function ordenarPorCercania(inicio, puntos) {
+      const pendientes = [...puntos];
+      const orden = [];
+      let actual = inicio;
+      while (pendientes.length) {
+        let idx = 0;
+        let best = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
+        for (let i = 1; i < pendientes.length; i++) {
+          const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
+          if (d < best) { best = d; idx = i; }
+        }
+        actual = pendientes.splice(idx, 1)[0];
+        orden.push(actual);
+      }
+      return orden;
+    }
+
+    function distanciaKm(lat1, lng1, lat2, lng2) {
+      const R = 6371;
+      const dLat = rad(lat2 - lat1);
+      const dLng = rad(lng2 - lng1);
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function estimarMinutos(metros) {
+      return Math.max(1, Math.round((metros / 1000) / 25 * 60));
+    }
+
+    function formatoDistancia(metros) {
+      return metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km";
+    }
+
+    function horaAMinutos(hora) {
+      const parts = String(hora || "00:00").split(":").map(Number);
+      return (parts[0] || 0) * 60 + (parts[1] || 0);
+    }
+
+    function minutosAHora(min) {
+      const total = ((Math.round(min) % 1440) + 1440) % 1440;
+      return String(Math.floor(total / 60)).padStart(2, "0") + ":" + String(total % 60).padStart(2, "0");
+    }
+
+    function limpiar(v) { return String(v || "").trim(); }
+    function normalizarTexto(v) { return limpiar(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    function rad(v) { return v * Math.PI / 180; }
+    function escapar(v) {
+      return String(v || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    window.addEventListener("load", () => {
+      cambiarModo();
+      setTimeout(() => map.invalidateSize(), 300);
+    });
+  </script>
 </body>
-
 </html>
-```
