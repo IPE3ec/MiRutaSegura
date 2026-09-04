@@ -10,31 +10,72 @@
     body { margin: 0; background: #f0f2f5; }
     #map-container { position: relative; width: 100vw; height: 100vh; }
     #map { width: 100%; height: 100%; }
-    .panel-control { position: absolute; top: 18px; left: 18px; z-index: 1000; width: 390px; max-width: calc(100vw - 36px); max-height: calc(100vh - 36px); background: rgba(255,255,255,.97); border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.25); padding: 16px; display: flex; flex-direction: column; }
-    .header-panel { background: #111; color: #ffcc00; padding: 12px; border-radius: 6px; text-align: center; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
+    .panel-control {
+      position: absolute; top: 18px; left: 18px; z-index: 1000;
+      width: 390px; max-width: calc(100vw - 36px); max-height: calc(100vh - 36px);
+      background: rgba(255,255,255,.97); border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.25); padding: 16px;
+      display: flex; flex-direction: column;
+    }
+    .header-panel {
+      background: #111; color: #ffcc00; padding: 12px; border-radius: 6px;
+      text-align: center; font-weight: 900; margin-bottom: 10px; text-transform: uppercase;
+    }
     .modo-ruta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-    .btn { width: 100%; border: 0; border-radius: 6px; padding: 11px; font-size: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; }
+    .btn {
+      width: 100%; border: 0; border-radius: 6px; padding: 11px;
+      font-size: 12px; font-weight: 900; cursor: pointer;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
     .btn-cargar { background: #111; color: #ffcc00; }
-    .btn-trazar { background: #28a745; color: white; }
+    .btn-trazar { background: #28a745; color: #fff; }
     .btn-modo { background: #e9ecef; color: #111; border: 2px solid #ddd; }
     .btn-modo.activo { background: #ffcc00; color: #111; border-color: #111; }
     .btn:disabled { background: #ccc; color: #777; cursor: not-allowed; }
-    .estado { font-size: 13px; padding: 9px; border-radius: 6px; background: #fff3cd; border: 1px solid #ffeeba; margin-bottom: 10px; display: none; }
-    .resumen { display: none; background: #e8f4f8; border: 1px solid #b8daff; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; line-height: 1.45; }
-    .tramos { display: none; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 8px; margin-bottom: 10px; font-size: 12px; max-height: 145px; overflow: auto; }
-    .tramo { border-bottom: 1px solid #eee; padding: 6px 0; }
-    .tramo:last-child { border-bottom: 0; }
+    .estado {
+      font-size: 13px; padding: 9px; border-radius: 6px;
+      margin-bottom: 10px; display: none;
+    }
+    .estado.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    .estado.ok { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+    .estado.info { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+    .resumen {
+      display: none; background: #e8f4f8; border: 1px solid #b8daff;
+      padding: 10px; border-radius: 6px; font-size: 12px;
+      margin-bottom: 10px; line-height: 1.45;
+    }
+    .resumen table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .resumen th, .resumen td { border-bottom: 1px solid #cfe2ff; padding: 4px; text-align: left; }
     .contador { font-size: 13px; font-weight: 900; margin-bottom: 6px; }
     .lista-alumnos { overflow-y: auto; border-top: 1px solid #e0e0e0; padding-top: 8px; min-height: 120px; }
-    .card-alumno { background: #f8f9fa; border-left: 4px solid #ffcc00; padding: 9px 10px; margin-bottom: 8px; border-radius: 5px; font-size: 12px; cursor: pointer; }
+    .card-alumno {
+      background: #f8f9fa; border-left: 4px solid #ffcc00;
+      padding: 9px 10px; margin-bottom: 8px; border-radius: 5px;
+      font-size: 12px; cursor: pointer;
+    }
     .card-alumno strong { display: block; color: #111; margin-bottom: 4px; }
-    .card-sin-coords { border-left-color: #dc3545; color: #666; }
-    .btn-nav { margin-top: 8px; width: 100%; background: #111; color: #ffcc00; border: 0; border-radius: 5px; padding: 8px; font-weight: 900; cursor: pointer; }
-    .numbered-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; font-weight: 900; text-align: center; line-height: 26px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
-    .school-icon, .driver-icon { border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; font-size: 15px; }
+    .btn-nav {
+      margin-top: 8px; width: 100%; background: #111; color: #ffcc00;
+      border: 0; border-radius: 5px; padding: 8px; font-weight: 900; cursor: pointer;
+    }
+    .empty { text-align: center; color: #777; font-size: 12px; }
+    .numbered-icon {
+      background: #ffcc00; color: #111; border: 2px solid #111;
+      border-radius: 50%; font-weight: 900; text-align: center;
+      line-height: 26px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,.4);
+    }
+    .fixed-icon {
+      border-radius: 50%; font-weight: 900; text-align: center;
+      line-height: 30px; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,.4);
+    }
     .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; }
-    .driver-icon { background: #0066ff; color: #fff; border: 2px solid #fff; }
-    @media (max-width: 700px) { .panel-control { top: auto; left: 10px; right: 10px; bottom: 10px; width: auto; max-width: none; max-height: 58vh; } }
+    .conductor-icon { background: #0066ff; color: #fff; border: 2px solid #fff; }
+    @media (max-width: 700px) {
+      .panel-control {
+        top: auto; left: 10px; right: 10px; bottom: 10px;
+        width: auto; max-width: none; max-height: 58vh;
+      }
+    }
   </style>
 </head>
 <body>
@@ -42,248 +83,193 @@
     <div class="panel-control">
       <div class="header-panel">Ruta 7 - San Gabriel</div>
       <div class="modo-ruta">
-        <button id="btn-manana-entrada" class="btn btn-modo activo" onclick="seleccionarModoRuta('mananaEntrada')">Manana entrada</button>
-        <button id="btn-manana-salida" class="btn btn-modo" onclick="seleccionarModoRuta('mananaSalida')">Manana salida</button>
-        <button id="btn-tarde-entrada" class="btn btn-modo" onclick="seleccionarModoRuta('tardeEntrada')">Tarde entrada</button>
-        <button id="btn-tarde-salida" class="btn btn-modo" onclick="seleccionarModoRuta('tardeSalida')">Tarde salida</button>
+        <button class="btn btn-modo activo" data-modo="mananaEntrada" onclick="seleccionarModoRuta('mananaEntrada')">Mañana entrada</button>
+        <button class="btn btn-modo" data-modo="mananaSalida" onclick="seleccionarModoRuta('mananaSalida')">Mañana salida</button>
+        <button class="btn btn-modo" data-modo="tardeEntrada" onclick="seleccionarModoRuta('tardeEntrada')">Tarde entrada</button>
+        <button class="btn btn-modo" data-modo="tardeSalida" onclick="seleccionarModoRuta('tardeSalida')">Tarde salida</button>
       </div>
       <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">Cargar estudiantes</button>
       <button class="btn btn-trazar" id="btn-trazar" onclick="generarRuta()" disabled>Trazar ruta</button>
-      <button class="btn btn-cargar" id="btn-navegacion-completa" style="display:none" onclick="abrirNavegacionCompleta()">Navegar ruta completa</button>
       <div id="estado" class="estado"></div>
       <div id="resumen" class="resumen"></div>
-      <div id="tramos" class="tramos"></div>
-      <div class="contador">Inscritos: <span id="cant-alumnos">0</span> | En esta ruta: <span id="cant-ruta">0</span></div>
-      <div class="lista-alumnos" id="lista-alumnos"><p style="text-align:center;color:#777;font-size:12px;">Presiona Cargar estudiantes.</p></div>
+      <div id="navegacion-completa"></div>
+      <div class="contador">Registros: <span id="cant-total">0</span> | En ruta: <span id="cant-filtrados">0</span></div>
+      <div class="lista-alumnos" id="lista-alumnos"><p class="empty">Presiona “Cargar estudiantes”.</p></div>
     </div>
     <div id="map"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxavsmUXvKo1DjuQirLMiu1ej4MixYyrNsToBlf_lip0XrK-9bDQRnqm-vRrpW6yw5PCw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzho1kGWHLd64WowOqX-ARH9aOIb5nyE00y2E4dOx7bZ7TbKyUP6Eibd2QkfEQvkHvHrw/exec";
     const CASA_CONDUCTOR = { nombre: "Casa del conductor", lat: -0.256837, lng: -78.558433 };
     const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
-    const MODOS = {
-      mananaEntrada: { label: "Manana entrada", horario: "MATUTINO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#0066ff" },
-      mananaSalida: { label: "Manana salida", horario: "MATUTINO", sentido: "salida", inicio: ESCUELA, fin: null, color: "#28a745" },
-      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#8e44ad" },
-      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", sentido: "salida", inicio: ESCUELA, fin: null, color: "#e67e22" }
+    const MODOS_RUTA = {
+      mananaEntrada: { label: "Mañana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#0066ff" },
+      mananaSalida: { label: "Mañana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, color: "#28a745" },
+      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#8e44ad" },
+      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, color: "#f39c12" }
     };
 
-    let modoRuta = "mananaEntrada";
+    let modoActual = "mananaEntrada";
     let estudiantesData = [];
-    let puntosValidos = [];
     let puntosFiltrados = [];
-    let ultimoLinkCompleto = "";
+    let puntosOrdenados = [];
+    let tramosRuta = [];
     let marcadoresGroup = L.layerGroup();
     let rutaLayer = null;
 
     const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap"
+    }).addTo(map);
     marcadoresGroup.addTo(map);
     colocarPuntosFijos();
 
     function colocarPuntosFijos() {
-      const iconEscuela = L.divIcon({ className: "school-icon", html: "E", iconSize: [32, 32], iconAnchor: [16, 16] });
-      const iconConductor = L.divIcon({ className: "driver-icon", html: "C", iconSize: [32, 32], iconAnchor: [16, 16] });
-      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: iconEscuela }).bindPopup(`<strong>${ESCUELA.nombre}</strong><br>Escuela`).addTo(map);
+      const iconConductor = L.divIcon({ className: "fixed-icon conductor-icon", html: "C", iconSize: [32, 32], iconAnchor: [16, 16] });
+      const iconEscuela = L.divIcon({ className: "fixed-icon school-icon", html: "E", iconSize: [32, 32], iconAnchor: [16, 16] });
       L.marker([CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], { icon: iconConductor }).bindPopup(`<strong>${CASA_CONDUCTOR.nombre}</strong><br>Punto inicial`).addTo(map);
+      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: iconEscuela }).bindPopup(`<strong>${ESCUELA.nombre}</strong><br>Escuela`).addTo(map);
     }
 
     function seleccionarModoRuta(modo) {
-      modoRuta = modo;
-      Object.keys(MODOS).forEach(key => document.getElementById("btn-" + key.replace(/[A-Z]/g, m => "-" + m.toLowerCase())).classList.toggle("activo", key === modo));
-      mostrarEstado(MODOS[modo].label + ": " + (MODOS[modo].sentido === "entrada" ? "casas hacia escuela." : "escuela hacia casas."), "info");
-      if (puntosValidos.length > 0) generarRuta();
+      modoActual = modo;
+      document.querySelectorAll(".btn-modo").forEach(btn => btn.classList.toggle("activo", btn.dataset.modo === modo));
+      limpiarRuta();
+      if (estudiantesData.length) filtrarYRenderizar();
     }
 
     function cargarDatosDesdeGoogle() {
-      document.getElementById("lista-alumnos").innerHTML = "<p style='text-align:center;'>Leyendo Google Sheets...</p>";
       mostrarEstado("Conectando con Google Sheets...", "info");
-      cargarJsonp(`${SCRIPT_URL}?action=records`).then(data => {
-        const registros = Array.isArray(data) ? data : (data.records || []);
-        estudiantesData = registros.map(normalizarRegistro);
-        document.getElementById("cant-alumnos").textContent = estudiantesData.length;
-        prepararPuntosValidos();
-        generarRuta();
-      }).catch(error => {
-        console.error(error);
-        mostrarEstado("Error al leer Google Sheets. Revisa URL /exec y permisos.", "error");
-      });
+      document.getElementById("lista-alumnos").innerHTML = "<p class='empty'>Leyendo registros...</p>";
+      cargarJsonp(`${SCRIPT_URL}?action=records`)
+        .then(data => {
+          const registros = Array.isArray(data) ? data : (data.records || []);
+          estudiantesData = registros.map(normalizarRegistro);
+          document.getElementById("cant-total").textContent = estudiantesData.length;
+          filtrarYRenderizar();
+        })
+        .catch(error => {
+          console.error(error);
+          mostrarEstado("No se pudo leer Google Sheets. Revisa la URL /exec y permisos.", "error");
+        });
     }
 
     function cargarJsonp(url) {
       return new Promise((resolve, reject) => {
-        const callbackName = "jsonpCallback_" + Date.now();
+        const callbackName = "jsonpCallback_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
         const script = document.createElement("script");
         const separator = url.includes("?") ? "&" : "?";
-        window[callbackName] = data => { delete window[callbackName]; script.remove(); resolve(data); };
-        script.onerror = () => { delete window[callbackName]; script.remove(); reject(new Error("No se pudo cargar JSONP")); };
+        window[callbackName] = data => { cleanup(); resolve(data); };
+        script.onerror = () => { cleanup(); reject(new Error("No se pudo cargar JSONP")); };
         script.src = `${url}${separator}callback=${callbackName}&t=${Date.now()}`;
         document.body.appendChild(script);
+        function cleanup() {
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
       });
     }
 
     function normalizarRegistro(est) {
       return {
-        id: est.id || "",
-        estudiante: est.estudiante || est.nombresestudiante || est.nombreestudiante || est.nombre || "",
-        representante: est.representante || est.nombrerepresentante || "",
-        telefono: est.telefono || "",
-        sector: est.sector || "",
-        grado: est.gradoano || est.grado || "",
-        nivel: est.nivel || "",
-        urlMaps: est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "",
-        horario: est.tipodeservicio || est.horario || est.horarioservicio || "",
-        servicio: normalizarTexto(est.servicio || "COMPLETO"),
-        estado: est.estado || "",
-        valor: est.valor || ""
+        estudiante: limpiar(est.estudiante || est.nombresestudiante || est.nombreestudiante || est.nombre),
+        representante: limpiar(est.representante || est.nombrerepresentante),
+        telefono: limpiar(est.telefono),
+        sector: limpiar(est.sector),
+        grado: limpiar(est.gradoano || est.grado),
+        horario: limpiar(est.tipodeservicio || est.horario || est.horarioservicio || est.tiposervicio),
+        servicio: limpiar(est.servicio || "COMPLETO"),
+        estado: limpiar(est.estado),
+        valor: limpiar(est.valor),
+        urlMaps: limpiar(est.enlacegooglemaps || est.urlmaps || est.url_maps || est.ubicacion || est.url)
       };
     }
 
-    function prepararPuntosValidos() {
-      puntosValidos = [];
-      estudiantesData.forEach((est, idx) => {
-        const coords = extraerCoordenadas(est.urlMaps);
-        if (coords) puntosValidos.push({ ...est, lat: coords.lat, lng: coords.lng, ordenOriginal: idx });
-      });
-      document.getElementById("btn-trazar").disabled = puntosValidos.length === 0;
-    }
+    function filtrarYRenderizar() {
+      const config = MODOS_RUTA[modoActual];
+      puntosFiltrados = estudiantesData
+        .filter(est => coincideHorario(est.horario, config.horario))
+        .filter(est => coincideServicio(est.servicio, config.servicio))
+        .map(est => ({ ...est, coords: extraerCoordenadas(est.urlMaps) }))
+        .filter(est => est.coords)
+        .map(est => ({ ...est, lat: est.coords.lat, lng: est.coords.lng }));
 
-    function filtrarPorModo() {
-      const config = MODOS[modoRuta];
-      return puntosValidos.filter(est => {
-        const horario = normalizarTexto(est.horario);
-        const servicio = normalizarTexto(est.servicio || "COMPLETO");
-        const horarioOk = horario.includes(config.horario);
-        const servicioOk = config.sentido === "entrada" ? (servicio.includes("COMPLETO") || servicio.includes("INGRESO")) : (servicio.includes("COMPLETO") || servicio.includes("SALIDA"));
-        return horarioOk && servicioOk;
-      });
-    }
+      document.getElementById("cant-filtrados").textContent = puntosFiltrados.length;
+      document.getElementById("btn-trazar").disabled = puntosFiltrados.length === 0;
+      renderizarListaInicial();
 
-    function generarRuta() {
-      if (puntosValidos.length < 1) {
-        mostrarEstado("No hay estudiantes con ubicacion valida.", "error");
-        return;
+      if (puntosFiltrados.length) {
+        mostrarEstado(`${puntosFiltrados.length} estudiantes con ubicación válida para ${config.label}.`, "ok");
+      } else {
+        mostrarEstado(`No existen estudiantes con ubicación válida para ${config.label}.`, "error");
       }
-      const config = MODOS[modoRuta];
-      puntosFiltrados = filtrarPorModo();
-      document.getElementById("cant-ruta").textContent = puntosFiltrados.length;
-      if (!puntosFiltrados.length) {
-        limpiarRuta();
-        mostrarEstado(`No existen estudiantes con ubicacion valida para ${config.label}.`, "error");
-        return;
-      }
-      const btn = document.getElementById("btn-trazar");
-      btn.disabled = true;
-      btn.textContent = "Calculando...";
-      const ordenados = ordenarPorCercania(config.inicio, puntosFiltrados);
-      const puntosRuta = config.sentido === "entrada" ? [config.inicio, ...ordenados, config.fin] : [config.inicio, ...ordenados];
-      renderizarRutaOrdenada(ordenados, puntosRuta);
-      calcularRutaOSRM(puntosRuta, config).finally(() => { btn.disabled = false; btn.textContent = "Trazar ruta"; });
     }
 
-    function calcularRutaOSRM(puntosRuta, config) {
-      const waypoints = puntosRuta.map(p => `${p.lng},${p.lat}`).join(";");
-      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson&steps=false`;
-      return fetch(osrmUrl).then(res => res.json()).then(data => {
-        if (!data.routes || !data.routes.length) throw new Error("OSRM no devolvio ruta");
-        const route = data.routes[0];
-        if (rutaLayer) map.removeLayer(rutaLayer);
-        rutaLayer = L.geoJSON(route.geometry, { style: { color: config.color, weight: 6, opacity: 0.85 } }).addTo(map);
-        map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
-        ultimoLinkCompleto = crearLinkNavegacionCompleta(puntosRuta);
-        document.getElementById("btn-navegacion-completa").style.display = "block";
-        mostrarResumen(route, puntosRuta, config);
-        mostrarEstado("Ruta calculada con kilometros y tiempos por tramo.", "ok");
-      }).catch(error => {
-        console.error(error);
-        ultimoLinkCompleto = crearLinkNavegacionCompleta(puntosRuta);
-        document.getElementById("btn-navegacion-completa").style.display = "block";
-        const resumen = calcularResumenAproximado(puntosRuta);
-        mostrarResumenAproximado(resumen, puntosRuta, config);
-        mostrarEstado("OSRM no respondio. Se muestra calculo aproximado por distancia.", "error");
-      });
+    function coincideHorario(valor, horarioBuscado) {
+      return normalizarTexto(valor).includes(horarioBuscado);
     }
 
-    function renderizarRutaOrdenada(ordenados, puntosRuta) {
+    function coincideServicio(valor, servicioBuscado) {
+      const texto = normalizarTexto(valor || "COMPLETO");
+      if (texto === "" || texto.includes("COMPLETO")) return true;
+      if (servicioBuscado === "INGRESO") return texto.includes("INGRESO") || texto.includes("ENTRADA") || texto.includes("MANANA");
+      if (servicioBuscado === "SALIDA") return texto.includes("SALIDA") || texto.includes("TARDE");
+      return true;
+    }
+
+    function renderizarListaInicial() {
+      limpiarRuta();
       const lista = document.getElementById("lista-alumnos");
       lista.innerHTML = "";
       marcadoresGroup.clearLayers();
-      const bounds = puntosRuta.map(p => [p.lat, p.lng]);
-      ordenados.forEach((est, index) => agregarParadaAlMapaYLista(est, index + 1, lista));
-      map.fitBounds(bounds, { padding: [45, 45] });
-    }
-
-    function agregarParadaAlMapaYLista(est, numero, lista) {
-      const icon = L.divIcon({ className: "numbered-icon", html: numero, iconSize: [28, 28], iconAnchor: [14, 14] });
-      const marker = L.marker([est.lat, est.lng], { icon });
-      const linkNavegar = `https://www.google.com/maps/dir/?api=1&destination=${est.lat},${est.lng}&travelmode=driving`;
-      marker.bindPopup(`<strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><br><b>Sector:</b> ${escapar(est.sector || "Sin sector")}<br><b>Representante:</b> ${escapar(est.representante || "Sin representante")}<br><b>Telefono:</b> ${crearLinkWhatsApp(est.telefono)}<br><br><a href="${linkNavegar}" target="_blank">Navegar a esta parada</a>`);
-      marcadoresGroup.addLayer(marker);
-      const card = document.createElement("div");
-      card.className = "card-alumno";
-      card.innerHTML = `<strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><div>Sector: ${escapar(est.sector || "Sin sector")}</div><div>Telefono: ${escapar(est.telefono || "Sin telefono")}</div><div>Horario: ${escapar(est.horario || "Sin horario")}</div><div>Servicio: ${escapar(est.servicio || "COMPLETO")}</div><button class="btn-nav" onclick="event.stopPropagation(); window.open('${linkNavegar}', '_blank')">Navegar solo a parada #${numero}</button>`;
-      card.onclick = () => { map.flyTo([est.lat, est.lng], 17); marker.openPopup(); };
-      lista.appendChild(card);
-    }
-
-    function mostrarResumen(route, puntosRuta, config) {
-      const totalKm = route.distance / 1000;
-      const totalMin = Math.round(route.duration / 60);
-      document.getElementById("resumen").style.display = "block";
-      document.getElementById("resumen").innerHTML = `<b>Resumen de ruta</b><br>Tipo: <b>${config.label}</b><br>Paradas: <b>${puntosRuta.length - (config.sentido === "entrada" ? 2 : 1)}</b><br>Kilometros total: <b>${totalKm.toFixed(2)} km</b><br>Tiempo total: <b>${totalMin} min</b><br>Inicio: <b>${escapar(puntosRuta[0].nombre || puntosRuta[0].estudiante)}</b><br>Final: <b>${escapar(puntosRuta[puntosRuta.length - 1].nombre || puntosRuta[puntosRuta.length - 1].estudiante)}</b>`;
-      renderizarTramosOSRM(route.legs || [], puntosRuta);
-    }
-
-    function renderizarTramosOSRM(legs, puntosRuta) {
-      const cont = document.getElementById("tramos");
-      cont.style.display = "block";
-      cont.innerHTML = "<b>Detalle punto a punto</b>";
-      legs.forEach((leg, i) => {
-        const desde = puntosRuta[i];
-        const hasta = puntosRuta[i + 1];
-        const km = (leg.distance / 1000).toFixed(2);
-        const min = Math.round(leg.duration / 60);
-        cont.innerHTML += `<div class="tramo"><b>${i + 1}.</b> ${escapar(nombrePunto(desde))} -> ${escapar(nombrePunto(hasta))}<br>${km} km - ${min} min</div>`;
-      });
-    }
-
-    function mostrarResumenAproximado(resumen, puntosRuta, config) {
-      document.getElementById("resumen").style.display = "block";
-      document.getElementById("resumen").innerHTML = `<b>Resumen aproximado</b><br>Tipo: <b>${config.label}</b><br>Kilometros total: <b>${resumen.totalKm.toFixed(2)} km</b><br>Tiempo total aprox: <b>${resumen.totalMin} min</b>`;
-      const cont = document.getElementById("tramos");
-      cont.style.display = "block";
-      cont.innerHTML = "<b>Detalle aproximado punto a punto</b>";
-      resumen.tramos.forEach((t, i) => cont.innerHTML += `<div class="tramo"><b>${i + 1}.</b> ${escapar(nombrePunto(t.desde))} -> ${escapar(nombrePunto(t.hasta))}<br>${t.km.toFixed(2)} km - ${t.min} min aprox.</div>`);
-    }
-
-    function calcularResumenAproximado(puntosRuta) {
-      const tramos = [];
-      let totalKm = 0;
-      for (let i = 0; i < puntosRuta.length - 1; i++) {
-        const km = distanciaKm(puntosRuta[i].lat, puntosRuta[i].lng, puntosRuta[i + 1].lat, puntosRuta[i + 1].lng) * 1.35;
-        const min = Math.max(1, Math.round((km / 22) * 60));
-        totalKm += km;
-        tramos.push({ desde: puntosRuta[i], hasta: puntosRuta[i + 1], km, min });
+      if (!puntosFiltrados.length) {
+        lista.innerHTML = "<p class='empty'>No hay paradas para este modo.</p>";
+        return;
       }
-      return { totalKm, totalMin: tramos.reduce((sum, t) => sum + t.min, 0), tramos };
+      puntosFiltrados.forEach((est, i) => agregarParada(est, i + 1, lista));
+      ajustarVista(puntosFiltrados);
     }
 
-    function crearLinkNavegacionCompleta(puntosRuta) {
-      if (puntosRuta.length < 2) return "";
-      const origen = puntosRuta[0];
-      const destino = puntosRuta[puntosRuta.length - 1];
-      const intermedios = puntosRuta.slice(1, -1);
-      let url = `https://www.google.com/maps/dir/?api=1&origin=${origen.lat},${origen.lng}&destination=${destino.lat},${destino.lng}&travelmode=driving`;
-      if (intermedios.length > 0) url += `&waypoints=${encodeURIComponent(intermedios.map(p => `${p.lat},${p.lng}`).join("|"))}`;
-      return url;
-    }
+    function generarRuta() {
+      if (!puntosFiltrados.length) return;
+      const config = MODOS_RUTA[modoActual];
+      const btn = document.getElementById("btn-trazar");
+      btn.disabled = true;
+      btn.textContent = "Calculando ruta...";
 
-    function abrirNavegacionCompleta() {
-      if (!ultimoLinkCompleto) return alert("Primero traza la ruta.");
-      window.open(ultimoLinkCompleto, "_blank");
+      puntosOrdenados = ordenarPorCercania(config.inicio, puntosFiltrados);
+      const puntosOSRM = config.sentido === "entrada"
+        ? [config.inicio, ...puntosOrdenados, config.fin]
+        : [config.inicio, ...puntosOrdenados];
+
+      const waypoints = puntosOSRM.map(p => `${p.lng},${p.lat}`).join(";");
+      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson&steps=false`;
+
+      fetch(osrmUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.routes || !data.routes.length) throw new Error("OSRM no devolvió ruta");
+          const route = data.routes[0];
+          tramosRuta = (route.legs || []).map((leg, index) => ({ index: index + 1, km: leg.distance / 1000, min: leg.duration / 60 }));
+
+          if (rutaLayer) map.removeLayer(rutaLayer);
+          rutaLayer = L.geoJSON(route.geometry, { style: { color: config.color, weight: 6, opacity: 0.85 } }).addTo(map);
+
+          renderizarRutaOrdenada(route);
+          map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
+          mostrarEstado("Ruta trazada con calles reales.", "ok");
+        })
+        .catch(error => {
+          console.error(error);
+          mostrarEstado("No se pudo trazar la ruta. Intenta nuevamente.", "error");
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = "Trazar ruta";
+        });
     }
 
     function ordenarPorCercania(inicio, puntos) {
@@ -295,7 +281,10 @@
         let mejorDistancia = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
         for (let i = 1; i < pendientes.length; i++) {
           const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
-          if (d < mejorDistancia) { mejorDistancia = d; mejorIndex = i; }
+          if (d < mejorDistancia) {
+            mejorDistancia = d;
+            mejorIndex = i;
+          }
         }
         const siguiente = pendientes.splice(mejorIndex, 1)[0];
         ordenados.push(siguiente);
@@ -304,19 +293,114 @@
       return ordenados;
     }
 
-    function limpiarRuta() {
+    function renderizarRutaOrdenada(route) {
       marcadoresGroup.clearLayers();
-      if (rutaLayer) map.removeLayer(rutaLayer);
-      rutaLayer = null;
+      const lista = document.getElementById("lista-alumnos");
+      lista.innerHTML = "";
+      puntosOrdenados.forEach((est, i) => agregarParada(est, i + 1, lista, tramosRuta[i]));
+      mostrarResumen(route);
+      mostrarNavegacionCompleta();
+    }
+
+    function agregarParada(est, numero, lista, tramo) {
+      const icon = L.divIcon({ className: "numbered-icon", html: numero, iconSize: [28, 28], iconAnchor: [14, 14] });
+      const linkParada = `https://www.google.com/maps/dir/?api=1&destination=${est.lat},${est.lng}&travelmode=driving`;
+      const marker = L.marker([est.lat, est.lng], { icon }).bindPopup(`
+        <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><br>
+        <b>Sector:</b> ${escapar(est.sector || "Sin sector")}<br>
+        <b>Teléfono:</b> ${crearLinkWhatsApp(est.telefono)}<br><br>
+        <a href="${linkParada}" target="_blank">Navegar a esta parada</a>
+      `);
+      marcadoresGroup.addLayer(marker);
+
+      const tramoHtml = tramo ? `<div><b>Tramo:</b> ${tramo.km.toFixed(2)} km - ${Math.round(tramo.min)} min</div>` : "";
+      const card = document.createElement("div");
+      card.className = "card-alumno";
+      card.innerHTML = `
+        <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong>
+        <div>Sector: ${escapar(est.sector || "Sin sector")}</div>
+        <div>Horario: ${escapar(est.horario || "Sin horario")}</div>
+        <div>Servicio: ${escapar(est.servicio || "COMPLETO")}</div>
+        ${tramoHtml}
+        <button class="btn-nav" onclick="event.stopPropagation(); window.open('${linkParada}', '_blank')">Navegar a parada #${numero}</button>
+      `;
+      card.onclick = () => { map.flyTo([est.lat, est.lng], 17); marker.openPopup(); };
+      lista.appendChild(card);
+    }
+
+    function mostrarResumen(route) {
+      const config = MODOS_RUTA[modoActual];
+      const km = (route.distance / 1000).toFixed(2);
+      const min = Math.round(route.duration / 60);
+      const resumen = document.getElementById("resumen");
+      resumen.style.display = "block";
+      const filas = tramosRuta.map((t, i) => `<tr><td>${i + 1}</td><td>${t.km.toFixed(2)} km</td><td>${Math.round(t.min)} min</td></tr>`).join("");
+      resumen.innerHTML = `
+        <b>${config.label}</b><br>
+        Total paradas: <b>${puntosOrdenados.length}</b><br>
+        Distancia total: <b>${km} km</b><br>
+        Tiempo total: <b>${min} min</b><br>
+        Primera parada: <b>${escapar(puntosOrdenados[0]?.estudiante || "N/D")}</b><br>
+        Última parada: <b>${escapar(puntosOrdenados[puntosOrdenados.length - 1]?.estudiante || "N/D")}</b>
+        <table><thead><tr><th>Tramo</th><th>Km</th><th>Tiempo</th></tr></thead><tbody>${filas}</tbody></table>
+      `;
+    }
+
+    function mostrarNavegacionCompleta() {
+      const cont = document.getElementById("navegacion-completa");
+      cont.innerHTML = "";
+      const links = crearLinksNavegacionPorTramos();
+      links.forEach((link, i) => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-cargar";
+        btn.textContent = links.length === 1 ? "Navegar ruta completa" : `Navegar tramo ${i + 1}`;
+        btn.onclick = () => window.open(link, "_blank");
+        cont.appendChild(btn);
+      });
+    }
+
+    function crearLinksNavegacionPorTramos() {
+      const config = MODOS_RUTA[modoActual];
+      const puntos = config.sentido === "entrada"
+        ? [config.inicio, ...puntosOrdenados, config.fin]
+        : [config.inicio, ...puntosOrdenados];
+      const maxPuntosGoogle = 10;
+      const links = [];
+      for (let start = 0; start < puntos.length - 1; start += maxPuntosGoogle - 1) {
+        const tramo = puntos.slice(start, start + maxPuntosGoogle);
+        if (tramo.length < 2) continue;
+        const origen = tramo[0];
+        const destino = tramo[tramo.length - 1];
+        const intermedios = tramo.slice(1, -1);
+        let url = `https://www.google.com/maps/dir/?api=1&origin=${origen.lat},${origen.lng}&destination=${destino.lat},${destino.lng}&travelmode=driving`;
+        if (intermedios.length) {
+          url += `&waypoints=${encodeURIComponent(intermedios.map(p => `${p.lat},${p.lng}`).join("|"))}`;
+        }
+        links.push(url);
+      }
+      return links;
+    }
+
+    function limpiarRuta() {
+      if (rutaLayer) {
+        map.removeLayer(rutaLayer);
+        rutaLayer = null;
+      }
+      tramosRuta = [];
+      puntosOrdenados = [];
+      marcadoresGroup.clearLayers();
       document.getElementById("resumen").style.display = "none";
-      document.getElementById("tramos").style.display = "none";
-      document.getElementById("btn-navegacion-completa").style.display = "none";
-      document.getElementById("lista-alumnos").innerHTML = "<p style='text-align:center;color:#777;font-size:12px;'>Sin estudiantes para este modo.</p>";
+      document.getElementById("navegacion-completa").innerHTML = "";
+    }
+
+    function ajustarVista(puntos) {
+      const bounds = [[CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], [ESCUELA.lat, ESCUELA.lng], ...puntos.map(p => [p.lat, p.lng])];
+      map.fitBounds(bounds, { padding: [45, 45] });
     }
 
     function extraerCoordenadas(texto) {
-      if (!texto) return null;
-      const valor = String(texto).replace(/"/g, "").trim();
+      const valor = limpiar(texto).replace(/"/g, "").replace(/\n/g, " ");
+      if (!valor) return null;
       let match = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
       if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
       match = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
@@ -330,28 +414,41 @@
       const R = 6371;
       const dLat = gradosARadianes(lat2 - lat1);
       const dLng = gradosARadianes(lng2 - lng1);
-      const a = Math.sin(dLat / 2) ** 2 + Math.cos(gradosARadianes(lat1)) * Math.cos(gradosARadianes(lat2)) * Math.sin(dLng / 2) ** 2;
+      const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos(gradosARadianes(lat1)) * Math.cos(gradosARadianes(lat2)) *
+        Math.sin(dLng / 2) ** 2;
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
     function gradosARadianes(grados) { return grados * Math.PI / 180; }
-    function nombrePunto(p) { return p.nombre || p.estudiante || "Punto"; }
-    function normalizarTexto(v) { return String(v || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(); }
+
     function crearLinkWhatsApp(telefono) {
-      const limpio = String(telefono || "").replace(/\D/g, "");
-      if (!limpio) return "Sin telefono";
+      const limpio = limpiar(telefono).replace(/\D/g, "");
+      if (!limpio) return "Sin teléfono";
       const internacional = limpio.startsWith("0") ? "593" + limpio.slice(1) : "593" + limpio;
       return `<a href="https://wa.me/${internacional}" target="_blank">${escapar(telefono)}</a>`;
     }
-    function escapar(valor) { return String(valor || "").replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """).replace(/'/g, "'"); }
+
     function mostrarEstado(texto, tipo) {
       const estado = document.getElementById("estado");
       estado.style.display = "block";
       estado.textContent = texto;
-      if (tipo === "error") { estado.style.background = "#f8d7da"; estado.style.borderColor = "#f5c6cb"; estado.style.color = "#721c24"; }
-      else if (tipo === "ok") { estado.style.background = "#d4edda"; estado.style.borderColor = "#c3e6cb"; estado.style.color = "#155724"; }
-      else { estado.style.background = "#fff3cd"; estado.style.borderColor = "#ffeeba"; estado.style.color = "#856404"; }
+      estado.className = `estado ${tipo || "info"}`;
     }
+
+    function limpiar(v) { return String(v || "").trim(); }
+    function normalizarTexto(v) {
+      return limpiar(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+    function escapar(valor) {
+      return String(valor || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     window.addEventListener("load", () => setTimeout(() => map.invalidateSize(), 300));
   </script>
 </body>
