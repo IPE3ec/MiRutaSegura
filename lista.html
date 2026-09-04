@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Recorrido Escolar - Marcelo Muñoz</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- jsPDF & autoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card-counter { padding: 18px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card-counter i { font-size: 2.2rem; opacity: 0.3; }
+        .bg-custom-primary { background-color: #1e3a8a; color: white; }
+        .badge-aldia { background-color: #10b981; color: white; }
+        .badge-pendiente { background-color: #f59e0b; color: white; }
+        .badge-vencido { background-color: #ef4444; color: white; }
+        .table-responsive { max-height: 550px; overflow-y: auto; }
+        thead th { position: sticky; top: 0; background-color: #e2e8f0 !important; z-index: 1; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-primary shadow-sm mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#"><i class="fa-solid fa-bus-simple me-2"></i> Dashboard de Recorrido Escolar</a>
+            <span class="navbar-text text-white">
+                <i class="fa-solid fa-user-gear me-1"></i> <strong>Conductor:</strong> Marcelo Muñoz
+            </span>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        
+        <!-- Tarjetas Metricas Summary -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-2">
+                <div class="card-counter border-start border-primary border-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted small fw-bold text-uppercase mb-1">Total Alumnos</h6>
+                            <h3 class="fw-bold m-0 text-primary" id="totalAlumnos">0</h3>
+                        </div>
+                        <i class="fa-solid fa-users text-primary"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card-counter border-start border-info border-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted small fw-bold text-uppercase mb-1">Mañana Ingreso</h6>
+                            <h3 class="fw-bold m-0 text-info" id="cntME">0</h3>
+                        </div>
+                        <i class="fa-solid fa-sun text-info"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card-counter border-start border-warning border-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted small fw-bold text-uppercase mb-1">Mañana Salida</h6>
+                            <h3 class="fw-bold m-0 text-warning" id="cntMS">0</h3>
+                        </div>
+                        <i class="fa-solid fa-door-open text-warning"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card-counter border-start border-secondary border-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted small fw-bold text-uppercase mb-1">Tarde Ingreso</h6>
+                            <h3 class="fw-bold m-0 text-secondary" id="cntTE">0</h3>
+                        </div>
+                        <i class="fa-solid fa-cloud-sun text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card-counter border-start border-dark border-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted small fw-bold text-uppercase mb-1">Tarde Salida</h6>
+                            <h3 class="fw-bold m-0 text-dark" id="cntTS">0</h3>
+                        </div>
+                        <i class="fa-solid fa-moon text-dark"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card-counter border-start border-danger border-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted small fw-bold text-uppercase mb-1">Pagos Pendientes</h6>
+                            <h3 class="fw-bold m-0 text-danger" id="cntPendientes">0</h3>
+                        </div>
+                        <i class="fa-solid fa-clock-rotate-left text-danger"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Filtros para Exportar PDF -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold text-primary">
+                <i class="fa-solid fa-file-pdf me-2"></i> Generador de Reporte PDF Personalizado
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-2">Selecciona los campos que deseas incluir en el archivo PDF descargable:</p>
+                <div class="row g-2 mb-3">
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cEstudiante" checked><label class="form-check-label" for="cEstudiante">Estudiante</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cGrado" checked><label class="form-check-label" for="cGrado">Grado / Año</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cRepresentante" checked><label class="form-check-label" for="cRepresentante">Representante</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cTel" checked><label class="form-check-label" for="cTel">Teléfono</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cSector" checked><label class="form-check-label" for="cSector">Sector</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cDireccion" checked><label class="form-check-label" for="cDireccion">Dirección Completa</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cReferencia"><label class="form-check-label" for="cReferencia">Referencia</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cServicio" checked><label class="form-check-label" for="cServicio">Tipo Servicio</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cValor" checked><label class="form-check-label" for="cValor">Valor ($)</label></div></div>
+                    <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cPago" checked><label class="form-check-label" for="cPago">Estado Pago</label></div></div>
+                </div>
+                <button class="btn btn-danger btn-sm" onclick="generarPDF()"><i class="fa-solid fa-download me-2"></i> Generar y Descargar PDF</button>
+            </div>
+        </div>
+
+        <!-- Tabla de Datos -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="m-0 fw-bold"><i class="fa-solid fa-table me-2"></i> Listado Completo de Alumnos Inscritos</h5>
+                <input type="text" id="searchInput" onkeyup="filtrarTabla()" class="form-control form-control-sm w-25" placeholder="Buscar estudiante, sector...">
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle m-0" id="tablaAlumnos">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Estudiante</th>
+                                <th>Grado</th>
+                                <th>Representante</th>
+                                <th>Teléfono</th>
+                                <th>Sector</th>
+                                <th>Dirección (Principal / Sec.)</th>
+                                <th>Servicio</th>
+                                <th>Valor</th>
+                                <th>Estado Pago</th>
+                                <th>Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyTabla">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script de Lógica -->
+    <script>
+        const datosAlumnos = [
+            { fecha: "3/9/2026 13:19:19", estudiante: "ANAHÍ ABIGAIL ARMIJOS AÑASCO", nivel: "EDUCACION BASICA", grado: "6TO C", representante: "ARCELY AÑASCO", telefono: "0983092180", sector: "EL CONDE", calle_p: "SUSANA LETOR", calle_s: "LINEA FERRIA", casa: "INC", ref: "INC", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.304445, -78.539999", valor: 40, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "2/9/2026 19:44:44", estudiante: "CALEB ADRIEL MORALES IZA", nivel: "EDUCACION BASICA", grado: "3RO EGB", representante: "PAOLA IZA", telefono: "0991702124", sector: "CIUDAD JARDIN", calle_p: "E8H", calle_s: "S55", casa: "S55-28", ref: "CASA EN OBRA GRIS CON DOS PUERTAS GRANDE GRISES", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.333648,-78.528741", valor: 74, estado_serv: "SOLO EN LA MAÑANA (INGRESO)", pago: "PENDIENTE", me: true, ms: false, te: false, ts: false },
+            { fecha: "3/9/2026 15:19:34", estudiante: "CAMILA ALEJANDRA HERNÁNDEZ GALLARDO", nivel: "EDUCACION BASICA", grado: "4TO B", representante: "DANIELA GALLARDO", telefono: "0969035074", sector: "CAUPICHO", calle_p: "S44", calle_s: "NO APLICADO", casa: "DEPARTAMENTO 202", ref: "CONJUNTO ENTRE PARQUES LOTE 7", tipo_serv: "No quiere en la mañana", maps: "", valor: 53, estado_serv: "NO DESEA", pago: "PENDIENTE", me: false, ms: false, te: false, ts: false },
+            { fecha: "3/9/2026 10:47:31", estudiante: "CAMILO DAMIÁN LICTO VELARDE", nivel: "EDUCACION BASICA", grado: "2DO B", representante: "XIMENA VILLACÍS", telefono: "0969979463", sector: "MAYORISTA", calle_p: "OE1J", calle_s: "PASAJE OE1J", casa: "S22-50", ref: "DIAGONAL AL VISTA ARUBA PARED PINTADO COLO LADRILLO", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.276342,-78.534797", valor: 36, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "3/9/2026 10:38:27", estudiante: "CRISTOFER YAIR LÓPEZ NARVÁEZ", nivel: "EDUCACION BASICA", grado: "4TO C", representante: "FERNANDO LÓPEZ", telefono: "0996662075", sector: "AYMESA", calle_p: "BARTOLOME RUBIO", calle_s: "AURELIO GUERRERO", casa: "E2-89", ref: "PUERTA VERDE", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.292849,-78.536200", valor: 38, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "2/9/2026 19:42:04", estudiante: "DERECK ALEXANDER LASCANO COELLO", nivel: "EDUCACION BASICA", grado: "7MO", representante: "CATALINA COELLO", telefono: "0998070240", sector: "MAYORISTA", calle_p: "AVENIDA PEDRO VICENTE MALDONADO", calle_s: "AYAPAMBA", casa: "S22-15", ref: "CASA DE 2 PISOS COLOR NARANJA CON FILOS BLANCOS LOCAL DE ABAJO ES DE ARREGLO DE MOTORES", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.278105,-78.531330", valor: 36, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "3/9/2026 14:13:20", estudiante: "DYLAN ALEXANDER CALVA MAZA", nivel: "EDUCACION BASICA", grado: "6TO A", representante: "ERIKA MAZA", telefono: "0988434437", sector: "SOLANDA", calle_p: "QUIMIAG", calle_s: "MANGLAR ALTO", casa: "CASA 18", ref: "ATRAS DE CABLEC FRENTE AL CENTRO COMERCIAL ANDINO DE MAYORISTAS", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.278228,-78.534740", valor: 36, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "3/9/2026 14:22:02", estudiante: "KATHERINE VALENTINA ARIAS GREFA", nivel: "EDUCACION BASICA", grado: "6TO", representante: "CARMEN GREFA", telefono: "0999734628", sector: "CAUPICHO", calle_p: "AV. QUITUMBE ÑAN", calle_s: "S50A", casa: "OE2-204", ref: "PORTON VERDE CASA DE DOS PISO", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.320982,-78.553688", valor: 35, estado_serv: "SOLO SALIDA", pago: "PENDIENTE", me: false, ms: true, te: false, ts: false },
+            { fecha: "3/9/2026 13:14:58", estudiante: "LIAM FRANCISCO TIBAN TORRES", nivel: "EDUCACION BASICA", grado: "2DO C", representante: "MARIA JOSE TIBAN", telefono: "0958616673", sector: "MAYORISTA", calle_p: "LLACAO", calle_s: "AYAPAMBA", casa: "S/N", ref: "N/A", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.275283, -78.535784", valor: 36, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "3/9/2026 17:55:05", estudiante: "MAILYN ZARAHI HURTADO AILLA", nivel: "EDUCACION BASICA", grado: "6TO D EGB", representante: "ELENA AILLA GUAYULEMA", telefono: "0981444202", sector: "ARCADIA", calle_p: "OE1I", calle_s: "S44", casa: "S42-180", ref: "LOCAL ESQUINERO CHAMBA J.M PORTÓN CAFÉ", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.307398,-78.546946", valor: 40, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "3/9/2026 13:26:53", estudiante: "SHENOA MAILETH MERO DELGADO", nivel: "EDUCACION BASICA", grado: "2DO B", representante: "MELANY DELGADO", telefono: "0990339481", sector: "UNION POPULAR", calle_p: "RIO ZABALETA", calle_s: "MANGLAR ALTO", casa: "S/N", ref: "DETRAS DEL BANCO PICHINCHA", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.284497, -78.540389", valor: 38, estado_serv: "COMPLETO", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "3/9/2026 10:42:45", estudiante: "SNEIDER ISAAC SANCHEZ PAREDES", nivel: "EDUCACION BASICA", grado: "6TO", representante: "CAMILA PAREDES", telefono: "0980951326", sector: "UNION POPULAR", calle_p: "LAS LAJAS", calle_s: "OEIKS2667", casa: "S/N", ref: "CALLE SIN SALIDA AL FONDO UN ARO DE BASQUET", tipo_serv: "MATUTINO (MAÑANA)", maps: "https://www.google.com/maps?q=-0.282894,-78.538809", valor: 36, estado_serv: "COMPLETO (LUNES)", pago: "PENDIENTE", me: true, ms: true, te: false, ts: false },
+            { fecha: "N/A", estudiante: "SOFIA TRUJILLO", nivel: "EDUCACION BASICA", grado: "3RO", representante: "CELIA CAIZA", telefono: "0987215789", sector: "N/A", calle_p: "N/A", calle_s: "N/A", casa: "N/A", ref: "No contesta en la mañana", tipo_serv: "N/A", maps: "", valor: 0, estado_serv: "NO CONTESTA", pago: "PENDIENTE", me: false, ms: false, te: false, ts: false }
+        ];
+
+        function inicializarDashboard() {
+            document.getElementById('totalAlumnos').innerText = datosAlumnos.length;
+            
+            let cntME = datosAlumnos.filter(a => a.me).length;
+            let cntMS = datosAlumnos.filter(a => a.ms).length;
+            let cntTE = datosAlumnos.filter(a => a.te).length;
+            let cntTS = datosAlumnos.filter(a => a.ts).length;
+            let cntPen = datosAlumnos.filter(a => a.pago === 'PENDIENTE').length;
+
+            document.getElementById('cntME').innerText = cntME;
+            document.getElementById('cntMS').innerText = cntMS;
+            document.getElementById('cntTE').innerText = cntTE;
+            document.getElementById('cntTS').innerText = cntTS;
+            document.getElementById('cntPendientes').innerText = cntPen;
+
+            renderTabla(datosAlumnos);
+        }
+
+        function renderTabla(data) {
+            const tbody = document.getElementById('bodyTabla');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                let badgePago = item.pago === 'AL DIA' ? 'badge-aldia' : 'badge-pendiente';
+                let mapsBtn = item.maps ? `<a href="${item.maps}" target="_blank" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-location-dot"></i> Maps</a>` : '<span class="text-muted font-monospace">N/A</span>';
+                
+                let row = `<tr>
+                    <td>${index + 1}</td>
+                    <td class="fw-bold">${item.estudiante}</td>
+                    <td><span class="badge bg-light text-dark border">${item.grado}</span></td>
+                    <td>${item.representante}</td>
+                    <td>${item.telefono}</td>
+                    <td><span class="badge bg-secondary">${item.sector}</span></td>
+                    <td class="small">${item.calle_p} y ${item.calle_s}</td>
+                    <td><span class="badge bg-info text-dark">${item.estado_serv}</span></td>
+                    <td class="fw-bold">$${item.valor}</td>
+                    <td><span class="badge ${badgePago}">${item.pago}</span></td>
+                    <td>${mapsBtn}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function filtrarTabla() {
+            let val = document.getElementById('searchInput').value.toLowerCase();
+            let filtrados = datosAlumnos.filter(a => 
+                a.estudiante.toLowerCase().includes(val) || 
+                a.representante.toLowerCase().includes(val) ||
+                a.sector.toLowerCase().includes(val)
+            );
+            renderTabla(filtrados);
+        }
+
+        function generarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+
+            doc.setFontSize(14);
+            doc.text("Reporte Completo de Recorrido Escolar", 14, 12);
+            doc.setFontSize(10);
+            doc.text("Conductor: Marcelo Muñoz | Fecha de Generación: " + new Date().toLocaleDateString(), 14, 18);
+
+            let headers = [];
+            let flags = {
+                estudiante: document.getElementById('cEstudiante').checked,
+                grado: document.getElementById('cGrado').checked,
+                representante: document.getElementById('cRepresentante').checked,
+                tel: document.getElementById('cTel').checked,
+                sector: document.getElementById('cSector').checked,
+                direccion: document.getElementById('cDireccion').checked,
+                ref: document.getElementById('cReferencia').checked,
+                servicio: document.getElementById('cServicio').checked,
+                valor: document.getElementById('cValor').checked,
+                pago: document.getElementById('cPago').checked
+            };
+
+            headers.push("#");
+            if(flags.estudiante) headers.push("Estudiante");
+            if(flags.grado) headers.push("Grado");
+            if(flags.representante) headers.push("Representante");
+            if(flags.tel) headers.push("Teléfono");
+            if(flags.sector) headers.push("Sector");
+            if(flags.direccion) headers.push("Dirección");
+            if(flags.ref) headers.push("Referencia");
+            if(flags.servicio) headers.push("Estado Servicio");
+            if(flags.valor) headers.push("Valor");
+            if(flags.pago) headers.push("Pago");
+
+            let rows = datosAlumnos.map((item, index) => {
+                let r = [index + 1];
+                if(flags.estudiante) r.push(item.estudiante);
+                if(flags.grado) r.push(item.grado);
+                if(flags.representante) r.push(item.representante);
+                if(flags.tel) r.push(item.telefono);
+                if(flags.sector) r.push(item.sector);
+                if(flags.direccion) r.push(`${item.calle_p} y ${item.calle_s} (${item.casa})`);
+                if(flags.ref) r.push(item.ref);
+                if(flags.servicio) r.push(item.estado_serv);
+                if(flags.valor) r.push(`$${item.valor}`);
+                if(flags.pago) r.push(item.pago);
+                return r;
+            });
+
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+                startY: 24,
+                theme: 'striped',
+                headStyles: { fillColor: [30, 58, 138] },
+                styles: { fontSize: 8 }
+            });
+
+            doc.save("Listado_Recorrido_Marcelo_Munoz.pdf");
+        }
+
+        document.addEventListener("DOMContentLoaded", inicializarDashboard);
+    </script>
+</body>
+</html>
