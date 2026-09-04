@@ -1,0 +1,25 @@
+{
+  "name": "Mi Ruta Segura - Conductor",
+  "short_name": "Ruta Conductor",
+  "description": "PWA para conductor de transporte escolar con GPS, ruta y avance por paradas.",
+  "start_url": "conductor.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "icon-conductor.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-conductor.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
