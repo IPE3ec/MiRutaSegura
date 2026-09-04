@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Padres - Mi Ruta Segura</title>
-  <link rel="manifest" href="manifest-padre.webmanifest">
+  <link rel="manifest" href="manifest-padres.webmanifest">
   <meta name="theme-color" content="#111111">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
@@ -106,7 +106,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxhblkRB2qRKIEE7_nsRSGUL_-2duLeidTu_S1quSSaTByEdF59xwr3JmluGnldGRKrzw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxavsmUXvKo1DjuQirLMiu1ej4MixYyrNsToBlf_lip0XrK-9bDQRnqm-vRrpW6yw5PCw/exec";
     const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
     const RADIO_CERCA = 500;
     const RADIO_LLEGO = 100;
@@ -168,7 +168,10 @@
 
     function esRegistroDelPerfil(e) {
       const key = normalizar(personalKey);
-      return normalizar(e.token).includes(key) || normalizar(e.telefono).includes(key) || normalizar(e.estudiante).includes(key);
+      const phoneKey = normalizarTelefono(personalKey);
+      return (key && normalizar(e.token) === key) ||
+        (phoneKey && normalizarTelefono(e.telefono) === phoneKey) ||
+        (key && normalizar(e.estudiante) === key);
     }
 
     function pintarEstudiante() {
@@ -385,10 +388,16 @@
     }
 
     function registrarServiceWorker() {
-      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw-padre.js").catch(() => {});
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw-padres.js").catch(() => {});
     }
 
     function clean(v) { return String(v || "").trim(); }
+    function normalizarTelefono(v) {
+      let n = clean(v).replace(/\D/g, "");
+      if (n.startsWith("593")) n = n.slice(3);
+      if (n.startsWith("0")) n = n.slice(1);
+      return n;
+    }
     function normalizar(v) { return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z0-9]/g, ""); }
     function rad(n) { return n * Math.PI / 180; }
     function esc(v) { return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
