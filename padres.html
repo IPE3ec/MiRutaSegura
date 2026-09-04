@@ -12,43 +12,94 @@
     body { margin: 0; background: #f2f3f5; color: #111; }
     #app { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
     #map { width: 100%; height: 100%; }
+    .top-stats {
+      position: absolute; top: 10px; left: 10px; right: 10px; z-index: 900;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px;
+    }
+    .stat { background: rgba(17,17,17,.92); color: #fff; border-radius: 8px; padding: 8px; font-size: 11px; }
+    .stat b { display: block; color: #ffcc00; font-size: 15px; margin-top: 2px; }
     .panel {
       position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 1000;
       background: rgba(255,255,255,.98); border-radius: 10px; overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,.25); max-height: 72vh; display: flex; flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25); max-height: 76vh; display: flex; flex-direction: column;
     }
-    .head { background: #111; color: #ffcc00; padding: 13px; font-weight: 900; }
+    .panel.min { max-height: 152px; }
+    .panel.min .body, .panel.min .tabs { display: none; }
+    .head { background: #111; color: #ffcc00; padding: 13px; font-weight: 900; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+    .head small { display: block; color: #fff; font-weight: 600; margin-top: 2px; }
+    .head button { width: auto; margin: 0; background: #ffcc00; color: #111; }
+    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #ddd; }
+    .tab { border: 0; background: #eee; padding: 10px 4px; font-size: 11px; font-weight: 900; cursor: pointer; }
+    .tab.active { background: #ffcc00; color: #111; }
     .body { padding: 10px; overflow-y: auto; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    input { width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 11px; margin-bottom: 8px; }
+    .view { display: none; }
+    .view.active { display: block; }
     button { width: 100%; border: 0; border-radius: 6px; padding: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; cursor: pointer; }
+    button:disabled { background: #ccc !important; color: #777 !important; cursor: not-allowed; }
     .primary { background: #111; color: #ffcc00; }
     .success { background: #28a745; color: #fff; }
     .danger { background: #dc3545; color: #fff; }
     .soft { background: #e9ecef; color: #111; border: 1px solid #bbb; }
-    .card { background: #f8f9fa; border-left: 4px solid #ffcc00; border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 13px; }
+    .card { background: #f8f9fa; border-left: 4px solid #ffcc00; border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 13px; line-height: 1.45; }
+    .card.ok { border-left-color: #28a745; }
+    .card.warn { border-left-color: #f39c12; }
+    .card.danger { border-left-color: #dc3545; color: #111; }
     .alerta { display: none; background: #fff3cd; border: 1px solid #ffeeba; color: #856404; border-radius: 8px; padding: 10px; margin-bottom: 8px; font-weight: 800; }
     .alerta.on { display: block; }
-    .bus-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; text-align: center; line-height: 30px; font-weight: 900; }
-    .home-icon { background: #0066ff; color: #fff; border: 2px solid #fff; border-radius: 50%; text-align: center; line-height: 28px; font-weight: 900; }
-    @media (min-width: 850px) { .panel { left: 16px; right: auto; top: 16px; bottom: auto; width: 390px; max-height: calc(100vh - 32px); } }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid button { margin-bottom: 0; }
+    .bus-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; text-align: center; line-height: 30px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+    .home-icon { background: #0066ff; color: #fff; border: 2px solid #fff; border-radius: 50%; text-align: center; line-height: 28px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+    .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; border-radius: 50%; text-align: center; line-height: 30px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+    @media (min-width: 850px) {
+      .panel { left: 16px; right: auto; top: 16px; bottom: auto; width: 400px; max-height: calc(100vh - 32px); }
+      .top-stats { left: 432px; right: 16px; grid-template-columns: repeat(3, minmax(110px, 170px)); }
+    }
   </style>
 </head>
 <body>
   <div id="app">
+    <div class="top-stats">
+      <div class="stat">Transporte<b id="statDistancia">--</b></div>
+      <div class="stat">ETA<b id="statEta">--</b></div>
+      <div class="stat">Estado<b id="statEstado">Activo</b></div>
+    </div>
     <div id="map"></div>
-    <div class="panel">
-      <div class="head">Mi Ruta Segura - Padres</div>
+    <div id="panel" class="panel">
+      <div class="head">
+        <div>
+          Mi Ruta Segura - Padres
+          <small id="subtitulo">Perfil personal</small>
+        </div>
+        <button onclick="togglePanel()" id="btnPanel">Minimizar</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-view="inicio" onclick="showView('inicio')">Inicio</button>
+        <button class="tab" data-view="recorrido" onclick="showView('recorrido')">Recorrido</button>
+        <button class="tab" data-view="pagos" onclick="showView('pagos')">Pagos</button>
+        <button class="tab" data-view="avisos" onclick="showView('avisos')">Avisos</button>
+      </div>
       <div class="body">
         <div id="alerta" class="alerta"></div>
-        <input id="busqueda" placeholder="Nombre del estudiante o telefono">
-        <button class="primary" onclick="buscarEstudiante()">Buscar estudiante</button>
-        <button class="soft" onclick="activarNotificaciones()">Activar notificaciones</button>
-        <div id="info" class="card">Busca el estudiante para ver su parada y el transporte.</div>
-        <div class="grid">
-          <button class="danger" onclick="avisarNoAsiste()">No asiste hoy</button>
-          <button class="soft" onclick="avisarRetiro()">Retiro en escuela</button>
-        </div>
+        <section id="view-inicio" class="view active">
+          <div id="info" class="card">Cargando perfil personal...</div>
+          <button class="soft" onclick="activarNotificaciones()">Activar notificaciones</button>
+          <button class="soft" onclick="centrarMapa()">Centrar mapa</button>
+        </section>
+        <section id="view-recorrido" class="view">
+          <div id="recorridoInfo" class="card">Esperando ubicación del conductor.</div>
+          <button class="primary" onclick="actualizarTodo()">Actualizar ahora</button>
+        </section>
+        <section id="view-pagos" class="view">
+          <div id="pagosInfo" class="card">Cargando información de pagos...</div>
+        </section>
+        <section id="view-avisos" class="view">
+          <div class="card">Usa estas opciones solo para el estudiante de este perfil.</div>
+          <div class="grid">
+            <button class="danger" onclick="avisarNoAsiste()">No asiste hoy</button>
+            <button class="soft" onclick="avisarRetiro()">Retiro en escuela</button>
+          </div>
+        </section>
       </div>
     </div>
   </div>
@@ -56,50 +107,106 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxavsmUXvKo1DjuQirLMiu1ej4MixYyrNsToBlf_lip0XrK-9bDQRnqm-vRrpW6yw5PCw/exec";
-    const ESCUELA = { lat: -0.268130, lng: -78.543977 };
+    const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
     const RADIO_CERCA = 500;
     const RADIO_LLEGO = 100;
+    const REFRESH_MS = 12000;
 
     let estudiante = null;
     let busMarker = null;
     let casaMarker = null;
+    let rutaLayer = null;
     let ultimaAlerta = "";
+    let personalKey = "";
+
     const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
-    registrarServiceWorker();
-    setInterval(actualizarEventos, 15000);
+    L.marker([ESCUELA.lat, ESCUELA.lng], { icon: L.divIcon({ className: "school-icon", html: "E", iconSize: [32, 32], iconAnchor: [16, 16] }) }).addTo(map).bindPopup(ESCUELA.nombre);
 
-    function buscarEstudiante() {
-      const q = normalizar(document.getElementById("busqueda").value);
-      if (!q) return;
+    registrarServiceWorker();
+    iniciarPerfilPersonal();
+    setInterval(actualizarTodo, REFRESH_MS);
+
+    function iniciarPerfilPersonal() {
+      const params = new URLSearchParams(location.search);
+      personalKey = clean(params.get("token") || params.get("telefono") || params.get("id"));
+
+      if (!personalKey) {
+        document.getElementById("info").innerHTML = "Este enlace no tiene perfil asignado.<br>El administrador debe entregar un enlace personal como <b>padre.html?telefono=0983092180</b>.";
+        document.getElementById("pagosInfo").textContent = "Sin perfil asignado.";
+        document.getElementById("statEstado").textContent = "Sin perfil";
+        return;
+      }
+
+      cargarPerfil();
+    }
+
+    function cargarPerfil() {
       cargarJsonp(SCRIPT_URL + "?action=records").then(data => {
         const records = Array.isArray(data) ? data : (data.records || []);
-        estudiante = records.map(normalizarRegistro).find(e => normalizar(e.estudiante).includes(q) || normalizar(e.telefono).includes(q));
+        const normalizados = records.map(normalizarRegistro);
+        estudiante = normalizados.find(esRegistroDelPerfil);
+
         if (!estudiante) {
-          document.getElementById("info").textContent = "No se encontro el estudiante.";
+          document.getElementById("info").textContent = "No se encontró estudiante para este enlace personal.";
+          document.getElementById("pagosInfo").textContent = "No hay datos de pago para este perfil.";
+          document.getElementById("statEstado").textContent = "No encontrado";
           return;
         }
-        localStorage.setItem("miRutaPadre", document.getElementById("busqueda").value);
+
+        const coords = extraerCoordenadas(estudiante.urlMaps);
+        estudiante.lat = coords ? coords.lat : null;
+        estudiante.lng = coords ? coords.lng : null;
         pintarEstudiante();
+        pintarPagos();
         actualizarEventos();
+      }).catch(error => {
+        console.error(error);
+        document.getElementById("info").textContent = "No se pudo conectar con Google Sheets.";
       });
     }
 
+    function esRegistroDelPerfil(e) {
+      const key = normalizar(personalKey);
+      return normalizar(e.token).includes(key) || normalizar(e.telefono).includes(key) || normalizar(e.estudiante).includes(key);
+    }
+
     function pintarEstudiante() {
-      const coords = extraerCoordenadas(estudiante.urlMaps);
-      estudiante.lat = coords ? coords.lat : null;
-      estudiante.lng = coords ? coords.lng : null;
+      document.getElementById("subtitulo").textContent = estudiante.estudiante || "Perfil personal";
       document.getElementById("info").innerHTML = `
         <b>${esc(estudiante.estudiante)}</b><br>
+        Representante: ${esc(estudiante.representante)}<br>
         Sector: ${esc(estudiante.sector)}<br>
+        Grado: ${esc(estudiante.grado)}<br>
         Servicio: ${esc(estudiante.servicio)}<br>
-        Estado: seguimiento activo
+        Horario: ${esc(estudiante.horario)}
       `;
-      if (coords) {
-        if (casaMarker) map.removeLayer(casaMarker);
-        casaMarker = L.marker([coords.lat, coords.lng], { icon: L.divIcon({ className: "home-icon", html: "P", iconSize: [30, 30], iconAnchor: [15, 15] }) }).addTo(map).bindPopup("Parada del estudiante");
-        map.setView([coords.lat, coords.lng], 15);
+
+      if (estudiante.lat !== null && estudiante.lng !== null) {
+        const icon = L.divIcon({ className: "home-icon", html: "P", iconSize: [30, 30], iconAnchor: [15, 15] });
+        if (casaMarker) casaMarker.setLatLng([estudiante.lat, estudiante.lng]);
+        else casaMarker = L.marker([estudiante.lat, estudiante.lng], { icon }).addTo(map).bindPopup("Parada del estudiante");
+        centrarMapa();
       }
+    }
+
+    function pintarPagos() {
+      const valor = estudiante.valor || "No registrado";
+      const estadoPago = estudiante.estado || "PENDIENTE";
+      const clase = normalizar(estadoPago).includes("PAG") || normalizar(estadoPago).includes("COMPLETO") ? "ok" : "warn";
+      document.getElementById("pagosInfo").className = "card " + clase;
+      document.getElementById("pagosInfo").innerHTML = `
+        <b>Pagos del transporte</b><br>
+        Estudiante: ${esc(estudiante.estudiante)}<br>
+        Valor: <b>$${esc(valor)}</b><br>
+        Estado: <b>${esc(estadoPago || "PENDIENTE")}</b><br>
+        Servicio: ${esc(estudiante.servicio || "COMPLETO")}
+      `;
+    }
+
+    function actualizarTodo() {
+      if (!estudiante) return;
+      actualizarEventos();
     }
 
     function actualizarEventos() {
@@ -108,10 +215,14 @@
         const events = data.events || [];
         const ubicaciones = events.filter(e => e.tipo === "ubicacion" && e.lat && e.lng);
         const ultima = ubicaciones[ubicaciones.length - 1];
-        if (!ultima) return;
-        const bus = { lat: Number(ultima.lat), lng: Number(ultima.lng) };
+        if (!ultima) {
+          document.getElementById("recorridoInfo").textContent = "Todavía no hay ubicación enviada por el conductor.";
+          return;
+        }
+        const bus = { lat: Number(ultima.lat), lng: Number(ultima.lng), fecha: ultima.fechacliente || ultima.fechaservidor || "" };
         pintarBus(bus);
         evaluarCercania(bus);
+        trazarLinea(bus);
       }).catch(() => {});
     }
 
@@ -122,46 +233,88 @@
     }
 
     function evaluarCercania(bus) {
-      if (!estudiante || estudiante.lat === null) return;
+      if (!estudiante || estudiante.lat === null || estudiante.lng === null) return;
       const metros = distanciaKm(bus.lat, bus.lng, estudiante.lat, estudiante.lng) * 1000;
-      document.getElementById("info").innerHTML = `
-        <b>${esc(estudiante.estudiante)}</b><br>
-        Transporte a ${metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km"} de tu parada.<br>
-        Sector: ${esc(estudiante.sector)}<br>
-        Servicio: ${esc(estudiante.servicio)}
+      const etaMin = estimarEtaMin(metros);
+      document.getElementById("statDistancia").textContent = metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km";
+      document.getElementById("statEta").textContent = etaMin + " min";
+      document.getElementById("recorridoInfo").innerHTML = `
+        <b>Transporte en tiempo real</b><br>
+        Distancia a tu parada: <b>${metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km"}</b><br>
+        Llegada estimada: <b>${etaMin} min</b><br>
+        Última actualización: ${esc(bus.fecha || "reciente")}
       `;
-      if (metros <= RADIO_LLEGO) lanzarAlerta("La furgoneta ya llego a tu parada.");
-      else if (metros <= RADIO_CERCA) lanzarAlerta("La furgoneta esta cerca. Prepara al estudiante.");
+
+      if (metros <= RADIO_LLEGO) lanzarAlerta("La furgoneta ya llegó a tu parada.", "Llego");
+      else if (metros <= RADIO_CERCA) lanzarAlerta("La furgoneta está cerca. Prepara al estudiante.", "Cerca");
+      else document.getElementById("statEstado").textContent = "En ruta";
     }
 
-    function lanzarAlerta(texto) {
+    function trazarLinea(bus) {
+      if (!estudiante || estudiante.lat === null || estudiante.lng === null) return;
+      if (rutaLayer) map.removeLayer(rutaLayer);
+      rutaLayer = L.polyline([[bus.lat, bus.lng], [estudiante.lat, estudiante.lng]], { color: "#0066ff", weight: 4, opacity: 0.8, dashArray: "8,8" }).addTo(map);
+    }
+
+    function lanzarAlerta(texto, estado) {
       if (ultimaAlerta === texto) return;
       ultimaAlerta = texto;
+      document.getElementById("statEstado").textContent = estado || "Aviso";
       const el = document.getElementById("alerta");
       el.textContent = texto;
       el.className = "alerta on";
-      if (Notification.permission === "granted") navigator.serviceWorker.ready.then(reg => reg.showNotification("Mi Ruta Segura", { body: texto, icon: "icon-padre.svg" }));
+      reproducirSonido();
+      if ("Notification" in window && Notification.permission === "granted") {
+        navigator.serviceWorker.ready.then(reg => reg.showNotification("Mi Ruta Segura", { body: texto, icon: "icon-padre.svg", tag: "mi-ruta-alerta" }));
+      }
     }
 
     function activarNotificaciones() {
       if (!("Notification" in window)) return alert("Este navegador no soporta notificaciones.");
-      Notification.requestPermission().then(() => alert("Notificaciones configuradas."));
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") lanzarAlerta("Notificaciones activadas para este perfil.", "Activo");
+        else alert("No se activaron las notificaciones.");
+      });
     }
 
     function avisarNoAsiste() {
-      if (!estudiante) return alert("Primero busca el estudiante.");
+      if (!estudiante) return alert("Este perfil aún no está cargado.");
       enviarEvento("padre_no_asiste", { estudiante: estudiante.estudiante, telefono: estudiante.telefono });
-      lanzarAlerta("Aviso enviado: el estudiante no asiste hoy.");
+      lanzarAlerta("Aviso enviado: el estudiante no asiste hoy.", "Avisado");
     }
 
     function avisarRetiro() {
-      if (!estudiante) return alert("Primero busca el estudiante.");
+      if (!estudiante) return alert("Este perfil aún no está cargado.");
       enviarEvento("padre_retiro_escuela", { estudiante: estudiante.estudiante, telefono: estudiante.telefono });
-      lanzarAlerta("Aviso enviado: retiro en la escuela.");
+      lanzarAlerta("Aviso enviado: retiro en la escuela para la salida.", "Avisado");
     }
 
     function enviarEvento(tipo, extra) {
-      fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams({ action: "event", tipo, fecha: new Date().toISOString(), ...extra }) }).catch(() => {});
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: new URLSearchParams({ action: "event", tipo, fecha: new Date().toISOString(), ...extra })
+      }).catch(() => {});
+    }
+
+    function showView(view) {
+      document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
+      document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + view));
+    }
+
+    function togglePanel(forceMin) {
+      const panel = document.getElementById("panel");
+      const min = typeof forceMin === "boolean" ? forceMin : !panel.classList.contains("min");
+      panel.classList.toggle("min", min);
+      document.getElementById("btnPanel").textContent = min ? "Mostrar" : "Minimizar";
+      setTimeout(() => map.invalidateSize(), 250);
+    }
+
+    function centrarMapa() {
+      const puntos = [[ESCUELA.lat, ESCUELA.lng]];
+      if (estudiante && estudiante.lat !== null) puntos.push([estudiante.lat, estudiante.lng]);
+      if (busMarker) puntos.push(busMarker.getLatLng());
+      map.fitBounds(puntos, { padding: [45, 45] });
     }
 
     function cargarJsonp(url) {
@@ -178,40 +331,65 @@
 
     function normalizarRegistro(r) {
       return {
+        token: clean(r.token || r.codigo || r.codigopadre || r.id),
         estudiante: clean(r.estudiante || r.nombresestudiante || r.nombreestudiante || r.nombre),
+        representante: clean(r.representante || r.nombrerepresentante),
         telefono: clean(r.telefono),
         sector: clean(r.sector),
+        grado: clean(r.gradoano || r.grado),
+        horario: clean(r.tipodeservicio || r.horario || r.horarioservicio || r.tiposervicio),
         servicio: clean(r.servicio || "COMPLETO"),
+        estado: clean(r.estado),
+        valor: clean(r.valor),
         urlMaps: clean(r.enlacegooglemaps || r.urlmaps || r.url_maps || r.ubicacion || r.url)
       };
-    }
-
-    function registrarServiceWorker() {
-      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw-padre.js").catch(() => {});
-      const saved = localStorage.getItem("miRutaPadre");
-      if (saved) {
-        document.getElementById("busqueda").value = saved;
-        setTimeout(buscarEstudiante, 500);
-      }
     }
 
     function extraerCoordenadas(texto) {
       const valor = clean(texto).replace(/"/g, "").replace(/\n/g, " ");
       let m = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
       if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
+      m = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
+      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
       m = valor.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
       if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
       return null;
     }
 
+    function estimarEtaMin(metros) {
+      const velocidadPromedioMMin = 260;
+      return Math.max(1, Math.round(metros / velocidadPromedioMMin));
+    }
+
     function distanciaKm(a, b, c, d) {
-      const R = 6371, dLat = rad(c - a), dLng = rad(d - b);
+      const R = 6371;
+      const dLat = rad(c - a);
+      const dLng = rad(d - b);
       const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(dLng / 2) ** 2;
       return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
     }
 
+    function reproducirSonido() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 880;
+        gain.gain.value = 0.08;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        setTimeout(() => { osc.stop(); ctx.close(); }, 450);
+      } catch (e) {}
+    }
+
+    function registrarServiceWorker() {
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw-padre.js").catch(() => {});
+    }
+
     function clean(v) { return String(v || "").trim(); }
-    function normalizar(v) { return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    function normalizar(v) { return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z0-9]/g, ""); }
     function rad(n) { return n * Math.PI / 180; }
     function esc(v) { return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
   </script>
