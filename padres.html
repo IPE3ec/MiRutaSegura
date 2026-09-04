@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padres - Mi Ruta Segura</title>
+  <link rel="manifest" href="manifest-padre.webmanifest">
+  <meta name="theme-color" content="#111111">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, sans-serif; }
+    body { margin: 0; background: #f2f3f5; color: #111; }
+    #app { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    #map { width: 100%; height: 100%; }
+    .panel {
+      position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 1000;
+      background: rgba(255,255,255,.98); border-radius: 10px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25); max-height: 72vh; display: flex; flex-direction: column;
+    }
+    .head { background: #111; color: #ffcc00; padding: 13px; font-weight: 900; }
+    .body { padding: 10px; overflow-y: auto; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    input { width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 11px; margin-bottom: 8px; }
+    button { width: 100%; border: 0; border-radius: 6px; padding: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; cursor: pointer; }
+    .primary { background: #111; color: #ffcc00; }
+    .success { background: #28a745; color: #fff; }
+    .danger { background: #dc3545; color: #fff; }
+    .soft { background: #e9ecef; color: #111; border: 1px solid #bbb; }
+    .card { background: #f8f9fa; border-left: 4px solid #ffcc00; border-radius: 6px; padding: 10px; margin-bottom: 8px; font-size: 13px; }
+    .alerta { display: none; background: #fff3cd; border: 1px solid #ffeeba; color: #856404; border-radius: 8px; padding: 10px; margin-bottom: 8px; font-weight: 800; }
+    .alerta.on { display: block; }
+    .bus-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; text-align: center; line-height: 30px; font-weight: 900; }
+    .home-icon { background: #0066ff; color: #fff; border: 2px solid #fff; border-radius: 50%; text-align: center; line-height: 28px; font-weight: 900; }
+    @media (min-width: 850px) { .panel { left: 16px; right: auto; top: 16px; bottom: auto; width: 390px; max-height: calc(100vh - 32px); } }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="map"></div>
+    <div class="panel">
+      <div class="head">Mi Ruta Segura - Padres</div>
+      <div class="body">
+        <div id="alerta" class="alerta"></div>
+        <input id="busqueda" placeholder="Nombre del estudiante o telefono">
+        <button class="primary" onclick="buscarEstudiante()">Buscar estudiante</button>
+        <button class="soft" onclick="activarNotificaciones()">Activar notificaciones</button>
+        <div id="info" class="card">Busca el estudiante para ver su parada y el transporte.</div>
+        <div class="grid">
+          <button class="danger" onclick="avisarNoAsiste()">No asiste hoy</button>
+          <button class="soft" onclick="avisarRetiro()">Retiro en escuela</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxavsmUXvKo1DjuQirLMiu1ej4MixYyrNsToBlf_lip0XrK-9bDQRnqm-vRrpW6yw5PCw/exec";
+    const ESCUELA = { lat: -0.268130, lng: -78.543977 };
+    const RADIO_CERCA = 500;
+    const RADIO_LLEGO = 100;
+
+    let estudiante = null;
+    let busMarker = null;
+    let casaMarker = null;
+    let ultimaAlerta = "";
+    const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
+    registrarServiceWorker();
+    setInterval(actualizarEventos, 15000);
+
+    function buscarEstudiante() {
+      const q = normalizar(document.getElementById("busqueda").value);
+      if (!q) return;
+      cargarJsonp(SCRIPT_URL + "?action=records").then(data => {
+        const records = Array.isArray(data) ? data : (data.records || []);
+        estudiante = records.map(normalizarRegistro).find(e => normalizar(e.estudiante).includes(q) || normalizar(e.telefono).includes(q));
+        if (!estudiante) {
+          document.getElementById("info").textContent = "No se encontro el estudiante.";
+          return;
+        }
+        localStorage.setItem("miRutaPadre", document.getElementById("busqueda").value);
+        pintarEstudiante();
+        actualizarEventos();
+      });
+    }
+
+    function pintarEstudiante() {
+      const coords = extraerCoordenadas(estudiante.urlMaps);
+      estudiante.lat = coords ? coords.lat : null;
+      estudiante.lng = coords ? coords.lng : null;
+      document.getElementById("info").innerHTML = `
+        <b>${esc(estudiante.estudiante)}</b><br>
+        Sector: ${esc(estudiante.sector)}<br>
+        Servicio: ${esc(estudiante.servicio)}<br>
+        Estado: seguimiento activo
+      `;
+      if (coords) {
+        if (casaMarker) map.removeLayer(casaMarker);
+        casaMarker = L.marker([coords.lat, coords.lng], { icon: L.divIcon({ className: "home-icon", html: "P", iconSize: [30, 30], iconAnchor: [15, 15] }) }).addTo(map).bindPopup("Parada del estudiante");
+        map.setView([coords.lat, coords.lng], 15);
+      }
+    }
+
+    function actualizarEventos() {
+      if (!estudiante) return;
+      cargarJsonp(SCRIPT_URL + "?action=events").then(data => {
+        const events = data.events || [];
+        const ubicaciones = events.filter(e => e.tipo === "ubicacion" && e.lat && e.lng);
+        const ultima = ubicaciones[ubicaciones.length - 1];
+        if (!ultima) return;
+        const bus = { lat: Number(ultima.lat), lng: Number(ultima.lng) };
+        pintarBus(bus);
+        evaluarCercania(bus);
+      }).catch(() => {});
+    }
+
+    function pintarBus(bus) {
+      const icon = L.divIcon({ className: "bus-icon", html: "B", iconSize: [32, 32], iconAnchor: [16, 16] });
+      if (busMarker) busMarker.setLatLng([bus.lat, bus.lng]);
+      else busMarker = L.marker([bus.lat, bus.lng], { icon }).addTo(map).bindPopup("Transporte escolar");
+    }
+
+    function evaluarCercania(bus) {
+      if (!estudiante || estudiante.lat === null) return;
+      const metros = distanciaKm(bus.lat, bus.lng, estudiante.lat, estudiante.lng) * 1000;
+      document.getElementById("info").innerHTML = `
+        <b>${esc(estudiante.estudiante)}</b><br>
+        Transporte a ${metros < 1000 ? Math.round(metros) + " m" : (metros / 1000).toFixed(2) + " km"} de tu parada.<br>
+        Sector: ${esc(estudiante.sector)}<br>
+        Servicio: ${esc(estudiante.servicio)}
+      `;
+      if (metros <= RADIO_LLEGO) lanzarAlerta("La furgoneta ya llego a tu parada.");
+      else if (metros <= RADIO_CERCA) lanzarAlerta("La furgoneta esta cerca. Prepara al estudiante.");
+    }
+
+    function lanzarAlerta(texto) {
+      if (ultimaAlerta === texto) return;
+      ultimaAlerta = texto;
+      const el = document.getElementById("alerta");
+      el.textContent = texto;
+      el.className = "alerta on";
+      if (Notification.permission === "granted") navigator.serviceWorker.ready.then(reg => reg.showNotification("Mi Ruta Segura", { body: texto, icon: "icon-padre.svg" }));
+    }
+
+    function activarNotificaciones() {
+      if (!("Notification" in window)) return alert("Este navegador no soporta notificaciones.");
+      Notification.requestPermission().then(() => alert("Notificaciones configuradas."));
+    }
+
+    function avisarNoAsiste() {
+      if (!estudiante) return alert("Primero busca el estudiante.");
+      enviarEvento("padre_no_asiste", { estudiante: estudiante.estudiante, telefono: estudiante.telefono });
+      lanzarAlerta("Aviso enviado: el estudiante no asiste hoy.");
+    }
+
+    function avisarRetiro() {
+      if (!estudiante) return alert("Primero busca el estudiante.");
+      enviarEvento("padre_retiro_escuela", { estudiante: estudiante.estudiante, telefono: estudiante.telefono });
+      lanzarAlerta("Aviso enviado: retiro en la escuela.");
+    }
+
+    function enviarEvento(tipo, extra) {
+      fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams({ action: "event", tipo, fecha: new Date().toISOString(), ...extra }) }).catch(() => {});
+    }
+
+    function cargarJsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        const script = document.createElement("script");
+        window[cb] = data => { cleanup(); resolve(data); };
+        script.onerror = () => { cleanup(); reject(new Error("JSONP fallo")); };
+        script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb + "&t=" + Date.now();
+        document.body.appendChild(script);
+        function cleanup() { delete window[cb]; if (script.parentNode) script.parentNode.removeChild(script); }
+      });
+    }
+
+    function normalizarRegistro(r) {
+      return {
+        estudiante: clean(r.estudiante || r.nombresestudiante || r.nombreestudiante || r.nombre),
+        telefono: clean(r.telefono),
+        sector: clean(r.sector),
+        servicio: clean(r.servicio || "COMPLETO"),
+        urlMaps: clean(r.enlacegooglemaps || r.urlmaps || r.url_maps || r.ubicacion || r.url)
+      };
+    }
+
+    function registrarServiceWorker() {
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw-padre.js").catch(() => {});
+      const saved = localStorage.getItem("miRutaPadre");
+      if (saved) {
+        document.getElementById("busqueda").value = saved;
+        setTimeout(buscarEstudiante, 500);
+      }
+    }
+
+    function extraerCoordenadas(texto) {
+      const valor = clean(texto).replace(/"/g, "").replace(/\n/g, " ");
+      let m = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
+      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
+      m = valor.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+      if (m) return { lat: Number(m[1]), lng: Number(m[2]) };
+      return null;
+    }
+
+    function distanciaKm(a, b, c, d) {
+      const R = 6371, dLat = rad(c - a), dLng = rad(d - b);
+      const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+    }
+
+    function clean(v) { return String(v || "").trim(); }
+    function normalizar(v) { return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    function rad(n) { return n * Math.PI / 180; }
+    function esc(v) { return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+  </script>
+</body>
+</html>
