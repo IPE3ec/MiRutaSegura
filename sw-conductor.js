@@ -1,4 +1,4 @@
-const CACHE_NAME = "mi-ruta-segura-conductor-v1";
+const CACHE_NAME = "mi-ruta-segura-conductor-v3";
 const ASSETS = [
   "conductor.html",
   "manifest-conductor.webmanifest",
