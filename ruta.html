@@ -11,85 +11,117 @@
     #map-container { position: relative; width: 100vw; height: 100vh; }
     #map { width: 100%; height: 100%; }
     .panel-control {
-      position: absolute; top: 18px; left: 18px; z-index: 1000;
-      width: 390px; max-width: calc(100vw - 36px); max-height: calc(100vh - 36px);
-      background: rgba(255,255,255,.97); border-radius: 10px;
-      box-shadow: 0 4px 18px rgba(0,0,0,.25); padding: 16px;
-      display: flex; flex-direction: column;
+      position: absolute; top: 16px; left: 16px; z-index: 1000;
+      width: 440px; max-width: calc(100vw - 32px); max-height: calc(100vh - 32px);
+      background: rgba(255,255,255,.98); border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.25); padding: 14px;
+      display: flex; flex-direction: column; transition: all .2s ease;
+    }
+    .panel-control.minimizado { width: 350px; max-height: 210px; overflow: hidden; }
+    .panel-control.minimizado .zona-controles,
+    .panel-control.minimizado .lista-alumnos,
+    .panel-control.minimizado .contador,
+    .panel-control.minimizado #estado { display: none; }
+    .panel-control.minimizado .resumen {
+      display: block !important; max-height: 118px; overflow: hidden; margin-bottom: 8px;
     }
     .header-panel {
       background: #111; color: #ffcc00; padding: 12px; border-radius: 6px;
       text-align: center; font-weight: 900; margin-bottom: 10px; text-transform: uppercase;
     }
+    .top-actions, .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .modo-ruta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    label { font-size: 12px; font-weight: 800; color: #333; display: grid; gap: 4px; }
+    input, select { width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 9px; font-size: 13px; background: #fff; }
     .btn {
-      width: 100%; border: 0; border-radius: 6px; padding: 11px;
-      font-size: 12px; font-weight: 900; cursor: pointer;
-      text-transform: uppercase; margin-bottom: 8px;
+      width: 100%; border: 0; border-radius: 6px; padding: 10px; font-size: 12px;
+      font-weight: 900; cursor: pointer; text-transform: uppercase; margin-bottom: 8px;
     }
     .btn-cargar { background: #111; color: #ffcc00; }
     .btn-trazar { background: #28a745; color: #fff; }
+    .btn-sec { background: #e9ecef; color: #111; border: 1px solid #bbb; }
     .btn-modo { background: #e9ecef; color: #111; border: 2px solid #ddd; }
     .btn-modo.activo { background: #ffcc00; color: #111; border-color: #111; }
     .btn:disabled { background: #ccc; color: #777; cursor: not-allowed; }
-    .estado {
-      font-size: 13px; padding: 9px; border-radius: 6px;
-      margin-bottom: 10px; display: none;
-    }
+    .estado { font-size: 13px; padding: 9px; border-radius: 6px; margin-bottom: 10px; display: none; }
     .estado.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
     .estado.ok { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
     .estado.info { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
     .resumen {
-      display: none; background: #e8f4f8; border: 1px solid #b8daff;
-      padding: 10px; border-radius: 6px; font-size: 12px;
-      margin-bottom: 10px; line-height: 1.45;
+      display: none; background: #e8f4f8; border: 1px solid #b8daff; padding: 10px;
+      border-radius: 6px; font-size: 12px; margin-bottom: 10px; line-height: 1.45;
     }
     .resumen table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    .resumen th, .resumen td { border-bottom: 1px solid #cfe2ff; padding: 4px; text-align: left; }
+    .resumen th, .resumen td { border-bottom: 1px solid #cfe2ff; padding: 4px; text-align: left; vertical-align: top; }
     .contador { font-size: 13px; font-weight: 900; margin-bottom: 6px; }
     .lista-alumnos { overflow-y: auto; border-top: 1px solid #e0e0e0; padding-top: 8px; min-height: 120px; }
-    .card-alumno {
-      background: #f8f9fa; border-left: 4px solid #ffcc00;
-      padding: 9px 10px; margin-bottom: 8px; border-radius: 5px;
-      font-size: 12px; cursor: pointer;
-    }
+    .card-alumno { background: #f8f9fa; border-left: 4px solid #ffcc00; padding: 9px 10px; margin-bottom: 8px; border-radius: 5px; font-size: 12px; cursor: pointer; }
     .card-alumno strong { display: block; color: #111; margin-bottom: 4px; }
-    .btn-nav {
-      margin-top: 8px; width: 100%; background: #111; color: #ffcc00;
-      border: 0; border-radius: 5px; padding: 8px; font-weight: 900; cursor: pointer;
-    }
+    .card-sin-coords { border-left-color: #dc3545; color: #666; }
+    .btn-nav { margin-top: 8px; width: 100%; background: #111; color: #ffcc00; border: 0; border-radius: 5px; padding: 8px; font-weight: 900; cursor: pointer; }
     .empty { text-align: center; color: #777; font-size: 12px; }
-    .numbered-icon {
-      background: #ffcc00; color: #111; border: 2px solid #111;
-      border-radius: 50%; font-weight: 900; text-align: center;
-      line-height: 26px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,.4);
+    .floating-stats {
+      position: absolute; right: 16px; top: 16px; z-index: 999;
+      display: grid; grid-template-columns: repeat(3, minmax(90px, 1fr)); gap: 8px;
+      max-width: calc(100vw - 500px);
     }
-    .fixed-icon {
-      border-radius: 50%; font-weight: 900; text-align: center;
-      line-height: 30px; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,.4);
+    .stat {
+      background: rgba(17,17,17,.88); color: #fff; border-radius: 8px; padding: 9px 10px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.25); font-size: 12px;
     }
+    .stat b { color: #ffcc00; display: block; font-size: 15px; }
+    .numbered-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; font-weight: 900; text-align: center; line-height: 26px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
+    .fixed-icon { border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
     .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; }
     .conductor-icon { background: #0066ff; color: #fff; border: 2px solid #fff; }
-    @media (max-width: 700px) {
-      .panel-control {
-        top: auto; left: 10px; right: 10px; bottom: 10px;
-        width: auto; max-width: none; max-height: 58vh;
-      }
+    @media (max-width: 800px) {
+      .panel-control { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-width: none; max-height: 66vh; }
+      .panel-control.minimizado { width: auto; max-height: 190px; }
+      .floating-stats { left: 8px; right: 8px; top: 8px; max-width: none; grid-template-columns: repeat(3, 1fr); }
+      .stat { padding: 7px; font-size: 11px; }
+      .stat b { font-size: 13px; }
     }
   </style>
 </head>
 <body>
   <div id="map-container">
-    <div class="panel-control">
+    <div class="floating-stats">
+      <div class="stat">Paradas<b id="stat-paradas">0</b></div>
+      <div class="stat">Km total<b id="stat-km">0.00</b></div>
+      <div class="stat">Tiempo<b id="stat-tiempo">0 min</b></div>
+    </div>
+
+    <div id="panel-control" class="panel-control">
       <div class="header-panel">Ruta 7 - San Gabriel</div>
-      <div class="modo-ruta">
-        <button class="btn btn-modo activo" data-modo="mananaEntrada" onclick="seleccionarModoRuta('mananaEntrada')">Mañana entrada</button>
-        <button class="btn btn-modo" data-modo="mananaSalida" onclick="seleccionarModoRuta('mananaSalida')">Mañana salida</button>
-        <button class="btn btn-modo" data-modo="tardeEntrada" onclick="seleccionarModoRuta('tardeEntrada')">Tarde entrada</button>
-        <button class="btn btn-modo" data-modo="tardeSalida" onclick="seleccionarModoRuta('tardeSalida')">Tarde salida</button>
+      <div class="top-actions">
+        <button class="btn btn-sec" onclick="alternarPanel()" id="btn-panel">Minimizar panel</button>
+        <button class="btn btn-sec" onclick="centrarMapa()">Centrar mapa</button>
       </div>
-      <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">Cargar estudiantes</button>
-      <button class="btn btn-trazar" id="btn-trazar" onclick="generarRuta()" disabled>Trazar ruta</button>
+
+      <div class="zona-controles">
+        <div class="modo-ruta">
+          <button class="btn btn-modo activo" data-modo="mananaEntrada" onclick="seleccionarModoRuta('mananaEntrada')">Mañana entrada</button>
+          <button class="btn btn-modo" data-modo="mananaSalida" onclick="seleccionarModoRuta('mananaSalida')">Mañana salida</button>
+          <button class="btn btn-modo" data-modo="tardeEntrada" onclick="seleccionarModoRuta('tardeEntrada')">Tarde entrada</button>
+          <button class="btn btn-modo" data-modo="tardeSalida" onclick="seleccionarModoRuta('tardeSalida')">Tarde salida</button>
+        </div>
+
+        <div class="controls">
+          <label>Hora objetivo
+            <input id="horaObjetivo" type="time" value="06:50" onchange="limpiarCalculo()">
+          </label>
+          <label>Tipo de cálculo
+            <select id="tipoCalculo" onchange="limpiarCalculo()">
+              <option value="logica">Ruta lógica / ahorro</option>
+              <option value="rapida">Ruta más rápida</option>
+            </select>
+          </label>
+        </div>
+
+        <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">Cargar estudiantes</button>
+        <button class="btn btn-trazar" id="btn-trazar" onclick="generarRuta()" disabled>Trazar ruta y calcular tiempos</button>
+      </div>
+
       <div id="estado" class="estado"></div>
       <div id="resumen" class="resumen"></div>
       <div id="navegacion-completa"></div>
@@ -101,14 +133,15 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzho1kGWHLd64WowOqX-ARH9aOIb5nyE00y2E4dOx7bZ7TbKyUP6Eibd2QkfEQvkHvHrw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxavsmUXvKo1DjuQirLMiu1ej4MixYyrNsToBlf_lip0XrK-9bDQRnqm-vRrpW6yw5PCw/exec";
     const CASA_CONDUCTOR = { nombre: "Casa del conductor", lat: -0.256837, lng: -78.558433 };
     const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
+
     const MODOS_RUTA = {
-      mananaEntrada: { label: "Mañana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#0066ff" },
-      mananaSalida: { label: "Mañana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, color: "#28a745" },
-      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#8e44ad" },
-      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, color: "#f39c12" }
+      mananaEntrada: { label: "Mañana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#0066ff", hora: "06:50" },
+      mananaSalida: { label: "Mañana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, color: "#28a745", hora: "12:30" },
+      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, color: "#8e44ad", hora: "12:45" },
+      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, color: "#f39c12", hora: "18:00" }
     };
 
     let modoActual = "mananaEntrada";
@@ -134,27 +167,38 @@
       L.marker([ESCUELA.lat, ESCUELA.lng], { icon: iconEscuela }).bindPopup(`<strong>${ESCUELA.nombre}</strong><br>Escuela`).addTo(map);
     }
 
+    function alternarPanel(forzarMinimizado) {
+      const panel = document.getElementById("panel-control");
+      const debeMinimizar = typeof forzarMinimizado === "boolean" ? forzarMinimizado : !panel.classList.contains("minimizado");
+      panel.classList.toggle("minimizado", debeMinimizar);
+      document.getElementById("btn-panel").textContent = debeMinimizar ? "Mostrar panel" : "Minimizar panel";
+      setTimeout(() => map.invalidateSize(), 250);
+    }
+
     function seleccionarModoRuta(modo) {
       modoActual = modo;
+      const config = MODOS_RUTA[modoActual];
+      document.getElementById("horaObjetivo").value = config.hora;
       document.querySelectorAll(".btn-modo").forEach(btn => btn.classList.toggle("activo", btn.dataset.modo === modo));
-      limpiarRuta();
+      alternarPanel(false);
+      limpiarCalculo();
       if (estudiantesData.length) filtrarYRenderizar();
+      mostrarEstado(config.sentido === "entrada" ? "Entrada: casa del conductor → paradas → escuela." : "Salida: escuela → paradas → última casa.", "info");
     }
 
     function cargarDatosDesdeGoogle() {
+      alternarPanel(false);
       mostrarEstado("Conectando con Google Sheets...", "info");
       document.getElementById("lista-alumnos").innerHTML = "<p class='empty'>Leyendo registros...</p>";
-      cargarJsonp(`${SCRIPT_URL}?action=records`)
-        .then(data => {
-          const registros = Array.isArray(data) ? data : (data.records || []);
-          estudiantesData = registros.map(normalizarRegistro);
-          document.getElementById("cant-total").textContent = estudiantesData.length;
-          filtrarYRenderizar();
-        })
-        .catch(error => {
-          console.error(error);
-          mostrarEstado("No se pudo leer Google Sheets. Revisa la URL /exec y permisos.", "error");
-        });
+      cargarJsonp(`${SCRIPT_URL}?action=records`).then(data => {
+        const registros = Array.isArray(data) ? data : (data.records || []);
+        estudiantesData = registros.map(normalizarRegistro);
+        document.getElementById("cant-total").textContent = estudiantesData.length;
+        filtrarYRenderizar();
+      }).catch(error => {
+        console.error(error);
+        mostrarEstado("No se pudo leer Google Sheets. Revisa la URL /exec, doGet y permisos.", "error");
+      });
     }
 
     function cargarJsonp(url) {
@@ -199,13 +243,11 @@
 
       document.getElementById("cant-filtrados").textContent = puntosFiltrados.length;
       document.getElementById("btn-trazar").disabled = puntosFiltrados.length === 0;
-      renderizarListaInicial();
+      renderizarListaSinRuta();
+      actualizarEstadisticas(0, 0, puntosFiltrados.length);
 
-      if (puntosFiltrados.length) {
-        mostrarEstado(`${puntosFiltrados.length} estudiantes con ubicación válida para ${config.label}.`, "ok");
-      } else {
-        mostrarEstado(`No existen estudiantes con ubicación válida para ${config.label}.`, "error");
-      }
+      if (puntosFiltrados.length) mostrarEstado(`${puntosFiltrados.length} estudiantes con ubicación válida para ${config.label}.`, "ok");
+      else mostrarEstado(`No existen estudiantes con ubicación válida para ${config.label}.`, "error");
     }
 
     function coincideHorario(valor, horarioBuscado) {
@@ -215,13 +257,13 @@
     function coincideServicio(valor, servicioBuscado) {
       const texto = normalizarTexto(valor || "COMPLETO");
       if (texto === "" || texto.includes("COMPLETO")) return true;
-      if (servicioBuscado === "INGRESO") return texto.includes("INGRESO") || texto.includes("ENTRADA") || texto.includes("MANANA");
-      if (servicioBuscado === "SALIDA") return texto.includes("SALIDA") || texto.includes("TARDE");
+      if (servicioBuscado === "INGRESO") return texto.includes("INGRESO") || texto.includes("ENTRADA") || texto.includes("SOLO EN LA MANANA") || texto.includes("SOLO EN LA MAÑANA");
+      if (servicioBuscado === "SALIDA") return texto.includes("SALIDA") || texto.includes("SOLO SALIDA");
       return true;
     }
 
-    function renderizarListaInicial() {
-      limpiarRuta();
+    function renderizarListaSinRuta() {
+      limpiarCalculo(false);
       const lista = document.getElementById("lista-alumnos");
       lista.innerHTML = "";
       marcadoresGroup.clearLayers();
@@ -229,95 +271,148 @@
         lista.innerHTML = "<p class='empty'>No hay paradas para este modo.</p>";
         return;
       }
-      puntosFiltrados.forEach((est, i) => agregarParada(est, i + 1, lista));
-      ajustarVista(puntosFiltrados);
+      puntosFiltrados.forEach((est, i) => agregarParada(est, i + 1, lista, null, "Sin calcular"));
+      centrarMapa();
     }
 
-    function generarRuta() {
+    async function generarRuta() {
       if (!puntosFiltrados.length) return;
       const config = MODOS_RUTA[modoActual];
       const btn = document.getElementById("btn-trazar");
       btn.disabled = true;
       btn.textContent = "Calculando ruta...";
 
-      puntosOrdenados = ordenarPorCercania(config.inicio, puntosFiltrados);
-      const puntosOSRM = config.sentido === "entrada"
-        ? [config.inicio, ...puntosOrdenados, config.fin]
-        : [config.inicio, ...puntosOrdenados];
+      try {
+        if (document.getElementById("tipoCalculo").value === "rapida") {
+          await generarRutaRapida(config);
+        } else {
+          puntosOrdenados = ordenarRutaLogica(config, puntosFiltrados);
+          await trazarConOrden(config, puntosOrdenados, "Ruta lógica: primero los más lejanos y luego se va acercando.");
+        }
+        alternarPanel(true);
+      } catch (error) {
+        console.error(error);
+        mostrarEstado("No se pudo calcular la ruta rápida. Se usará la ruta lógica.", "error");
+        puntosOrdenados = ordenarRutaLogica(config, puntosFiltrados);
+        await trazarConOrden(config, puntosOrdenados, "Ruta lógica usada como respaldo.");
+        alternarPanel(true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Trazar ruta y calcular tiempos";
+      }
+    }
 
+    function ordenarRutaLogica(config, puntos) {
+      if (config.sentido === "entrada") {
+        const pendientes = [...puntos].sort((a, b) => distanciaKm(ESCUELA.lat, ESCUELA.lng, b.lat, b.lng) - distanciaKm(ESCUELA.lat, ESCUELA.lng, a.lat, a.lng));
+        const ordenados = [];
+        let actual = pendientes.shift();
+        if (actual) ordenados.push(actual);
+        while (pendientes.length) {
+          const siguienteIndex = indiceMasCercano(actual, pendientes);
+          actual = pendientes.splice(siguienteIndex, 1)[0];
+          ordenados.push(actual);
+        }
+        return ordenados;
+      }
+      return ordenarPorCercania(config.inicio, puntos);
+    }
+
+    async function generarRutaRapida(config) {
+      const puntosBase = config.sentido === "entrada" ? [config.inicio, ...puntosFiltrados, config.fin] : [config.inicio, ...puntosFiltrados];
+      const coords = puntosBase.map(p => `${p.lng},${p.lat}`).join(";");
+      const destination = config.sentido === "entrada" ? "last" : "any";
+      const url = `https://router.project-osrm.org/trip/v1/driving/${coords}?source=first&destination=${destination}&roundtrip=false&overview=full&geometries=geojson`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.trips || !data.trips.length || !data.waypoints) throw new Error("OSRM trip no devolvió ruta");
+
+      const puntosPorOrden = data.waypoints
+        .map((wp, originalIndex) => ({ originalIndex, orden: wp.waypoint_index }))
+        .sort((a, b) => a.orden - b.orden)
+        .map(x => x.originalIndex);
+
+      puntosOrdenados = puntosPorOrden
+        .filter(originalIndex => originalIndex !== 0)
+        .filter(originalIndex => !(config.sentido === "entrada" && originalIndex === puntosBase.length - 1))
+        .map(originalIndex => puntosBase[originalIndex]);
+
+      const route = data.trips[0];
+      tramosRuta = (route.legs || []).map((leg, index) => ({ index: index + 1, km: leg.distance / 1000, min: leg.duration / 60 }));
+      dibujarRuta(route, config);
+      renderizarRutaOrdenada(route, "Ruta más rápida: OSRM optimizó el orden por calles.");
+    }
+
+    async function trazarConOrden(config, ordenados, mensaje) {
+      const puntosOSRM = config.sentido === "entrada" ? [config.inicio, ...ordenados, config.fin] : [config.inicio, ...ordenados];
       const waypoints = puntosOSRM.map(p => `${p.lng},${p.lat}`).join(";");
       const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson&steps=false`;
-
-      fetch(osrmUrl)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.routes || !data.routes.length) throw new Error("OSRM no devolvió ruta");
-          const route = data.routes[0];
-          tramosRuta = (route.legs || []).map((leg, index) => ({ index: index + 1, km: leg.distance / 1000, min: leg.duration / 60 }));
-
-          if (rutaLayer) map.removeLayer(rutaLayer);
-          rutaLayer = L.geoJSON(route.geometry, { style: { color: config.color, weight: 6, opacity: 0.85 } }).addTo(map);
-
-          renderizarRutaOrdenada(route);
-          map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
-          mostrarEstado("Ruta trazada con calles reales.", "ok");
-        })
-        .catch(error => {
-          console.error(error);
-          mostrarEstado("No se pudo trazar la ruta. Intenta nuevamente.", "error");
-        })
-        .finally(() => {
-          btn.disabled = false;
-          btn.textContent = "Trazar ruta";
-        });
+      const res = await fetch(osrmUrl);
+      const data = await res.json();
+      if (!data.routes || !data.routes.length) throw new Error("OSRM no devolvió ruta");
+      const route = data.routes[0];
+      tramosRuta = (route.legs || []).map((leg, index) => ({ index: index + 1, km: leg.distance / 1000, min: leg.duration / 60 }));
+      dibujarRuta(route, config);
+      renderizarRutaOrdenada(route, mensaje);
     }
 
-    function ordenarPorCercania(inicio, puntos) {
-      const pendientes = [...puntos];
-      const ordenados = [];
-      let actual = inicio;
-      while (pendientes.length) {
-        let mejorIndex = 0;
-        let mejorDistancia = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
-        for (let i = 1; i < pendientes.length; i++) {
-          const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
-          if (d < mejorDistancia) {
-            mejorDistancia = d;
-            mejorIndex = i;
-          }
-        }
-        const siguiente = pendientes.splice(mejorIndex, 1)[0];
-        ordenados.push(siguiente);
-        actual = siguiente;
-      }
-      return ordenados;
+    function dibujarRuta(route, config) {
+      if (rutaLayer) map.removeLayer(rutaLayer);
+      rutaLayer = L.geoJSON(route.geometry, { style: { color: config.color, weight: 6, opacity: 0.85 } }).addTo(map);
+      map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
     }
 
-    function renderizarRutaOrdenada(route) {
+    function renderizarRutaOrdenada(route, mensaje) {
       marcadoresGroup.clearLayers();
       const lista = document.getElementById("lista-alumnos");
       lista.innerHTML = "";
-      puntosOrdenados.forEach((est, i) => agregarParada(est, i + 1, lista, tramosRuta[i]));
-      mostrarResumen(route);
+      const horarios = calcularHorarios(route);
+      puntosOrdenados.forEach((est, i) => agregarParada(est, i + 1, lista, tramosRuta[i], horarios.paradas[i]));
+      mostrarResumen(route, horarios, mensaje);
       mostrarNavegacionCompleta();
+      actualizarEstadisticas(route.distance / 1000, route.duration / 60, puntosOrdenados.length);
+      mostrarEstado(mensaje, "ok");
     }
 
-    function agregarParada(est, numero, lista, tramo) {
+    function calcularHorarios(route) {
+      const config = MODOS_RUTA[modoActual];
+      const objetivoMin = horaAMinutos(document.getElementById("horaObjetivo").value || config.hora);
+      const totalMin = Math.round(route.duration / 60);
+      const salidaMin = config.sentido === "entrada" ? objetivoMin - totalMin : objetivoMin;
+      let acumulado = 0;
+      const paradas = [];
+
+      for (let i = 0; i < puntosOrdenados.length; i++) {
+        acumulado += Math.round((tramosRuta[i] && tramosRuta[i].min) || 0);
+        paradas.push(minutosAHora(salidaMin + acumulado));
+      }
+
+      return {
+        salida: minutosAHora(salidaMin),
+        llegada: config.sentido === "entrada" ? minutosAHora(objetivoMin) : minutosAHora(salidaMin + totalMin),
+        paradas
+      };
+    }
+
+    function agregarParada(est, numero, lista, tramo, hora) {
       const icon = L.divIcon({ className: "numbered-icon", html: numero, iconSize: [28, 28], iconAnchor: [14, 14] });
       const linkParada = `https://www.google.com/maps/dir/?api=1&destination=${est.lat},${est.lng}&travelmode=driving`;
       const marker = L.marker([est.lat, est.lng], { icon }).bindPopup(`
         <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><br>
+        <b>Hora aprox:</b> ${escapar(hora || "Sin calcular")}<br>
         <b>Sector:</b> ${escapar(est.sector || "Sin sector")}<br>
+        <b>Servicio:</b> ${escapar(est.servicio || "COMPLETO")}<br>
         <b>Teléfono:</b> ${crearLinkWhatsApp(est.telefono)}<br><br>
         <a href="${linkParada}" target="_blank">Navegar a esta parada</a>
       `);
       marcadoresGroup.addLayer(marker);
 
-      const tramoHtml = tramo ? `<div><b>Tramo:</b> ${tramo.km.toFixed(2)} km - ${Math.round(tramo.min)} min</div>` : "";
+      const tramoHtml = tramo ? `<div><b>Tramo anterior:</b> ${tramo.km.toFixed(2)} km - ${Math.round(tramo.min)} min</div>` : "";
       const card = document.createElement("div");
       card.className = "card-alumno";
       card.innerHTML = `
         <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong>
+        <div><b>Hora aprox:</b> ${escapar(hora || "Sin calcular")}</div>
         <div>Sector: ${escapar(est.sector || "Sin sector")}</div>
         <div>Horario: ${escapar(est.horario || "Sin horario")}</div>
         <div>Servicio: ${escapar(est.servicio || "COMPLETO")}</div>
@@ -328,22 +423,39 @@
       lista.appendChild(card);
     }
 
-    function mostrarResumen(route) {
+    function mostrarResumen(route, horarios, mensaje) {
       const config = MODOS_RUTA[modoActual];
       const km = (route.distance / 1000).toFixed(2);
       const min = Math.round(route.duration / 60);
+      const filas = tramosRuta.map((t, i) => {
+        const desde = nombrePuntoTramo(i, "desde");
+        const hasta = nombrePuntoTramo(i, "hasta");
+        return `<tr><td>${i + 1}</td><td>${escapar(desde)} → ${escapar(hasta)}</td><td>${t.km.toFixed(2)} km</td><td>${Math.round(t.min)} min</td></tr>`;
+      }).join("");
+
       const resumen = document.getElementById("resumen");
       resumen.style.display = "block";
-      const filas = tramosRuta.map((t, i) => `<tr><td>${i + 1}</td><td>${t.km.toFixed(2)} km</td><td>${Math.round(t.min)} min</td></tr>`).join("");
       resumen.innerHTML = `
         <b>${config.label}</b><br>
+        Cálculo: <b>${escapar(document.getElementById("tipoCalculo").selectedOptions[0].textContent)}</b><br>
+        ${escapar(mensaje)}<br>
+        Hora salida calculada: <b>${horarios.salida}</b><br>
+        Hora llegada calculada: <b>${horarios.llegada}</b><br>
         Total paradas: <b>${puntosOrdenados.length}</b><br>
         Distancia total: <b>${km} km</b><br>
         Tiempo total: <b>${min} min</b><br>
         Primera parada: <b>${escapar(puntosOrdenados[0]?.estudiante || "N/D")}</b><br>
         Última parada: <b>${escapar(puntosOrdenados[puntosOrdenados.length - 1]?.estudiante || "N/D")}</b>
-        <table><thead><tr><th>Tramo</th><th>Km</th><th>Tiempo</th></tr></thead><tbody>${filas}</tbody></table>
+        <table><thead><tr><th>#</th><th>Tramo</th><th>Km</th><th>Tiempo</th></tr></thead><tbody>${filas}</tbody></table>
       `;
+    }
+
+    function nombrePuntoTramo(index, lado) {
+      const config = MODOS_RUTA[modoActual];
+      const puntos = config.sentido === "entrada" ? [config.inicio, ...puntosOrdenados, config.fin] : [config.inicio, ...puntosOrdenados];
+      const p = lado === "desde" ? puntos[index] : puntos[index + 1];
+      if (!p) return "N/D";
+      return p.nombre || p.estudiante || "Parada";
     }
 
     function mostrarNavegacionCompleta() {
@@ -353,7 +465,7 @@
       links.forEach((link, i) => {
         const btn = document.createElement("button");
         btn.className = "btn btn-cargar";
-        btn.textContent = links.length === 1 ? "Navegar ruta completa" : `Navegar tramo ${i + 1}`;
+        btn.textContent = links.length === 1 ? "Navegar ruta completa" : `Navegar ruta tramo ${i + 1}`;
         btn.onclick = () => window.open(link, "_blank");
         cont.appendChild(btn);
       });
@@ -361,9 +473,7 @@
 
     function crearLinksNavegacionPorTramos() {
       const config = MODOS_RUTA[modoActual];
-      const puntos = config.sentido === "entrada"
-        ? [config.inicio, ...puntosOrdenados, config.fin]
-        : [config.inicio, ...puntosOrdenados];
+      const puntos = config.sentido === "entrada" ? [config.inicio, ...puntosOrdenados, config.fin] : [config.inicio, ...puntosOrdenados];
       const maxPuntosGoogle = 10;
       const links = [];
       for (let start = 0; start < puntos.length - 1; start += maxPuntosGoogle - 1) {
@@ -373,29 +483,57 @@
         const destino = tramo[tramo.length - 1];
         const intermedios = tramo.slice(1, -1);
         let url = `https://www.google.com/maps/dir/?api=1&origin=${origen.lat},${origen.lng}&destination=${destino.lat},${destino.lng}&travelmode=driving`;
-        if (intermedios.length) {
-          url += `&waypoints=${encodeURIComponent(intermedios.map(p => `${p.lat},${p.lng}`).join("|"))}`;
-        }
+        if (intermedios.length) url += `&waypoints=${encodeURIComponent(intermedios.map(p => `${p.lat},${p.lng}`).join("|"))}`;
         links.push(url);
       }
       return links;
     }
 
-    function limpiarRuta() {
-      if (rutaLayer) {
-        map.removeLayer(rutaLayer);
-        rutaLayer = null;
+    function ordenarPorCercania(inicio, puntos) {
+      const pendientes = [...puntos];
+      const ordenados = [];
+      let actual = inicio;
+      while (pendientes.length) {
+        const mejorIndex = indiceMasCercano(actual, pendientes);
+        actual = pendientes.splice(mejorIndex, 1)[0];
+        ordenados.push(actual);
       }
-      tramosRuta = [];
-      puntosOrdenados = [];
-      marcadoresGroup.clearLayers();
-      document.getElementById("resumen").style.display = "none";
-      document.getElementById("navegacion-completa").innerHTML = "";
+      return ordenados;
     }
 
-    function ajustarVista(puntos) {
+    function indiceMasCercano(actual, pendientes) {
+      let mejorIndex = 0;
+      let mejorDistancia = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
+      for (let i = 1; i < pendientes.length; i++) {
+        const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
+        if (d < mejorDistancia) {
+          mejorDistancia = d;
+          mejorIndex = i;
+        }
+      }
+      return mejorIndex;
+    }
+
+    function limpiarCalculo(limpiarMarcadores = true) {
+      if (rutaLayer) { map.removeLayer(rutaLayer); rutaLayer = null; }
+      tramosRuta = [];
+      puntosOrdenados = [];
+      document.getElementById("resumen").style.display = "none";
+      document.getElementById("navegacion-completa").innerHTML = "";
+      actualizarEstadisticas(0, 0, puntosFiltrados.length);
+      if (limpiarMarcadores && puntosFiltrados.length) renderizarListaSinRuta();
+    }
+
+    function centrarMapa() {
+      const puntos = puntosOrdenados.length ? puntosOrdenados : puntosFiltrados;
       const bounds = [[CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], [ESCUELA.lat, ESCUELA.lng], ...puntos.map(p => [p.lat, p.lng])];
       map.fitBounds(bounds, { padding: [45, 45] });
+    }
+
+    function actualizarEstadisticas(km, min, paradas) {
+      document.getElementById("stat-paradas").textContent = paradas || 0;
+      document.getElementById("stat-km").textContent = Number(km || 0).toFixed(2);
+      document.getElementById("stat-tiempo").textContent = `${Math.round(min || 0)} min`;
     }
 
     function extraerCoordenadas(texto) {
@@ -414,10 +552,20 @@
       const R = 6371;
       const dLat = gradosARadianes(lat2 - lat1);
       const dLng = gradosARadianes(lng2 - lng1);
-      const a = Math.sin(dLat / 2) ** 2 +
-        Math.cos(gradosARadianes(lat1)) * Math.cos(gradosARadianes(lat2)) *
-        Math.sin(dLng / 2) ** 2;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(gradosARadianes(lat1)) * Math.cos(gradosARadianes(lat2)) * Math.sin(dLng / 2) ** 2;
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function horaAMinutos(hora) {
+      const parts = String(hora || "00:00").split(":").map(Number);
+      return (parts[0] || 0) * 60 + (parts[1] || 0);
+    }
+
+    function minutosAHora(minutos) {
+      const total = ((Math.round(minutos) % 1440) + 1440) % 1440;
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
     }
 
     function gradosARadianes(grados) { return grados * Math.PI / 180; }
@@ -437,9 +585,11 @@
     }
 
     function limpiar(v) { return String(v || "").trim(); }
+
     function normalizarTexto(v) {
       return limpiar(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
+
     function escapar(valor) {
       return String(valor || "")
         .replace(/&/g, "&amp;")
