@@ -115,7 +115,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhYsofdLrIMIon20Bqi09lkeUkLHMrMHFmDXvhVQ72W4UMKXTsQq46ubDGyF2Iky7n8A/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhefclDIHwrXVVHabv67jQahJpQapsKkFA339A7ExWwyTDYEoxvhbJmDBg-DeY78KXSQ/exec";
     const CASA_CONDUCTOR = { nombre: "Casa conductor", lat: -0.256837, lng: -78.558433 };
     const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
     const MODOS = {
@@ -308,7 +308,7 @@
           const key = [e.fechaservidor, e.tipo, e.telefono, e.estudiante].join("|");
           if (!eventosVistos.has(key)) {
             eventosVistos.add(key);
-            avisoSonoro("Aviso de padre: " + (e.estudiante || e.telefono || ""));
+            avisoSonoro("Aviso de padre: " + (e.tipo || "aviso") + " | Alumno: " + (e.estudiante || "Sin nombre") + " | Sector: " + (e.sector || "Sin sector") + " | Tel: " + (e.telefono || "Sin telefono"));
           }
         });
         box.innerHTML = eventos.slice(-20).reverse().map(e => "<div class='card'><strong>" + esc(e.tipo) + "</strong>" + esc(e.estudiante || "") + "<br>" + esc(e.mensaje || "") + "<br><small>" + esc(e.fechaservidor || "") + "</small></div>").join("");
