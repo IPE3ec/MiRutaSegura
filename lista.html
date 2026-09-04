@@ -1,2817 +1,620 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Dashboard Recorrido Escolar - Ruta 7
-    </title>
-
-
-    <!-- Bootstrap 5 -->
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-
-    <!-- FontAwesome -->
-
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        rel="stylesheet"
-    >
-
-
-    <!-- jsPDF -->
-
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-    </script>
-
-
-    <!-- autoTable -->
-
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js">
-    </script>
-
-
-    <style>
-
-        body {
-
-            background-color: #f4f6f9;
-
-            font-family:
-                'Segoe UI',
-                Tahoma,
-                Geneva,
-                Verdana,
-                sans-serif;
-
-        }
-
-
-        .card-counter {
-
-            padding: 18px;
-
-            background-color: #fff;
-
-            border-radius: 10px;
-
-            box-shadow:
-                0 4px 6px rgba(
-                    0,
-                    0,
-                    0,
-                    0.05
-                );
-
-        }
-
-
-        .card-counter i {
-
-            font-size: 2.2rem;
-
-            opacity: 0.3;
-
-        }
-
-
-        .bg-custom-primary {
-
-            background-color: #1e3a8a;
-
-            color: white;
-
-        }
-
-
-        .badge-aldia {
-
-            background-color: #10b981;
-
-            color: white;
-
-        }
-
-
-        .badge-pendiente {
-
-            background-color: #f59e0b;
-
-            color: white;
-
-        }
-
-
-        .table-responsive {
-
-            max-height: 550px;
-
-            overflow-y: auto;
-
-        }
-
-
-        thead th {
-
-            position: sticky;
-
-            top: 0;
-
-            background-color:
-                #e2e8f0 !important;
-
-            z-index: 1;
-
-        }
-
-
-        .badge-ruta {
-
-            font-size: 0.9rem;
-
-            background-color: #f59e0b;
-
-            color: #000;
-
-            font-weight: bold;
-
-        }
-
-
-        #estadoConexion {
-
-            transition:
-                all 0.3s ease;
-
-        }
-
-    </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Recorrido Escolar - Ruta 7</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+body{background:#f4f6f9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+.card-counter{padding:18px;background:#fff;border-radius:10px;box-shadow:0 4px 6px rgba(0,0,0,.05)}
+.card-counter i{font-size:2.2rem;opacity:.3}
+.bg-custom-primary{background:#1e3a8a;color:#fff}
+.badge-aldia{background:#10b981;color:#fff}
+.badge-pendiente{background:#f59e0b;color:#fff}
+.table-responsive{max-height:550px;overflow-y:auto}
+thead th{position:sticky;top:0;background:#e2e8f0!important;z-index:2}
+.badge-ruta{font-size:.9rem;background:#f59e0b;color:#000;font-weight:bold}
+.table td{vertical-align:middle}
+.loading{padding:30px;text-align:center;color:#64748b}
+.status-bar{font-size:.85rem}
+.row-selected{background:#eef6ff!important}
+</style>
 </head>
 
-
 <body>
-
-
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
-
-    <nav
-        class="navbar navbar-expand-lg navbar-dark bg-custom-primary shadow-sm mb-4"
-    >
-
-        <div class="container-fluid">
-
-            <a
-                class="navbar-brand fw-bold"
-                href="#"
-            >
-
-                <i
-                    class="fa-solid fa-bus-simple me-2"
-                ></i>
-
-                Dashboard de Recorrido Escolar
-
-                <span
-                    class="badge badge-ruta ms-2"
-                >
-                    RUTA 7
-                </span>
-
-            </a>
-
-
-            <span
-                class="navbar-text text-white"
-            >
-
-                <i
-                    class="fa-solid fa-user-gear me-1"
-                ></i>
-
-                <strong>
-                    Conductor:
-                </strong>
-
-                Marcelo Muñoz
-
-            </span>
-
-        </div>
-
-    </nav>
-
-
-    <div class="container-fluid px-4">
-
-
-        <!-- =================================================
-             MÉTRICAS
-        ================================================== -->
-
-        <div class="row g-3 mb-4">
-
-
-            <div class="col-md-2">
-
-                <div
-                    class="card-counter border-start border-primary border-4"
-                >
-
-                    <div
-                        class="d-flex justify-content-between align-items-center"
-                    >
-
-                        <div>
-
-                            <h6
-                                class="text-muted small fw-bold text-uppercase mb-1"
-                            >
-                                Total Registrados
-                            </h6>
-
-                            <h3
-                                class="fw-bold m-0 text-primary"
-                                id="totalAlumnos"
-                            >
-                                0
-                            </h3>
-
-                        </div>
-
-
-                        <i
-                            class="fa-solid fa-users text-primary"
-                        ></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-md-2">
-
-                <div
-                    class="card-counter border-start border-success border-4"
-                >
-
-                    <div
-                        class="d-flex justify-content-between align-items-center"
-                    >
-
-                        <div>
-
-                            <h6
-                                class="text-muted small fw-bold text-uppercase mb-1"
-                            >
-                                Seleccionados PDF
-                            </h6>
-
-                            <h3
-                                class="fw-bold m-0 text-success"
-                                id="totalSeleccionados"
-                            >
-                                0
-                            </h3>
-
-                        </div>
-
-
-                        <i
-                            class="fa-solid fa-user-check text-success"
-                        ></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-md-2">
-
-                <div
-                    class="card-counter border-start border-info border-4"
-                >
-
-                    <div
-                        class="d-flex justify-content-between align-items-center"
-                    >
-
-                        <div>
-
-                            <h6
-                                class="text-muted small fw-bold text-uppercase mb-1"
-                            >
-                                Mañana Ingreso
-                            </h6>
-
-                            <h3
-                                class="fw-bold m-0 text-info"
-                                id="cntME"
-                            >
-                                0
-                            </h3>
-
-                        </div>
-
-
-                        <i
-                            class="fa-solid fa-sun text-info"
-                        ></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-md-2">
-
-                <div
-                    class="card-counter border-start border-warning border-4"
-                >
-
-                    <div
-                        class="d-flex justify-content-between align-items-center"
-                    >
-
-                        <div>
-
-                            <h6
-                                class="text-muted small fw-bold text-uppercase mb-1"
-                            >
-                                Mañana Salida
-                            </h6>
-
-                            <h3
-                                class="fw-bold m-0 text-warning"
-                                id="cntMS"
-                            >
-                                0
-                            </h3>
-
-                        </div>
-
-
-                        <i
-                            class="fa-solid fa-door-open text-warning"
-                        ></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-md-2">
-
-                <div
-                    class="card-counter border-start border-danger border-4"
-                >
-
-                    <div
-                        class="d-flex justify-content-between align-items-center"
-                    >
-
-                        <div>
-
-                            <h6
-                                class="text-muted small fw-bold text-uppercase mb-1"
-                            >
-                                Pagos Pendientes
-                            </h6>
-
-                            <h3
-                                class="fw-bold m-0 text-danger"
-                                id="cntPendientes"
-                            >
-                                0
-                            </h3>
-
-                        </div>
-
-
-                        <i
-                            class="fa-solid fa-clock-rotate-left text-danger"
-                        ></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- =================================================
-             GENERADOR PDF
-        ================================================== -->
-
-        <div class="card shadow-sm mb-4">
-
-            <div
-                class="card-header bg-white fw-bold text-primary d-flex justify-content-between align-items-center"
-            >
-
-                <span>
-
-                    <i
-                        class="fa-solid fa-file-pdf me-2"
-                    ></i>
-
-                    Generador de Reporte PDF - RUTA 7
-
-                </span>
-
-
-                <span
-                    class="badge bg-primary"
-                >
-                    Ruta 7
-                </span>
-
-            </div>
-
-
-            <div class="card-body">
-
-                <p
-                    class="text-muted small mb-2"
-                >
-                    Selecciona las columnas que deseas incluir en el archivo PDF descargable:
-                </p>
-
-
-                <div class="row g-2 mb-3">
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cID"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cID"
-                            >
-                                ID / Cédula
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cEstudiante"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cEstudiante"
-                            >
-                                Estudiante
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cGrado"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cGrado"
-                            >
-                                Grado / Año
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cRepresentante"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cRepresentante"
-                            >
-                                Representante
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cTel"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cTel"
-                            >
-                                Teléfono
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cSector"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cSector"
-                            >
-                                Sector
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cDireccion"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cDireccion"
-                            >
-                                Dirección Completa
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cReferencia"
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cReferencia"
-                            >
-                                Referencia
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cServicio"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cServicio"
-                            >
-                                Tipo Servicio
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cValor"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cValor"
-                            >
-                                Valor ($)
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="col-6 col-md-2">
-
-                        <div class="form-check">
-
-                            <input
-                                class="form-check-input filter-pdf"
-                                type="checkbox"
-                                id="cPago"
-                                checked
-                            >
-
-                            <label
-                                class="form-check-label"
-                                for="cPago"
-                            >
-                                Estado Pago
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-
-                <button
-                    class="btn btn-danger btn-sm fw-bold"
-                    onclick="generarPDF()"
-                >
-
-                    <i
-                        class="fa-solid fa-file-pdf me-2"
-                    ></i>
-
-                    Descargar PDF Solo Seleccionados
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =================================================
-             TABLA
-        ================================================== -->
-
-        <div class="card shadow-sm mb-4">
-
-            <div
-                class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2"
-            >
-
-                <h5
-                    class="m-0 fw-bold"
-                >
-
-                    <i
-                        class="fa-solid fa-table me-2"
-                    ></i>
-
-                    Listado de Alumnos - Ruta 7
-
-                </h5>
-
-
-                <div
-                    class="d-flex align-items-center gap-2"
-                >
-
-                    <input
-                        type="text"
-                        id="filterID"
-                        onkeyup="filtrarTabla()"
-                        class="form-control form-control-sm"
-                        placeholder="🔍 Filtrar por ID / Cédula..."
-                    >
-
-
-                    <input
-                        type="text"
-                        id="searchInput"
-                        onkeyup="filtrarTabla()"
-                        class="form-control form-control-sm"
-                        placeholder="🔍 Buscar por nombre, sector..."
-                    >
-
-
-                    <button
-                        class="btn btn-primary btn-sm"
-                        onclick="cargarDatos()"
-                        title="Actualizar datos"
-                    >
-
-                        <i
-                            class="fa-solid fa-rotate"
-                        ></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div class="card-body p-0">
-
-                <div class="table-responsive">
-
-                    <table
-                        class="table table-hover align-middle m-0"
-                        id="tablaAlumnos"
-                    >
-
-                        <thead
-                            class="table-light"
-                        >
-
-                            <tr>
-
-                                <th
-                                    class="text-center"
-                                    style="width: 50px;"
-                                >
-
-                                    <input
-                                        type="checkbox"
-                                        id="checkAll"
-                                        onchange="toggleSelectAll(this)"
-                                        checked
-                                    >
-
-                                </th>
-
-
-                                <th>#</th>
-
-                                <th>ID / Cédula</th>
-
-                                <th>Estudiante</th>
-
-                                <th>Grado</th>
-
-                                <th>Representante</th>
-
-                                <th>Teléfono</th>
-
-                                <th>Sector</th>
-
-                                <th>
-                                    Dirección (Principal / Sec.)
-                                </th>
-
-                                <th>Servicio</th>
-
-                                <th>Valor</th>
-
-                                <th>Estado Pago</th>
-
-                                <th>Ubicación</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody
-                            id="bodyTabla"
-                        >
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-primary shadow-sm mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="fa-solid fa-bus-simple me-2"></i>
+      Dashboard de Recorrido Escolar
+      <span class="badge badge-ruta ms-2">RUTA 7</span>
+    </a>
+    <span class="navbar-text text-white">
+      <i class="fa-solid fa-user-gear me-1"></i>
+      <strong>Conductor:</strong> Marcelo Muñoz
+    </span>
+  </div>
+</nav>
+
+<div class="container-fluid px-4">
+
+  <div id="estadoConexion" class="alert alert-secondary status-bar py-2 mb-3">
+    <i class="fa-solid fa-circle-notch fa-spin me-2"></i> Cargando información...
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-2"><div class="card-counter border-start border-primary border-4">
+      <h6 class="text-muted small fw-bold text-uppercase mb-1">Total Registrados</h6>
+      <h3 class="fw-bold m-0 text-primary" id="totalAlumnos">0</h3>
+    </div></div>
+    <div class="col-md-2"><div class="card-counter border-start border-success border-4">
+      <h6 class="text-muted small fw-bold text-uppercase mb-1">Seleccionados PDF</h6>
+      <h3 class="fw-bold m-0 text-success" id="totalSeleccionados">0</h3>
+    </div></div>
+    <div class="col-md-2"><div class="card-counter border-start border-info border-4">
+      <h6 class="text-muted small fw-bold text-uppercase mb-1">Mañana Ingreso</h6>
+      <h3 class="fw-bold m-0 text-info" id="cntME">0</h3>
+    </div></div>
+    <div class="col-md-2"><div class="card-counter border-start border-warning border-4">
+      <h6 class="text-muted small fw-bold text-uppercase mb-1">Mañana Salida</h6>
+      <h3 class="fw-bold m-0 text-warning" id="cntMS">0</h3>
+    </div></div>
+    <div class="col-md-2"><div class="card-counter border-start border-danger border-4">
+      <h6 class="text-muted small fw-bold text-uppercase mb-1">Pagos Pendientes</h6>
+      <h3 class="fw-bold m-0 text-danger" id="cntPendientes">0</h3>
+    </div></div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold text-primary d-flex justify-content-between align-items-center">
+      <span><i class="fa-solid fa-file-pdf me-2"></i>Generador de Reporte PDF - RUTA 7</span>
+      <span class="badge bg-primary">Ruta 7</span>
+    </div>
+    <div class="card-body">
+      <p class="text-muted small mb-2">
+        Selecciona las columnas que deseas incluir en el PDF.
+        <strong>El PDF siempre incluirá únicamente los estudiantes seleccionados.</strong>
+      </p>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cID" checked><label class="form-check-label" for="cID">ID / Cédula</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cEstudiante" checked><label class="form-check-label" for="cEstudiante">Estudiante</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cGrado" checked><label class="form-check-label" for="cGrado">Grado / Año</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cRepresentante" checked><label class="form-check-label" for="cRepresentante">Representante</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cTel" checked><label class="form-check-label" for="cTel">Teléfono</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cSector" checked><label class="form-check-label" for="cSector">Sector</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cDireccion" checked><label class="form-check-label" for="cDireccion">Dirección</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cReferencia"><label class="form-check-label" for="cReferencia">Referencia</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cServicio" checked><label class="form-check-label" for="cServicio">Tipo Servicio</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cValor" checked><label class="form-check-label" for="cValor">Valor ($)</label></div></div>
+        <div class="col-6 col-md-2"><div class="form-check"><input class="form-check-input filter-pdf" type="checkbox" id="cPago" checked><label class="form-check-label" for="cPago">Estado Pago</label></div></div>
+      </div>
+
+      <button class="btn btn-danger btn-sm fw-bold me-2" onclick="generarPDF()">
+        <i class="fa-solid fa-file-pdf me-2"></i>Descargar PDF Solo Seleccionados
+      </button>
+      <button class="btn btn-outline-primary btn-sm" onclick="seleccionarTodos()">
+        <i class="fa-solid fa-check-double me-1"></i>Seleccionar todos
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="deseleccionarTodos()">
+        <i class="fa-solid fa-square-xmark me-1"></i>Deseleccionar todos
+      </button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <h5 class="m-0 fw-bold"><i class="fa-solid fa-table me-2"></i>Listado de Alumnos - Ruta 7</h5>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <input type="text" id="filterID" class="form-control form-control-sm" placeholder="🔍 Filtrar por ID / Cédula...">
+        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 Buscar por nombre, sector...">
+        <button class="btn btn-outline-primary btn-sm" onclick="cargarDatos()">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+      </div>
     </div>
 
-
-
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
-
-    <script>
-
-
-        /*
-        ========================================================
-        URL DE GOOGLE APPS SCRIPT
-        ========================================================
-        
-        IMPORTANTE:
-
-        REEMPLAZA ESTA URL POR LA URL /exec
-        DE TU IMPLEMENTACIÓN.
-
-        Ejemplo:
-
-        https://script.google.com/macros/s/XXXXXXXX/exec
-
-        ========================================================
-        */
-
-        const API_URL =
-            "https://script.google.com/macros/s/AKfycbwwbHOX3pRDCdF49xcuZ_t3OB0DQiFurGcFRhN_hxeA5ufkBCcX0OhVWAXssrTjHq4WHQ/exec";
-
-
-        /*
-        ========================================================
-        VARIABLES
-        ========================================================
-        */
-
-        let datosAlumnos = [];
-
-        let cargandoDatos = false;
-
-        let ultimaActualizacion = null;
-
-
-        /*
-        ========================================================
-        INICIAR
-        ========================================================
-        */
-
-        function inicializarDashboard() {
-
-            cargarDatos();
-
-
-            /*
-            Actualización automática cada 30 segundos
-            */
-
-            setInterval(
-                function() {
-
-                    cargarDatos(true);
-
-                },
-                30000
-            );
-
-        }
-
-
-        /*
-        ========================================================
-        CARGAR GOOGLE SHEETS
-        ========================================================
-        */
-
-        function cargarDatos(
-            actualizacionAutomatica = false
-        ) {
-
-
-            if (cargandoDatos) {
-
-                return;
-
-            }
-
-
-            /*
-            Verificar URL
-            */
-
-            if (
-                !API_URL ||
-                API_URL.includes(
-                    "PEGA_AQUI"
-                )
-            ) {
-
-                mostrarError(
-                    "Debes colocar la URL /exec de Google Apps Script en API_URL."
-                );
-
-                return;
-
-            }
-
-
-            cargandoDatos = true;
-
-
-            mostrarEstadoCarga(
-                true
-            );
-
-
-            /*
-            Nombre único para JSONP
-            */
-
-            const callbackName =
-
-                "miRutaSegura_" +
-
-                Date.now() +
-
-                "_" +
-
-                Math.floor(
-                    Math.random() * 100000
-                );
-
-
-            const script =
-                document.createElement(
-                    "script"
-                );
-
-
-            let finalizado =
-                false;
-
-
-            /*
-            Tiempo máximo
-            */
-
-            const timeout =
-
-                setTimeout(
-                    function() {
-
-                        finalizar();
-
-                        mostrarError(
-                            "No se pudo obtener información de Google Sheets. Verifica la URL del Web App y los permisos."
-                        );
-
-                    },
-                    15000
-                );
-
-
-            /*
-            Respuesta JSONP
-            */
-
-            window[callbackName] =
-
-                function(respuesta) {
-
-
-                    if (finalizado) {
-
-                        return;
-
-                    }
-
-
-                    finalizar();
-
-
-                    console.log(
-                        "Respuesta Google Apps Script:",
-                        respuesta
-                    );
-
-
-                    if (
-                        !respuesta ||
-                        respuesta.ok !== true
-                    ) {
-
-                        mostrarError(
-
-                            respuesta &&
-                            respuesta.error
-
-                                ? respuesta.error
-
-                                : "Google Apps Script devolvió una respuesta inválida."
-
-                        );
-
-                        return;
-
-                    }
-
-
-                    /*
-                    Guardar selección actual
-                    */
-
-                    const seleccionAnterior =
-                        new Map(
-
-                            datosAlumnos.map(
-                                function(alumno) {
-
-                                    return [
-
-                                        String(
-                                            alumno.id || ""
-                                        ),
-
-                                        alumno.selected
-
-                                    ];
-
-                                }
-                            )
-
-                        );
-
-
-                    /*
-                    Recibir datos
-                    */
-
-                    datosAlumnos =
-
-                        Array.isArray(
-                            respuesta.records
-                        )
-
-                            ? respuesta.records
-
-                            : [];
-
-
-                    /*
-                    Normalizar
-                    */
-
-                    datosAlumnos =
-
-                        datosAlumnos.map(
-                            function(item) {
-
-
-                                const id =
-
-                                    String(
-                                        item.id || ""
-                                    ).trim();
-
-
-                                const estudiante =
-
-                                    String(
-                                        item.estudiante || ""
-                                    ).trim();
-
-
-                                const representante =
-
-                                    String(
-                                        item.representante || ""
-                                    ).trim();
-
-
-                                const sector =
-
-                                    String(
-                                        item.sector || ""
-                                    ).trim();
-
-
-                                const calle_p =
-
-                                    String(
-                                        item.calle_p || ""
-                                    ).trim();
-
-
-                                const calle_s =
-
-                                    String(
-                                        item.calle_s || ""
-                                    ).trim();
-
-
-                                const casa =
-
-                                    String(
-                                        item.casa || ""
-                                    ).trim();
-
-
-                                const ref =
-
-                                    String(
-                                        item.ref || ""
-                                    ).trim();
-
-
-                                const tipo_serv =
-
-                                    String(
-                                        item.tipo_serv || ""
-                                    ).trim();
-
-
-                                const maps =
-
-                                    String(
-                                        item.maps || ""
-                                    ).trim();
-
-
-                                const valor =
-
-                                    String(
-                                        item.valor || "0"
-                                    ).trim();
-
-
-                                const estado_serv =
-
-                                    String(
-                                        item.estado_serv ||
-                                        "COMPLETO"
-                                    ).trim();
-
-
-                                const pago =
-
-                                    String(
-                                        item.pago ||
-                                        "PENDIENTE"
-                                    ).trim();
-
-
-                                const servicioTexto = (
-
-                                    tipo_serv +
-
-                                    " " +
-
-                                    estado_serv
-
-                                ).toUpperCase();
-
-
-                                const me =
-
-                                    servicioTexto.includes(
-                                        "MAÑANA"
-                                    )
-
-                                    ||
-
-                                    servicioTexto.includes(
-                                        "MATUTINO"
-                                    )
-
-                                    ||
-
-                                    servicioTexto.includes(
-                                        "INGRESO"
-                                    );
-
-
-                                const ms =
-
-                                    servicioTexto.includes(
-                                        "SALIDA"
-                                    )
-
-                                    ||
-
-                                    servicioTexto.includes(
-                                        "TARDE"
-                                    )
-
-                                    ||
-
-                                    servicioTexto.includes(
-                                        "VESPERTINO"
-                                    );
-
-
-                                return {
-
-                                    id:
-
-                                        id,
-
-
-                                    selected:
-
-                                        seleccionAnterior.has(
-                                            id
-                                        )
-
-                                            ? seleccionAnterior.get(
-                                                id
-                                            )
-
-                                            : true,
-
-
-                                    fecha:
-
-                                        item.fecha || "",
-
-
-                                    estudiante:
-
-                                        estudiante,
-
-
-                                    nivel:
-
-                                        item.nivel || "",
-
-
-                                    grado:
-
-                                        item.grado || "",
-
-
-                                    representante:
-
-                                        representante,
-
-
-                                    telefono:
-
-                                        item.telefono || "",
-
-
-                                    sector:
-
-                                        sector,
-
-
-                                    calle_p:
-
-                                        calle_p,
-
-
-                                    calle_s:
-
-                                        calle_s,
-
-
-                                    casa:
-
-                                        casa,
-
-
-                                    ref:
-
-                                        ref,
-
-
-                                    tipo_serv:
-
-                                        tipo_serv,
-
-
-                                    maps:
-
-                                        maps,
-
-
-                                    valor:
-
-                                        valor,
-
-
-                                    estado_serv:
-
-                                        estado_serv,
-
-
-                                    pago:
-
-                                        pago,
-
-
-                                    me:
-
-                                        me,
-
-
-                                    ms:
-
-                                        ms
-
-                                };
-
-
-                            }
-                        );
-
-
-                    ultimaActualizacion =
-                        new Date();
-
-
-                    actualizarDashboard();
-
-
-                    ocultarError();
-
-
-                    mostrarEstadoCarga(
-                        false
-                    );
-
-
-                    console.log(
-
-                        "Datos actualizados:",
-
-                        datosAlumnos.length,
-
-                        "estudiantes"
-
-                    );
-
-                };
-
-
-            /*
-            ====================================================
-            ERROR DE SCRIPT
-            ====================================================
-            */
-
-            script.onerror =
-
-                function() {
-
-                    if (finalizado) {
-
-                        return;
-
-                    }
-
-
-                    finalizar();
-
-
-                    mostrarError(
-                        "No se pudo conectar con Google Apps Script."
-                    );
-
-                };
-
-
-            /*
-            ====================================================
-            FINALIZAR
-            ====================================================
-            */
-
-            function finalizar() {
-
-                if (finalizado) {
-
-                    return;
-
-                }
-
-
-                finalizado = true;
-
-
-                clearTimeout(
-                    timeout
-                );
-
-
-                try {
-
-                    if (
-                        script.parentNode
-                    ) {
-
-                        script.parentNode.removeChild(
-                            script
-                        );
-
-                    }
-
-                } catch (error) {}
-
-
-                try {
-
-                    delete window[
-                        callbackName
-                    ];
-
-                } catch (error) {
-
-                    window[
-                        callbackName
-                    ] = undefined;
-
-                }
-
-
-                cargandoDatos = false;
-
-                mostrarEstadoCarga(
-                    false
-                );
-
-            }
-
-
-            /*
-            ====================================================
-            URL SIN CACHÉ
-            ====================================================
-            */
-
-            const separador =
-
-                API_URL.includes("?")
-                    ? "&"
-                    : "?";
-
-
-            script.src =
-
-                API_URL +
-
-                separador +
-
-                "action=records" +
-
-                "&callback=" +
-
-                callbackName +
-
-                "&t=" +
-
-                Date.now();
-
-
-            document.body.appendChild(
-                script
-            );
-
-        }
-
-
-        /*
-        ========================================================
-        ACTUALIZAR DASHBOARD
-        ========================================================
-        */
-
-        function actualizarDashboard() {
-
-
-            document.getElementById(
-                "totalAlumnos"
-            ).innerText =
-
-                datosAlumnos.length;
-
-
-            const cntME =
-
-                datosAlumnos.filter(
-                    function(a) {
-
-                        return a.me;
-
-                    }
-                ).length;
-
-
-            const cntMS =
-
-                datosAlumnos.filter(
-                    function(a) {
-
-                        return a.ms;
-
-                    }
-                ).length;
-
-
-            const cntPen =
-
-                datosAlumnos.filter(
-                    function(a) {
-
-                        return String(
-                            a.pago || ""
-                        ).toUpperCase()
-                         === "PENDIENTE";
-
-                    }
-                ).length;
-
-
-            document.getElementById(
-                "cntME"
-            ).innerText = cntME;
-
-
-            document.getElementById(
-                "cntMS"
-            ).innerText = cntMS;
-
-
-            document.getElementById(
-                "cntPendientes"
-            ).innerText = cntPen;
-
-
-            filtrarTabla();
-
-        }
-
-
-        /*
-        ========================================================
-        RENDER TABLA
-        ========================================================
-        */
-
-        function renderTabla(
-            data
-        ) {
-
-
-            const tbody =
-                document.getElementById(
-                    "bodyTabla"
-                );
-
-
-            tbody.innerHTML = "";
-
-
-            if (!data.length) {
-
-                tbody.innerHTML = `
-
-                    <tr>
-
-                        <td
-                            colspan="13"
-                            class="text-center text-muted py-5"
-                        >
-
-                            <i
-                                class="fa-solid fa-database fa-2x mb-2"
-                            ></i>
-
-                            <br>
-
-                            No existen registros para mostrar.
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-
-                actualizarContadorSeleccionados();
-
-
-                return;
-
-            }
-
-
-            data.forEach(
-                function(item, index) {
-
-
-                    const pago =
-
-                        String(
-                            item.pago || ""
-                        ).toUpperCase();
-
-
-                    const badgePago =
-
-                        pago === "AL DIA" ||
-                        pago === "ALDIA"
-
-                            ? "badge-aldia"
-
-                            : "badge-pendiente";
-
-
-                    const mapsBtn =
-
-                        item.maps
-
-                            ? `
-
-                                <a
-                                    href="${escapeHtml(item.maps)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="btn btn-outline-danger btn-sm"
-                                >
-
-                                    <i
-                                        class="fa-solid fa-location-dot"
-                                    ></i>
-
-                                    Maps
-
-                                </a>
-
-                            `
-
-                            :
-
-                            `
-
-                                <span
-                                    class="text-muted font-monospace"
-                                >
-                                    N/A
-                                </span>
-
-                            `;
-
-
-                    const isChecked =
-
-                        item.selected
-                            ? "checked"
-                            : "";
-
-
-                    const row = `
-
-                        <tr>
-
-
-                            <td class="text-center">
-
-                                <input
-                                    type="checkbox"
-                                    onchange="toggleSelectStudent('${escapeJs(item.id)}', this.checked)"
-                                    ${isChecked}
-                                >
-
-                            </td>
-
-
-                            <td>
-                                ${index + 1}
-                            </td>
-
-
-                            <td
-                                class="fw-bold font-monospace text-primary"
-                            >
-                                ${escapeHtml(item.id)}
-                            </td>
-
-
-                            <td class="fw-bold">
-                                ${escapeHtml(item.estudiante)}
-                            </td>
-
-
-                            <td>
-
-                                <span
-                                    class="badge bg-light text-dark border"
-                                >
-                                    ${escapeHtml(item.grado)}
-                                </span>
-
-                            </td>
-
-
-                            <td>
-                                ${escapeHtml(item.representante)}
-                            </td>
-
-
-                            <td>
-                                ${escapeHtml(item.telefono)}
-                            </td>
-
-
-                            <td>
-
-                                <span
-                                    class="badge bg-secondary"
-                                >
-                                    ${escapeHtml(item.sector)}
-                                </span>
-
-                            </td>
-
-
-                            <td class="small">
-
-                                ${escapeHtml(item.calle_p)}
-
-                                ${
-                                    item.calle_s
-                                        ? " y "
-                                        : ""
-                                }
-
-                                ${escapeHtml(item.calle_s)}
-
-                                ${
-                                    item.casa
-                                        ? " - " +
-                                          escapeHtml(item.casa)
-                                        : ""
-                                }
-
-                            </td>
-
-
-                            <td>
-
-                                <span
-                                    class="badge bg-info text-dark"
-                                >
-                                    ${escapeHtml(item.estado_serv)}
-                                </span>
-
-                            </td>
-
-
-                            <td class="fw-bold">
-
-                                $${escapeHtml(item.valor)}
-
-                            </td>
-
-
-                            <td>
-
-                                <span
-                                    class="badge ${badgePago}"
-                                >
-                                    ${escapeHtml(item.pago)}
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                ${mapsBtn}
-
-                            </td>
-
-
-                        </tr>
-
-                    `;
-
-
-                    tbody.innerHTML += row;
-
-                }
-            );
-
-
-            actualizarContadorSeleccionados();
-
-        }
-
-
-        /*
-        ========================================================
-        SELECCIONAR ESTUDIANTE
-        ========================================================
-        */
-
-        function toggleSelectStudent(
-            id,
-            checked
-        ) {
-
-
-            const alumno =
-
-                datosAlumnos.find(
-                    function(a) {
-
-                        return String(
-                            a.id
-                        ) === String(id);
-
-                    }
-                );
-
-
-            if (alumno) {
-
-                alumno.selected =
-                    checked;
-
-            }
-
-
-            actualizarContadorSeleccionados();
-
-        }
-
-
-        /*
-        ========================================================
-        SELECCIONAR TODOS
-        ========================================================
-        */
-
-        function toggleSelectAll(
-            masterCheckbox
-        ) {
-
-
-            const checked =
-                masterCheckbox.checked;
-
-
-            datosAlumnos.forEach(
-                function(a) {
-
-                    a.selected =
-                        checked;
-
-                }
-            );
-
-
-            filtrarTabla();
-
-        }
-
-
-        /*
-        ========================================================
-        CONTADOR
-        ========================================================
-        */
-
-        function actualizarContadorSeleccionados() {
-
-
-            const count =
-
-                datosAlumnos.filter(
-                    function(a) {
-
-                        return a.selected;
-
-                    }
-                ).length;
-
-
-            document.getElementById(
-                "totalSeleccionados"
-            ).innerText = count;
-
-        }
-
-
-        /*
-        ========================================================
-        FILTRAR TABLA
-        ========================================================
-        */
-
-        function filtrarTabla() {
-
-
-            const searchElement =
-
-                document.getElementById(
-                    "searchInput"
-                );
-
-
-            const idElement =
-
-                document.getElementById(
-                    "filterID"
-                );
-
-
-            if (
-                !searchElement ||
-                !idElement
-            ) {
-
-                return;
-
-            }
-
-
-            const valGeneral =
-
-                searchElement.value
-                    .toLowerCase()
-                    .trim();
-
-
-            const valID =
-
-                idElement.value
-                    .toLowerCase()
-                    .trim();
-
-
-            const filtrados =
-
-                datosAlumnos.filter(
-                    function(a) {
-
-
-                        const estudiante =
-
-                            String(
-                                a.estudiante || ""
-                            )
-                            .toLowerCase();
-
-
-                        const representante =
-
-                            String(
-                                a.representante || ""
-                            )
-                            .toLowerCase();
-
-
-                        const sector =
-
-                            String(
-                                a.sector || ""
-                            )
-                            .toLowerCase();
-
-
-                        const id =
-
-                            String(
-                                a.id || ""
-                            )
-                            .toLowerCase();
-
-
-                        const matchGeneral =
-
-                            estudiante.includes(
-                                valGeneral
-                            )
-
-                            ||
-
-                            representante.includes(
-                                valGeneral
-                            )
-
-                            ||
-
-                            sector.includes(
-                                valGeneral
-                            );
-
-
-                        const matchID =
-
-                            id.includes(
-                                valID
-                            );
-
-
-                        return (
-
-                            matchGeneral &&
-                            matchID
-
-                        );
-
-                    }
-                );
-
-
-            renderTabla(
-                filtrados
-            );
-
-        }
-
-
-        /*
-        ========================================================
-        ESTADO DE CONEXIÓN
-        ========================================================
-        */
-
-        function mostrarEstadoCarga(
-            cargando
-        ) {
-
-
-            let indicador =
-
-                document.getElementById(
-                    "estadoConexion"
-                );
-
-
-            if (!indicador) {
-
-
-                indicador =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                indicador.id =
-                    "estadoConexion";
-
-
-                indicador.style.position =
-                    "fixed";
-
-
-                indicador.style.bottom =
-                    "15px";
-
-
-                indicador.style.right =
-                    "15px";
-
-
-                indicador.style.zIndex =
-                    "9999";
-
-
-                indicador.style.padding =
-                    "8px 14px";
-
-
-                indicador.style.borderRadius =
-                    "20px";
-
-
-                indicador.style.fontSize =
-                    "13px";
-
-
-                indicador.style.boxShadow =
-                    "0 2px 8px rgba(0,0,0,.15)";
-
-
-                document.body.appendChild(
-                    indicador
-                );
-
-            }
-
-
-            if (cargando) {
-
-
-                indicador.innerHTML =
-
-                    '<i class="fa-solid fa-sync fa-spin me-1"></i>' +
-
-                    ' Actualizando datos...';
-
-
-                indicador.style.background =
-                    "#fff3cd";
-
-
-                indicador.style.color =
-                    "#664d03";
-
-
-            } else {
-
-
-                const hora =
-
-                    ultimaActualizacion
-
-                        ? ultimaActualizacion
-                            .toLocaleTimeString()
-
-                        : "--";
-
-
-                indicador.innerHTML =
-
-                    '<i class="fa-solid fa-circle-check me-1"></i>' +
-
-                    ' Actualizado ' +
-
-                    hora;
-
-
-                indicador.style.background =
-                    "#d1e7dd";
-
-
-                indicador.style.color =
-                    "#0f5132";
-
-            }
-
-        }
-
-
-        /*
-        ========================================================
-        ERROR
-        ========================================================
-        */
-
-        function mostrarError(
-            mensaje
-        ) {
-
-
-            console.error(
-                mensaje
-            );
-
-
-            let alerta =
-
-                document.getElementById(
-                    "alertaConexion"
-                );
-
-
-            if (!alerta) {
-
-
-                alerta =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                alerta.id =
-                    "alertaConexion";
-
-
-                alerta.className =
-                    "alert alert-danger m-3";
-
-
-                const container =
-
-                    document.querySelector(
-                        ".container-fluid"
-                    );
-
-
-                if (container) {
-
-                    container.prepend(
-                        alerta
-                    );
-
-                }
-
-            }
-
-
-            alerta.innerHTML = `
-
-                <i
-                    class="fa-solid fa-triangle-exclamation me-2"
-                ></i>
-
-                <strong>
-                    Error de conexión:
-                </strong>
-
-                ${escapeHtml(mensaje)}
-
-            `;
-
-        }
-
-
-        /*
-        ========================================================
-        OCULTAR ERROR
-        ========================================================
-        */
-
-        function ocultarError() {
-
-
-            const alerta =
-
-                document.getElementById(
-                    "alertaConexion"
-                );
-
-
-            if (alerta) {
-
-                alerta.remove();
-
-            }
-
-        }
-
-
-        /*
-        ========================================================
-        ESCAPAR HTML
-        ========================================================
-        */
-
-        function escapeHtml(
-            value
-        ) {
-
-            return String(
-                value || ""
-            )
-
-                .replace(
-                    /&/g,
-                    "&amp;"
-                )
-
-                .replace(
-                    /</g,
-                    "&lt;"
-                )
-
-                .replace(
-                    />/g,
-                    "&gt;"
-                )
-
-                .replace(
-                    /"/g,
-                    "&quot;"
-                )
-
-                .replace(
-                    /'/g,
-                    "&#039;"
-                );
-
-        }
-
-
-        /*
-        ========================================================
-        ESCAPAR JAVASCRIPT
-        ========================================================
-        */
-
-        function escapeJs(
-            value
-        ) {
-
-            return String(
-                value || ""
-            )
-
-                .replace(
-                    /\\/g,
-                    "\\\\"
-                )
-
-                .replace(
-                    /'/g,
-                    "\\'"
-                )
-
-                .replace(
-                    /"/g,
-                    '\\"'
-                )
-
-                .replace(
-                    /\n/g,
-                    "\\n"
-                )
-
-                .replace(
-                    /\r/g,
-                    "\\r"
-                );
-
-        }
-
-
-        /*
-        ========================================================
-        GENERAR PDF
-        ========================================================
-        */
-
-        function generarPDF() {
-
-
-            const {
-                jsPDF
-            } = window.jspdf;
-
-
-            const doc =
-                new jsPDF(
-                    "landscape"
-                );
-
-
-            const alumnosAExportar =
-
-                datosAlumnos.filter(
-                    function(a) {
-
-                        return a.selected;
-
-                    }
-                );
-
-
-            if (
-                alumnosAExportar.length === 0
-            ) {
-
-                alert(
-                    "Por favor selecciona al menos un estudiante para generar el reporte en PDF."
-                );
-
-
-                return;
-
-            }
-
-
-            doc.setFontSize(
-                14
-            );
-
-
-            doc.text(
-
-                "Reporte Completo de Recorrido Escolar - RUTA 7",
-
-                14,
-
-                12
-
-            );
-
-
-            doc.setFontSize(
-                10
-            );
-
-
-            doc.text(
-
-                "Conductor: Marcelo Muñoz | " +
-
-                "Fecha de Generación: " +
-
-                new Date()
-                    .toLocaleDateString() +
-
-                " | Total Alumnos: " +
-
-                alumnosAExportar.length,
-
-                14,
-
-                18
-
-            );
-
-
-            const flags = {
-
-                id:
-
-                    document.getElementById(
-                        "cID"
-                    ).checked,
-
-
-                estudiante:
-
-                    document.getElementById(
-                        "cEstudiante"
-                    ).checked,
-
-
-                grado:
-
-                    document.getElementById(
-                        "cGrado"
-                    ).checked,
-
-
-                representante:
-
-                    document.getElementById(
-                        "cRepresentante"
-                    ).checked,
-
-
-                tel:
-
-                    document.getElementById(
-                        "cTel"
-                    ).checked,
-
-
-                sector:
-
-                    document.getElementById(
-                        "cSector"
-                    ).checked,
-
-
-                direccion:
-
-                    document.getElementById(
-                        "cDireccion"
-                    ).checked,
-
-
-                ref:
-
-                    document.getElementById(
-                        "cReferencia"
-                    ).checked,
-
-
-                servicio:
-
-                    document.getElementById(
-                        "cServicio"
-                    ).checked,
-
-
-                valor:
-
-                    document.getElementById(
-                        "cValor"
-                    ).checked,
-
-
-                pago:
-
-                    document.getElementById(
-                        "cPago"
-                    ).checked
-
-            };
-
-
-            const headers = [
-                "#"
-            ];
-
-
-            if (flags.id)
-                headers.push(
-                    "ID / Cédula"
-                );
-
-
-            if (flags.estudiante)
-                headers.push(
-                    "Estudiante"
-                );
-
-
-            if (flags.grado)
-                headers.push(
-                    "Grado"
-                );
-
-
-            if (flags.representante)
-                headers.push(
-                    "Representante"
-                );
-
-
-            if (flags.tel)
-                headers.push(
-                    "Teléfono"
-                );
-
-
-            if (flags.sector)
-                headers.push(
-                    "Sector"
-                );
-
-
-            if (flags.direccion)
-                headers.push(
-                    "Dirección"
-                );
-
-
-            if (flags.ref)
-                headers.push(
-                    "Referencia"
-                );
-
-
-            if (flags.servicio)
-                headers.push(
-                    "Estado Servicio"
-                );
-
-
-            if (flags.valor)
-                headers.push(
-                    "Valor"
-                );
-
-
-            if (flags.pago)
-                headers.push(
-                    "Pago"
-                );
-
-
-            const rows =
-
-                alumnosAExportar.map(
-                    function(
-                        item,
-                        index
-                    ) {
-
-
-                        const r = [
-                            index + 1
-                        ];
-
-
-                        if (flags.id)
-                            r.push(
-                                item.id
-                            );
-
-
-                        if (flags.estudiante)
-                            r.push(
-                                item.estudiante
-                            );
-
-
-                        if (flags.grado)
-                            r.push(
-                                item.grado
-                            );
-
-
-                        if (flags.representante)
-                            r.push(
-                                item.representante
-                            );
-
-
-                        if (flags.tel)
-                            r.push(
-                                item.telefono
-                            );
-
-
-                        if (flags.sector)
-                            r.push(
-                                item.sector
-                            );
-
-
-                        if (flags.direccion)
-
-                            r.push(
-
-                                `${item.calle_p} y ${item.calle_s} (${item.casa})`
-
-                            );
-
-
-                        if (flags.ref)
-                            r.push(
-                                item.ref
-                            );
-
-
-                        if (flags.servicio)
-                            r.push(
-                                item.estado_serv
-                            );
-
-
-                        if (flags.valor)
-                            r.push(
-                                `$${item.valor}`
-                            );
-
-
-                        if (flags.pago)
-                            r.push(
-                                item.pago
-                            );
-
-
-                        return r;
-
-                    }
-                );
-
-
-            doc.autoTable({
-
-                head: [
-                    headers
-                ],
-
-                body:
-                    rows,
-
-                startY:
-                    24,
-
-                theme:
-                    "striped",
-
-                headStyles: {
-
-                    fillColor:
-                        [30, 58, 138]
-
-                },
-
-                styles: {
-
-                    fontSize:
-                        8
-
-                }
-
-            });
-
-
-            doc.save(
-                "Listado_Recorrido_RUTA_7_Marcelo_Munoz.pdf"
-            );
-
-        }
-
-
-        /*
-        ========================================================
-        INICIAR CUANDO CARGUE LA PÁGINA
-        ========================================================
-        */
-
-        document.addEventListener(
-
-            "DOMContentLoaded",
-
-            inicializarDashboard
-
-        );
-
-
-    </script>
-
-
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle m-0" id="tablaAlumnos">
+          <thead class="table-light">
+            <tr>
+              <th class="text-center" style="width:50px">
+                <input type="checkbox" id="checkAll" title="Seleccionar todos los registros">
+              </th>
+              <th>#</th>
+              <th>ID / Cédula</th>
+              <th>Estudiante</th>
+              <th>Grado</th>
+              <th>Representante</th>
+              <th>Teléfono</th>
+              <th>Sector</th>
+              <th>Dirección</th>
+              <th>Servicio</th>
+              <th>Valor</th>
+              <th>Estado Pago</th>
+              <th>Ubicación</th>
+            </tr>
+          </thead>
+          <tbody id="bodyTabla"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIGURACIÓN
+   Pega aquí la URL /exec de tu Web App de Google Apps Script.
+   ========================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbwwbHOX3pRDCdF49xcuZ_t3OB0DQiFurGcFRhN_hxeA5ufkBCcX0OhVWAXssrTjHq4WHQ/exec";
+
+let datosAlumnos = [];
+let seleccionados = new Set();
+let primeraCarga = true;
+
+/* ---------- Utilidades ---------- */
+function texto(v) {
+  return v === null || v === undefined ? "" : String(v).trim();
+}
+
+function normalizar(v) {
+  return texto(v).toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "");
+}
+
+function escaparHTML(v) {
+  return texto(v)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function claveAlumno(a, index) {
+  const id = texto(a.id || a.token || a.codigo);
+  const estudiante = normalizar(a.estudiante || a.nombresestudiante);
+  const telefono = texto(a.telefono);
+  return [id, estudiante, telefono, index].join("|");
+}
+
+function normalizarAlumno(raw, index) {
+  const a = {...raw};
+
+  a.id = texto(a.id || a.token || a.codigo || a.cedula);
+  a.estudiante = texto(a.estudiante || a.nombresestudiante || a.nombre);
+  a.representante = texto(a.representante || a.nombrerepresentante);
+  a.telefono = texto(a.telefono);
+  a.sector = texto(a.sector);
+  a.grado = texto(a.grado || a.gradoano);
+  a.nivel = texto(a.nivel);
+  a.calle_p = texto(a.calle_p || a.calleprincipal || a.callePrincipal);
+  a.calle_s = texto(a.calle_s || a.callesecundaria || a.calleSecundaria);
+  a.casa = texto(a.casa || a.numerocasa || a.nrocasalote);
+  a.ref = texto(a.ref || a.referencia);
+  a.tipo_serv = texto(a.tipo_serv || a.tipoServicio || a.tipodeservicio || a.horario);
+  a.maps = texto(a.maps || a.urlmaps || a.enlacegooglemaps);
+  a.valor = texto(a.valor);
+  a.estado_serv = texto(a.estado_serv || a.estadoServicio || a.estado);
+  a.pago = texto(a.pago || a.estadopago || a.estadoPago || "PENDIENTE");
+
+  a.me = Boolean(a.me) || normalizar(a.tipo_serv).includes("ingreso") || normalizar(a.tipo_serv).includes("matutino");
+  a.ms = Boolean(a.ms) || normalizar(a.tipo_serv).includes("salida");
+
+  /* La selección se controla EXCLUSIVAMENTE con el Set. */
+  a._key = claveAlumno(a, index);
+  a.selected = false;
+
+  return a;
+}
+
+/* ---------- Carga desde Google Apps Script ---------- */
+function cargarDatos() {
+  if (!API_URL || API_URL.includes("PEGA_AQUI")) {
+    mostrarEstado("Configura primero API_URL con la URL /exec de Google Apps Script.", "warning");
+    renderTabla([]);
+    return;
+  }
+
+  mostrarEstado("Cargando datos desde Google Sheets...", "secondary");
+
+  const url = API_URL + (API_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
+
+  cargarJSONP(url, "callbackRuta7", function(data) {
+    if (!data || data.ok !== true) {
+      throw new Error(data && data.error ? data.error : "La API no devolvió datos válidos.");
+    }
+
+    const anteriores = new Set(seleccionados);
+
+    datosAlumnos = (Array.isArray(data.records) ? data.records : [])
+      .map((r, i) => normalizarAlumno(r, i));
+
+    /* Mantiene seleccionados los registros que todavía existen. */
+    seleccionados = new Set(
+      datosAlumnos.filter(a => anteriores.has(a._key)).map(a => a._key)
+    );
+
+    datosAlumnos.forEach(a => a.selected = seleccionados.has(a._key));
+
+    primeraCarga = false;
+    actualizarDashboard();
+    filtrarTabla();
+
+    mostrarEstado(
+      "Conectado correctamente. " +
+      datosAlumnos.length + " estudiantes cargados. " +
+      "Última actualización: " + new Date().toLocaleTimeString(),
+      "success"
+    );
+  }, function(error) {
+    console.error(error);
+    mostrarEstado("Error al cargar los datos: " + error.message, "danger");
+
+    if (primeraCarga) {
+      datosAlumnos = [];
+      seleccionados.clear();
+      actualizarDashboard();
+      renderTabla([]);
+    }
+  });
+}
+
+/* JSONP evita problemas CORS desde GitHub Pages. */
+function cargarJSONP(url, callbackName, onSuccess, onError) {
+  const old = document.getElementById("jsonpRuta7");
+  if (old) old.remove();
+
+  const script = document.createElement("script");
+  script.id = "jsonpRuta7";
+
+  let terminado = false;
+  const timeout = setTimeout(() => {
+    if (terminado) return;
+    terminado = true;
+    script.remove();
+    window[callbackName] = null;
+    onError(new Error("No se pudo cargar JSONP. Revisa la URL /exec y el despliegue del Web App."));
+  }, 15000);
+
+  window[callbackName] = function(data) {
+    if (terminado) return;
+    terminado = true;
+    clearTimeout(timeout);
+    script.remove();
+    window[callbackName] = null;
+    onSuccess(data);
+  };
+
+  script.onerror = function() {
+    if (terminado) return;
+    terminado = true;
+    clearTimeout(timeout);
+    script.remove();
+    window[callbackName] = null;
+    onError(new Error("No se pudo conectar con Google Apps Script."));
+  };
+
+  script.src = url + "&callback=" + callbackName;
+  document.body.appendChild(script);
+}
+
+/* ---------- Dashboard ---------- */
+function actualizarDashboard() {
+  document.getElementById("totalAlumnos").innerText = datosAlumnos.length;
+  document.getElementById("totalSeleccionados").innerText = seleccionados.size;
+
+  const cntME = datosAlumnos.filter(a => a.me).length;
+  const cntMS = datosAlumnos.filter(a => a.ms).length;
+  const cntPen = datosAlumnos.filter(a =>
+    normalizar(a.pago).includes("pendiente")
+  ).length;
+
+  document.getElementById("cntME").innerText = cntME;
+  document.getElementById("cntMS").innerText = cntMS;
+  document.getElementById("cntPendientes").innerText = cntPen;
+
+  actualizarCheckAll();
+}
+
+function actualizarContadorSeleccionados() {
+  document.getElementById("totalSeleccionados").innerText = seleccionados.size;
+  actualizarCheckAll();
+}
+
+function actualizarCheckAll() {
+  const master = document.getElementById("checkAll");
+  if (!master) return;
+
+  if (datosAlumnos.length === 0) {
+    master.checked = false;
+    master.indeterminate = false;
+    return;
+  }
+
+  const cantidad = seleccionados.size;
+  master.checked = cantidad === datosAlumnos.length;
+  master.indeterminate = cantidad > 0 && cantidad < datosAlumnos.length;
+}
+
+/* ---------- Tabla ---------- */
+function renderTabla(data) {
+  const tbody = document.getElementById("bodyTabla");
+
+  if (!data.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="13" class="loading">
+          <i class="fa-solid fa-inbox fa-2x mb-2"></i><br>
+          No hay registros para mostrar.
+        </td>
+      </tr>`;
+    actualizarCheckAll();
+    return;
+  }
+
+  tbody.innerHTML = data.map((item, posicion) => {
+    const checked = seleccionados.has(item._key);
+    const badgePago = normalizar(item.pago).includes("al dia")
+      ? "badge-aldia"
+      : "badge-pendiente";
+
+    const direccion = [
+      item.calle_p,
+      item.calle_s,
+      item.casa
+    ].filter(Boolean).join(" y ");
+
+    const mapsBtn = item.maps
+      ? `<a href="${escaparHTML(item.maps)}" target="_blank" rel="noopener" class="btn btn-outline-danger btn-sm">
+           <i class="fa-solid fa-location-dot"></i> Maps
+         </a>`
+      : `<span class="text-muted font-monospace">N/A</span>`;
+
+    return `
+      <tr class="${checked ? "row-selected" : ""}">
+        <td class="text-center">
+          <input
+            type="checkbox"
+            class="check-alumno"
+            data-key="${escaparHTML(item._key)}"
+            ${checked ? "checked" : ""}
+            onchange="toggleSelectStudent(this)"
+          >
+        </td>
+        <td>${posicion + 1}</td>
+        <td class="fw-bold font-monospace text-primary">${escaparHTML(item.id || "N/A")}</td>
+        <td class="fw-bold">${escaparHTML(item.estudiante || "N/A")}</td>
+        <td><span class="badge bg-light text-dark border">${escaparHTML(item.grado || "N/A")}</span></td>
+        <td>${escaparHTML(item.representante || "N/A")}</td>
+        <td>${escaparHTML(item.telefono || "N/A")}</td>
+        <td><span class="badge bg-secondary">${escaparHTML(item.sector || "N/A")}</span></td>
+        <td class="small">${escaparHTML(direccion || "N/A")}</td>
+        <td><span class="badge bg-info text-dark">${escaparHTML(item.estado_serv || item.tipo_serv || "N/A")}</span></td>
+        <td class="fw-bold">${item.valor ? "$" + escaparHTML(item.valor) : "$0"}</td>
+        <td><span class="badge ${badgePago}">${escaparHTML(item.pago || "PENDIENTE")}</span></td>
+        <td>${mapsBtn}</td>
+      </tr>`;
+  }).join("");
+
+  actualizarCheckAll();
+}
+
+/* ---------- Selección CORREGIDA ---------- */
+function toggleSelectStudent(checkbox) {
+  const key = checkbox.dataset.key;
+
+  if (checkbox.checked) {
+    seleccionados.add(key);
+  } else {
+    seleccionados.delete(key);
+  }
+
+  const alumno = datosAlumnos.find(a => a._key === key);
+  if (alumno) alumno.selected = checkbox.checked;
+
+  actualizarContadorSeleccionados();
+
+  const fila = checkbox.closest("tr");
+  if (fila) fila.classList.toggle("row-selected", checkbox.checked);
+}
+
+function seleccionarTodos() {
+  datosAlumnos.forEach(a => {
+    seleccionados.add(a._key);
+    a.selected = true;
+  });
+
+  actualizarContadorSeleccionados();
+  filtrarTabla();
+}
+
+function deseleccionarTodos() {
+  seleccionados.clear();
+  datosAlumnos.forEach(a => a.selected = false);
+
+  actualizarContadorSeleccionados();
+  filtrarTabla();
+}
+
+function toggleSelectAll(master) {
+  if (master.checked) {
+    seleccionarTodos();
+  } else {
+    deseleccionarTodos();
+  }
+}
+
+/* ---------- FILTRO: NO MODIFICA datosAlumnos ---------- */
+function filtrarTabla() {
+  const valGeneral = normalizar(document.getElementById("searchInput").value);
+  const valID = normalizar(document.getElementById("filterID").value);
+
+  const filtrados = datosAlumnos.filter(a => {
+    const textoGeneral = [
+      a.estudiante,
+      a.representante,
+      a.sector,
+      a.grado,
+      a.telefono,
+      a.calle_p,
+      a.calle_s,
+      a.casa,
+      a.ref,
+      a.tipo_serv,
+      a.estado_serv,
+      a.pago
+    ].map(normalizar).join(" ");
+
+    const matchGeneral = !valGeneral || textoGeneral.includes(valGeneral);
+    const matchID = !valID || normalizar(a.id).includes(valID);
+
+    return matchGeneral && matchID;
+  });
+
+  renderTabla(filtrados);
+}
+
+/* ---------- PDF: SOLO seleccionados ---------- */
+function generarPDF() {
+  const seleccionadosPDF = datosAlumnos.filter(a => seleccionados.has(a._key));
+
+  if (seleccionadosPDF.length === 0) {
+    alert("Por favor selecciona al menos un estudiante para generar el PDF.");
+    return;
+  }
+
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("No se pudo cargar jsPDF.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("landscape", "mm", "a4");
+
+  const flags = {
+    id: document.getElementById("cID").checked,
+    estudiante: document.getElementById("cEstudiante").checked,
+    grado: document.getElementById("cGrado").checked,
+    representante: document.getElementById("cRepresentante").checked,
+    tel: document.getElementById("cTel").checked,
+    sector: document.getElementById("cSector").checked,
+    direccion: document.getElementById("cDireccion").checked,
+    ref: document.getElementById("cReferencia").checked,
+    servicio: document.getElementById("cServicio").checked,
+    valor: document.getElementById("cValor").checked,
+    pago: document.getElementById("cPago").checked
+  };
+
+  const headers = ["#"];
+  if (flags.id) headers.push("ID / Cédula");
+  if (flags.estudiante) headers.push("Estudiante");
+  if (flags.grado) headers.push("Grado");
+  if (flags.representante) headers.push("Representante");
+  if (flags.tel) headers.push("Teléfono");
+  if (flags.sector) headers.push("Sector");
+  if (flags.direccion) headers.push("Dirección");
+  if (flags.ref) headers.push("Referencia");
+  if (flags.servicio) headers.push("Estado Servicio");
+  if (flags.valor) headers.push("Valor");
+  if (flags.pago) headers.push("Pago");
+
+  if (headers.length === 1) {
+    alert("Selecciona al menos una columna para el PDF.");
+    return;
+  }
+
+  const rows = seleccionadosPDF.map((item, index) => {
+    const direccion = [item.calle_p, item.calle_s, item.casa]
+      .filter(Boolean).join(" y ");
+
+    const r = [index + 1];
+    if (flags.id) r.push(item.id || "");
+    if (flags.estudiante) r.push(item.estudiante || "");
+    if (flags.grado) r.push(item.grado || "");
+    if (flags.representante) r.push(item.representante || "");
+    if (flags.tel) r.push(item.telefono || "");
+    if (flags.sector) r.push(item.sector || "");
+    if (flags.direccion) r.push(direccion || "");
+    if (flags.ref) r.push(item.ref || "");
+    if (flags.servicio) r.push(item.estado_serv || item.tipo_serv || "");
+    if (flags.valor) r.push(item.valor ? "$" + item.valor : "$0");
+    if (flags.pago) r.push(item.pago || "PENDIENTE");
+
+    return r;
+  });
+
+  doc.setFontSize(14);
+  doc.text("Reporte de Recorrido Escolar - RUTA 7", 14, 12);
+
+  doc.setFontSize(9);
+  doc.text(
+    "Conductor: Marcelo Muñoz | Fecha: " +
+    new Date().toLocaleDateString("es-EC") +
+    " | Seleccionados: " + seleccionadosPDF.length,
+    14, 18
+  );
+
+  doc.autoTable({
+    head: [headers],
+    body: rows,
+    startY: 23,
+    theme: "striped",
+    styles: {
+      fontSize: 7,
+      cellPadding: 2,
+      overflow: "linebreak"
+    },
+    headStyles: {
+      fillColor: [30, 58, 138],
+      textColor: 255,
+      fontStyle: "bold"
+    },
+    margin: { top: 23, left: 8, right: 8, bottom: 10 },
+    didDrawPage: function(data) {
+      const pageCount = doc.internal.getNumberOfPages();
+      doc.setFontSize(7);
+      doc.text(
+        "Ruta 7 - Página " + data.pageNumber + " de " + pageCount,
+        14, doc.internal.pageSize.height - 5
+      );
+    }
+  });
+
+  doc.save(
+    "Listado_Recorrido_RUTA_7_" +
+    new Date().toISOString().slice(0,10) +
+    ".pdf"
+  );
+}
+
+/* ---------- Estado ---------- */
+function mostrarEstado(mensaje, tipo) {
+  const el = document.getElementById("estadoConexion");
+  el.className = "alert alert-" + tipo + " status-bar py-2 mb-3";
+  el.innerHTML = mensaje;
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("searchInput").addEventListener("input", filtrarTabla);
+  document.getElementById("filterID").addEventListener("input", filtrarTabla);
+  document.getElementById("checkAll").addEventListener("change", function() {
+    toggleSelectAll(this);
+  });
+
+  cargarDatos();
+
+  /* Actualiza desde Google Sheets cada 30 segundos,
+     sin borrar la selección del usuario. */
+  setInterval(cargarDatos, 30000);
+});
+</script>
 </body>
-
 </html>
