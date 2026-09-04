@@ -1,5 +1,5 @@
-const CACHE_NAME = "mi-ruta-padres-v8";
-const APP_SHELL = ["./padres.html", "./manifest-padres.webmanifest"];
+const CACHE_NAME = "mi-ruta-padres-v10";
+const APP_SHELL = ["./padres.html", "./manifest-padres.webmanifest", "./icon-padres.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).catch(() => null));
