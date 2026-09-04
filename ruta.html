@@ -1,600 +1,2660 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ruta 7 - Monitoreo</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <title>Ruta 7 - San Gabriel</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
 
   <style>
-    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, sans-serif; }
-    body { margin: 0; background: #f0f2f5; }
-    #map-container { position: relative; width: 100vw; height: 100vh; }
-    #map { width: 100%; height: 100%; }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f0f2f5;
+    }
+
+    #map-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ==============================
+       PANEL PRINCIPAL
+    ============================== */
 
     .panel-control {
       position: absolute;
       top: 18px;
       left: 18px;
       z-index: 1000;
-      width: 360px;
+
+      width: 390px;
       max-width: calc(100vw - 36px);
       max-height: calc(100vh - 36px);
+
       background: rgba(255,255,255,.97);
-      border-radius: 10px;
-      box-shadow: 0 4px 18px rgba(0,0,0,.25);
+
+      border-radius: 12px;
+
+      box-shadow:
+        0 4px 18px rgba(0,0,0,.25);
+
       padding: 16px;
+
       display: flex;
       flex-direction: column;
+
+      overflow: hidden;
     }
+
+    /* ==============================
+       ENCABEZADO
+    ============================== */
 
     .header-panel {
       background: #111;
       color: #ffcc00;
-      padding: 12px;
-      border-radius: 6px;
+
+      padding: 14px;
+
+      border-radius: 7px;
+
       text-align: center;
+
       font-weight: 900;
-      margin-bottom: 10px;
+
+      margin-bottom: 12px;
+
       text-transform: uppercase;
+
+      font-size: 16px;
     }
 
-    .modo-ruta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
+    .subtitulo {
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 12px;
+      font-weight: 700;
     }
+
+    /* ==============================
+       SELECTOR DE TURNO
+    ============================== */
+
+    .titulo-seccion {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: #333;
+    }
+
+    .selector-turno {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 8px;
+
+      margin-bottom: 12px;
+    }
+
+    /* ==============================
+       BOTONES
+    ============================== */
 
     .btn {
       width: 100%;
+
       border: 0;
-      border-radius: 6px;
+
+      border-radius: 7px;
+
       padding: 11px;
+
       font-size: 12px;
+
       font-weight: 900;
+
       cursor: pointer;
+
       text-transform: uppercase;
+
+      transition: .2s;
+
       margin-bottom: 8px;
     }
 
-    .btn-cargar { background: #111; color: #ffcc00; }
-    .btn-trazar { background: #28a745; color: white; }
-    .btn-modo { background: #e9ecef; color: #111; border: 2px solid #ddd; }
-    .btn-modo.activo { background: #ffcc00; color: #111; border-color: #111; }
-    .btn:disabled { background: #ccc; color: #777; cursor: not-allowed; }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-modo {
+      background: #e9ecef;
+
+      color: #111;
+
+      border: 2px solid #ddd;
+    }
+
+    .btn-modo.activo {
+      background: #ffcc00;
+
+      color: #111;
+
+      border-color: #111;
+    }
+
+    .btn-entrada {
+      background: #e9ecef;
+      color: #111;
+      border: 2px solid #ddd;
+    }
+
+    .btn-salida {
+      background: #e9ecef;
+      color: #111;
+      border: 2px solid #ddd;
+    }
+
+    .btn-entrada.activo {
+      background: #0066ff;
+      color: white;
+      border-color: #004bb5;
+    }
+
+    .btn-salida.activo {
+      background: #28a745;
+      color: white;
+      border-color: #1e7e34;
+    }
+
+    .btn-cargar {
+      background: #111;
+      color: #ffcc00;
+    }
+
+    .btn-trazar {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn:disabled {
+      background: #ccc;
+      color: #777;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ==============================
+       ESTADO
+    ============================== */
 
     .estado {
       font-size: 13px;
+
       padding: 9px;
+
       border-radius: 6px;
+
       background: #fff3cd;
+
       border: 1px solid #ffeeba;
+
       margin-bottom: 10px;
+
       display: none;
+
+      line-height: 1.4;
     }
+
+    /* ==============================
+       RESUMEN
+    ============================== */
 
     .resumen {
       display: none;
+
       background: #e8f4f8;
+
       border: 1px solid #b8daff;
+
       padding: 10px;
+
       border-radius: 6px;
+
       font-size: 12px;
+
       margin-bottom: 10px;
-      line-height: 1.45;
+
+      line-height: 1.5;
     }
+
+    /* ==============================
+       CONTADOR
+    ============================== */
 
     .contador {
       font-size: 13px;
+
       font-weight: 900;
+
       margin-bottom: 6px;
+
+      padding: 7px;
+
+      background: #f5f5f5;
+
+      border-radius: 5px;
     }
+
+    /* ==============================
+       LISTA
+    ============================== */
 
     .lista-alumnos {
       overflow-y: auto;
+
       border-top: 1px solid #e0e0e0;
+
       padding-top: 8px;
+
       min-height: 120px;
+
+      max-height: 48vh;
     }
+
+    /* ==============================
+       TARJETAS
+    ============================== */
 
     .card-alumno {
       background: #f8f9fa;
+
       border-left: 4px solid #ffcc00;
+
       padding: 9px 10px;
+
       margin-bottom: 8px;
+
       border-radius: 5px;
+
       font-size: 12px;
+
       cursor: pointer;
+    }
+
+    .card-alumno:hover {
+      background: #eeeeee;
     }
 
     .card-alumno strong {
       display: block;
+
       color: #111;
+
       margin-bottom: 4px;
     }
 
-    .card-sin-coords { border-left-color: #dc3545; color: #666; }
+    .card-sin-coords {
+      border-left-color: #dc3545;
+
+      color: #666;
+    }
+
+    .badge-servicio {
+      display: inline-block;
+
+      margin-top: 5px;
+
+      padding: 3px 7px;
+
+      border-radius: 4px;
+
+      background: #111;
+
+      color: #ffcc00;
+
+      font-size: 10px;
+
+      font-weight: 900;
+    }
+
+    .badge-turno {
+      display: inline-block;
+
+      margin-top: 5px;
+
+      padding: 3px 7px;
+
+      border-radius: 4px;
+
+      background: #ddd;
+
+      color: #111;
+
+      font-size: 10px;
+
+      font-weight: 900;
+    }
+
+    /* ==============================
+       BOTON NAVEGAR
+    ============================== */
 
     .btn-nav {
       margin-top: 8px;
+
       width: 100%;
+
       background: #111;
+
       color: #ffcc00;
+
       border: 0;
+
       border-radius: 5px;
+
       padding: 8px;
+
       font-weight: 900;
+
       cursor: pointer;
     }
 
+    /* ==============================
+       ICONO PARADA
+    ============================== */
+
     .numbered-icon {
       background: #ffcc00;
+
       color: #111;
+
       border: 2px solid #111;
+
       border-radius: 50%;
+
       font-weight: 900;
+
       text-align: center;
+
       line-height: 26px;
+
       font-size: 12px;
+
       box-shadow: 0 2px 5px rgba(0,0,0,.4);
     }
 
+    /* ==============================
+       ICONO ESCUELA
+    ============================== */
+
     .school-icon {
       background: #111;
+
       color: #ffcc00;
+
       border: 2px solid #ffcc00;
+
       border-radius: 50%;
+
       font-weight: 900;
+
       text-align: center;
+
       line-height: 30px;
+
       font-size: 15px;
     }
 
+    /* ==============================
+       RESPONSIVE
+    ============================== */
+
     @media (max-width: 700px) {
+
       .panel-control {
+
         top: auto;
+
         left: 10px;
+
         right: 10px;
+
         bottom: 10px;
+
         width: auto;
+
         max-width: none;
-        max-height: 50vh;
+
+        max-height: 62vh;
+
+        padding: 12px;
       }
+
+      .lista-alumnos {
+        max-height: 30vh;
+      }
+
+      .header-panel {
+        font-size: 14px;
+      }
+
     }
+
   </style>
+
 </head>
 
-<body>
-  <div id="map-container">
-    <div class="panel-control">
-      <div class="header-panel">Ruta 7 - San Gabriel</div>
 
-      <div class="modo-ruta">
-        <button id="btn-entrada" class="btn btn-modo activo" onclick="seleccionarModoRuta('entrada')">
-          Entrada mañana
-        </button>
-        <button id="btn-salida" class="btn btn-modo" onclick="seleccionarModoRuta('salida')">
-          Salida escuela
-        </button>
+<body>
+
+  <div id="map-container">
+
+    <div class="panel-control">
+
+      <!-- ==========================
+           ENCABEZADO
+      =========================== -->
+
+      <div class="header-panel">
+        RUTA 7 - SAN GABRIEL
       </div>
 
-      <button class="btn btn-cargar" onclick="cargarDatosDesdeGoogle()">Cargar estudiantes</button>
-      <button class="btn btn-trazar" id="btn-trazar" onclick="generarRuta()" disabled>Trazar ruta</button>
+      <div class="subtitulo">
+        Sistema de planificación y trazado de recorrido
+      </div>
+
+
+      <!-- ==========================
+           TURNO
+      =========================== -->
+
+      <div class="titulo-seccion">
+        1. Seleccione el turno
+      </div>
+
+      <div class="selector-turno">
+
+        <button
+          id="btn-matutino"
+          class="btn btn-modo activo"
+          onclick="seleccionarTurno('matutino')"
+        >
+          ☀ MATUTINO
+        </button>
+
+        <button
+          id="btn-vespertino"
+          class="btn btn-modo"
+          onclick="seleccionarTurno('vespertino')"
+        >
+          🌙 VESPERTINO
+        </button>
+
+      </div>
+
+
+      <!-- ==========================
+           TIPO DE RECORRIDO
+      =========================== -->
+
+      <div class="titulo-seccion">
+        2. Seleccione el recorrido
+      </div>
+
+      <div class="selector-turno">
+
+        <button
+          id="btn-entrada"
+          class="btn btn-entrada activo"
+          onclick="seleccionarRecorrido('entrada')"
+        >
+          ENTRADA
+        </button>
+
+        <button
+          id="btn-salida"
+          class="btn btn-salida"
+          onclick="seleccionarRecorrido('salida')"
+        >
+          SALIDA
+        </button>
+
+      </div>
+
+
+      <!-- ==========================
+           BOTONES
+      =========================== -->
+
+      <button
+        class="btn btn-cargar"
+        onclick="cargarDatosDesdeGoogle()"
+      >
+        CARGAR ESTUDIANTES
+      </button>
+
+
+      <button
+        class="btn btn-trazar"
+        id="btn-trazar"
+        onclick="generarRuta()"
+        disabled
+      >
+        TRAZAR RUTA
+      </button>
+
+
+      <!-- ==========================
+           ESTADO
+      =========================== -->
 
       <div id="estado" class="estado"></div>
+
+
+      <!-- ==========================
+           RESUMEN
+      =========================== -->
+
       <div id="resumen" class="resumen"></div>
 
-      <div class="contador">Inscritos: <span id="cant-alumnos">0</span></div>
 
-      <div class="lista-alumnos" id="lista-alumnos">
-        <p style="text-align:center;color:#777;font-size:12px;">
-          Presiona “Cargar estudiantes”.
-        </p>
+      <!-- ==========================
+           CONTADOR
+      =========================== -->
+
+      <div class="contador">
+
+        Estudiantes del recorrido:
+
+        <span id="cant-alumnos">
+          0
+        </span>
+
       </div>
+
+
+      <!-- ==========================
+           LISTA
+      =========================== -->
+
+      <div
+        class="lista-alumnos"
+        id="lista-alumnos"
+      >
+
+        <p
+          style="
+            text-align:center;
+            color:#777;
+            font-size:12px;
+          "
+        >
+          Seleccione el turno y recorrido y presione
+          “Cargar estudiantes”.
+        </p>
+
+      </div>
+
     </div>
 
+
+    <!-- MAPA -->
+
     <div id="map"></div>
+
   </div>
+
+
+  <!-- ==============================
+       LEAFLET
+  =============================== -->
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQHxoQKvJaplF2u3eRYg4rjV-m8WKnwNr-gg0QpqlTRZ94ST4PLsrLLE6Xp9B0gGOGZg/exec";
+
+    /* =====================================================
+       CONFIGURACIÓN
+    ===================================================== */
+
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbwQHxoQKvJaplF2u3eRYg4rjV-m8WKnwNr-gg0QpqlTRZ94ST4PLsrLLE6Xp9B0gGOGZg/exec";
+
+
+    /* =====================================================
+       ESCUELA
+    ===================================================== */
 
     const ESCUELA = {
+
       nombre: "Unidad Educativa San Gabriel",
+
       lat: -0.268130,
+
       lng: -78.543977
+
     };
 
-    let modoRuta = "entrada";
+
+    /* =====================================================
+       VARIABLES
+    ===================================================== */
+
+    let turnoSeleccionado = "matutino";
+
+    let recorridoSeleccionado = "entrada";
+
     let estudiantesData = [];
+
     let puntosValidos = [];
+
     let marcadoresGroup = L.layerGroup();
+
     let rutaLayer = null;
 
-    const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "© OpenStreetMap"
-    }).addTo(map);
+    /* =====================================================
+       MAPA
+    ===================================================== */
+
+    const map =
+      L.map("map")
+        .setView(
+          [ESCUELA.lat, ESCUELA.lng],
+          13
+        );
+
+
+    L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        maxZoom: 19,
+
+        attribution: "© OpenStreetMap"
+      }
+    ).addTo(map);
+
 
     marcadoresGroup.addTo(map);
+
+
     colocarEscuela();
 
+
+    /* =====================================================
+       COLOCAR ESCUELA
+    ===================================================== */
+
     function colocarEscuela() {
+
       const icon = L.divIcon({
+
         className: "school-icon",
+
         html: "E",
+
         iconSize: [32, 32],
+
         iconAnchor: [16, 16]
+
       });
 
-      L.marker([ESCUELA.lat, ESCUELA.lng], { icon })
-        .bindPopup(`<strong>${ESCUELA.nombre}</strong><br>Escuela`)
-        .addTo(map);
+
+      L.marker(
+        [ESCUELA.lat, ESCUELA.lng],
+        { icon }
+      )
+
+      .bindPopup(`
+        <strong>${ESCUELA.nombre}</strong>
+        <br>
+        Escuela
+      `)
+
+      .addTo(map);
+
     }
 
-    function seleccionarModoRuta(modo) {
-      modoRuta = modo;
 
-      document.getElementById("btn-entrada").classList.toggle("activo", modo === "entrada");
-      document.getElementById("btn-salida").classList.toggle("activo", modo === "salida");
+    /* =====================================================
+       SELECCIONAR TURNO
+    ===================================================== */
+
+    function seleccionarTurno(turno) {
+
+      turnoSeleccionado = turno;
+
+
+      document
+        .getElementById("btn-matutino")
+        .classList
+        .toggle(
+          "activo",
+          turno === "matutino"
+        );
+
+
+      document
+        .getElementById("btn-vespertino")
+        .classList
+        .toggle(
+          "activo",
+          turno === "vespertino"
+        );
+
 
       mostrarEstado(
-        modo === "entrada"
-          ? "Entrada mañana: recoge estudiantes y termina en la escuela."
-          : "Salida escuela: inicia en la escuela y termina en la última parada.",
+
+        turno === "matutino"
+
+          ? "Turno MATUTINO seleccionado."
+
+          : "Turno VESPERTINO seleccionado.",
+
+        "info"
+
+      );
+
+
+      if (estudiantesData.length > 0) {
+
+        actualizarRecorrido();
+
+      }
+
+    }
+
+
+    /* =====================================================
+       SELECCIONAR RECORRIDO
+    ===================================================== */
+
+    function seleccionarRecorrido(recorrido) {
+
+      recorridoSeleccionado = recorrido;
+
+
+      document
+        .getElementById("btn-entrada")
+        .classList
+        .toggle(
+          "activo",
+          recorrido === "entrada"
+        );
+
+
+      document
+        .getElementById("btn-salida")
+        .classList
+        .toggle(
+          "activo",
+          recorrido === "salida"
+        );
+
+
+      if (recorrido === "entrada") {
+
+        mostrarEstado(
+
+          `ENTRADA ${turnoSeleccionado.toUpperCase()}:
+          estudiantes COMPLETO e INGRESO.`,
+
+          "info"
+
+        );
+
+      } else {
+
+        mostrarEstado(
+
+          `SALIDA ${turnoSeleccionado.toUpperCase()}:
+          estudiantes COMPLETO y SALIDA.`,
+
+          "info"
+
+        );
+
+      }
+
+
+      if (estudiantesData.length > 0) {
+
+        actualizarRecorrido();
+
+      }
+
+    }
+
+
+    /* =====================================================
+       MOSTRAR ESTADO
+    ===================================================== */
+
+    function mostrarEstado(texto, tipo) {
+
+      const estado =
+        document.getElementById("estado");
+
+
+      estado.style.display = "block";
+
+      estado.textContent = texto;
+
+
+      if (tipo === "error") {
+
+        estado.style.background = "#f8d7da";
+
+        estado.style.borderColor = "#f5c6cb";
+
+        estado.style.color = "#721c24";
+
+      }
+
+      else if (tipo === "ok") {
+
+        estado.style.background = "#d4edda";
+
+        estado.style.borderColor = "#c3e6cb";
+
+        estado.style.color = "#155724";
+
+      }
+
+      else {
+
+        estado.style.background = "#fff3cd";
+
+        estado.style.borderColor = "#ffeeba";
+
+        estado.style.color = "#856404";
+
+      }
+
+    }
+
+
+    /* =====================================================
+       CARGAR GOOGLE SHEETS
+    ===================================================== */
+
+    function cargarDatosDesdeGoogle() {
+
+      puntosValidos = [];
+
+
+      document
+        .getElementById("lista-alumnos")
+        .innerHTML = `
+
+          <p
+            style="
+              text-align:center;
+              padding:15px;
+            "
+          >
+            Leyendo Google Sheets...
+          </p>
+
+        `;
+
+
+      mostrarEstado(
+        "Conectando con Google Sheets...",
         "info"
       );
 
-      if (puntosValidos.length > 0) generarRuta();
+
+      cargarJsonp(
+        `${SCRIPT_URL}?action=records`
+      )
+
+      .then(data => {
+
+        const registros =
+          Array.isArray(data)
+            ? data
+            : (data.records || []);
+
+
+        estudiantesData =
+          registros.map(normalizarRegistro);
+
+
+        console.log(
+          "Registros recibidos:",
+          estudiantesData
+        );
+
+
+        actualizarRecorrido();
+
+      })
+
+      .catch(error => {
+
+        console.error(error);
+
+
+        mostrarEstado(
+
+          "Error al leer Google Sheets. " +
+          "Revisa la URL /exec y los permisos.",
+
+          "error"
+
+        );
+
+      });
+
     }
 
-    function mostrarEstado(texto, tipo) {
-      const estado = document.getElementById("estado");
-      estado.style.display = "block";
-      estado.textContent = texto;
 
-      if (tipo === "error") {
-        estado.style.background = "#f8d7da";
-        estado.style.borderColor = "#f5c6cb";
-        estado.style.color = "#721c24";
-      } else if (tipo === "ok") {
-        estado.style.background = "#d4edda";
-        estado.style.borderColor = "#c3e6cb";
-        estado.style.color = "#155724";
-      } else {
-        estado.style.background = "#fff3cd";
-        estado.style.borderColor = "#ffeeba";
-        estado.style.color = "#856404";
-      }
-    }
-
-    function cargarDatosDesdeGoogle() {
-      puntosValidos = [];
-      document.getElementById("lista-alumnos").innerHTML = "<p style='text-align:center;'>Leyendo Google Sheets...</p>";
-      mostrarEstado("Conectando con Google Sheets...", "info");
-
-      cargarJsonp(`${SCRIPT_URL}?action=records`)
-        .then(data => {
-          const registros = Array.isArray(data) ? data : (data.records || []);
-          estudiantesData = registros.map(normalizarRegistro);
-          document.getElementById("cant-alumnos").textContent = estudiantesData.length;
-          renderizarMapaYLista();
-
-          if (puntosValidos.length > 0) {
-            document.getElementById("btn-trazar").disabled = false;
-            mostrarEstado(`${puntosValidos.length} estudiantes con ubicación válida.`, "ok");
-          } else {
-            document.getElementById("btn-trazar").disabled = true;
-            mostrarEstado("Se cargaron datos, pero no hay ubicaciones válidas.", "error");
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          mostrarEstado("Error al leer Google Sheets. Revisa URL /exec y permisos.", "error");
-        });
-    }
+    /* =====================================================
+       JSONP
+    ===================================================== */
 
     function cargarJsonp(url) {
-      return new Promise((resolve, reject) => {
-        const callbackName = "jsonpCallback_" + Date.now();
-        const script = document.createElement("script");
-        const separator = url.includes("?") ? "&" : "?";
 
-        window[callbackName] = function(data) {
-          delete window[callbackName];
-          script.remove();
-          resolve(data);
-        };
+      return new Promise(
+        (resolve, reject) => {
 
-        script.onerror = function() {
-          delete window[callbackName];
-          script.remove();
-          reject(new Error("No se pudo cargar JSONP"));
-        };
+          const callbackName =
+            "jsonpCallback_" +
+            Date.now();
 
-        script.src = `${url}${separator}callback=${callbackName}&t=${Date.now()}`;
-        document.body.appendChild(script);
-      });
+
+          const script =
+            document.createElement("script");
+
+
+          const separator =
+            url.includes("?")
+              ? "&"
+              : "?";
+
+
+          window[callbackName] =
+            function(data) {
+
+              delete window[callbackName];
+
+              script.remove();
+
+              resolve(data);
+
+            };
+
+
+          script.onerror =
+            function() {
+
+              delete window[callbackName];
+
+              script.remove();
+
+              reject(
+                new Error(
+                  "No se pudo cargar JSONP"
+                )
+              );
+
+            };
+
+
+          script.src =
+            `${url}${separator}` +
+            `callback=${callbackName}` +
+            `&t=${Date.now()}`;
+
+
+          document
+            .body
+            .appendChild(script);
+
+        }
+      );
+
     }
+
+
+    /* =====================================================
+       NORMALIZAR REGISTRO
+    ===================================================== */
 
     function normalizarRegistro(est) {
+
       return {
-        id: est.id || "",
-        estudiante: est.estudiante || est.nombresestudiante || est.nombreestudiante || est.nombre || "",
-        representante: est.representante || est.nombrerepresentante || "",
-        telefono: est.telefono || "",
-        sector: est.sector || "",
-        grado: est.gradoano || est.grado || "",
-        nivel: est.nivel || "",
-        urlMaps: est.enlacegooglemaps || est.urlmaps || est.ubicacion || est.url || "",
-        callePrincipal: est.calleprincipal || "",
-        calleSecundaria: est.callesecundaria || "",
-        numeroCasa: est.nrocasalote || est.numerocasa || "",
-        referencia: est.referencia || "",
-        horario: est.tipodeservicio || est.horarioservicio || est.horario || "",
-        estado: est.estado || ""
+
+        id:
+          obtenerCampo(
+            est,
+            [
+              "id"
+            ]
+          ),
+
+        estudiante:
+          obtenerCampo(
+            est,
+            [
+              "estudiante",
+              "nombresestudiante",
+              "nombreestudiante",
+              "nombre"
+            ]
+          ),
+
+        representante:
+          obtenerCampo(
+            est,
+            [
+              "representante",
+              "nombrerepresentante"
+            ]
+          ),
+
+        telefono:
+          obtenerCampo(
+            est,
+            [
+              "telefono",
+              "teléfono"
+            ]
+          ),
+
+        sector:
+          obtenerCampo(
+            est,
+            [
+              "sector"
+            ]
+          ),
+
+        grado:
+          obtenerCampo(
+            est,
+            [
+              "gradoano",
+              "grado",
+              "grado/año"
+            ]
+          ),
+
+        nivel:
+          obtenerCampo(
+            est,
+            [
+              "nivel"
+            ]
+          ),
+
+        urlMaps:
+          obtenerCampo(
+            est,
+            [
+              "enlacegooglemaps",
+              "urlmaps",
+              "ubicacion",
+              "url",
+              "enlace google maps"
+            ]
+          ),
+
+        callePrincipal:
+          obtenerCampo(
+            est,
+            [
+              "calleprincipal"
+            ]
+          ),
+
+        calleSecundaria:
+          obtenerCampo(
+            est,
+            [
+              "callesecundaria"
+            ]
+          ),
+
+        numeroCasa:
+          obtenerCampo(
+            est,
+            [
+              "nrocasalote",
+              "numerocasa"
+            ]
+          ),
+
+        referencia:
+          obtenerCampo(
+            est,
+            [
+              "referencia"
+            ]
+          ),
+
+        /* ==============================
+           TURNO
+        ============================== */
+
+        horario:
+          obtenerCampo(
+            est,
+            [
+              "tipodeservicio",
+              "horarioservicio",
+              "horario",
+              "tipo de servicio"
+            ]
+          ),
+
+        /* ==============================
+           ESTADO
+        ============================== */
+
+        estado:
+          obtenerCampo(
+            est,
+            [
+              "estado"
+            ]
+          ),
+
+        /* ==============================
+           SERVICIO
+           COMPLETO / INGRESO / SALIDA
+        ============================== */
+
+        servicio:
+          obtenerCampo(
+            est,
+            [
+              "servicio",
+              "tiposervicio"
+            ]
+          )
+
       };
+
     }
 
-    function renderizarMapaYLista() {
-      const lista = document.getElementById("lista-alumnos");
+
+    /* =====================================================
+       OBTENER CAMPO DE FORMA SEGURA
+    ===================================================== */
+
+    function obtenerCampo(obj, nombres) {
+
+      if (!obj) return "";
+
+
+      const claves =
+        Object.keys(obj);
+
+
+      for (const nombre of nombres) {
+
+        const buscado =
+          normalizarTexto(nombre);
+
+
+        const claveEncontrada =
+          claves.find(
+            clave =>
+              normalizarTexto(clave) === buscado
+          );
+
+
+        if (
+          claveEncontrada !== undefined &&
+          obj[claveEncontrada] !== null &&
+          obj[claveEncontrada] !== undefined
+        ) {
+
+          return String(
+            obj[claveEncontrada]
+          ).trim();
+
+        }
+
+      }
+
+
+      return "";
+
+    }
+
+
+    /* =====================================================
+       NORMALIZAR TEXTO
+    ===================================================== */
+
+    function normalizarTexto(texto) {
+
+      return String(texto || "")
+
+        .normalize("NFD")
+
+        .replace(
+          /[\u0300-\u036f]/g,
+          ""
+        )
+
+        .toLowerCase()
+
+        .replace(
+          /[\s_\-\/]+/g,
+          ""
+        )
+
+        .trim();
+
+    }
+
+
+    /* =====================================================
+       ACTUALIZAR RECORRIDO
+    ===================================================== */
+
+    function actualizarRecorrido() {
+
+      const filtrados =
+        filtrarEstudiantes();
+
+
+      const conCoordenadas =
+        filtrados.filter(
+          est =>
+            extraerCoordenadas(
+              est.urlMaps
+            )
+        );
+
+
+      puntosValidos =
+        conCoordenadas.map(
+          (est, index) => {
+
+            const coords =
+              extraerCoordenadas(
+                est.urlMaps
+              );
+
+
+            return {
+
+              ...est,
+
+              lat: coords.lat,
+
+              lng: coords.lng,
+
+              ordenOriginal: index
+
+            };
+
+          }
+        );
+
+
+      document
+        .getElementById("cant-alumnos")
+        .textContent =
+        puntosValidos.length;
+
+
+      renderizarMapaYLista(
+        filtrados
+      );
+
+
+      if (
+        puntosValidos.length > 0
+      ) {
+
+        document
+          .getElementById("btn-trazar")
+          .disabled = false;
+
+
+        mostrarEstado(
+
+          `${puntosValidos.length} estudiantes encontrados para ` +
+
+          `${turnoSeleccionado.toUpperCase()} - ` +
+
+          `${recorridoSeleccionado.toUpperCase()}.`,
+
+          "ok"
+
+        );
+
+
+      } else {
+
+        document
+          .getElementById("btn-trazar")
+          .disabled = true;
+
+
+        mostrarEstado(
+
+          `No existen estudiantes con ubicación válida para ` +
+
+          `${turnoSeleccionado.toUpperCase()} - ` +
+
+          `${recorridoSeleccionado.toUpperCase()}.`,
+
+          "error"
+
+        );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       FILTRAR ESTUDIANTES
+    ===================================================== */
+
+    function filtrarEstudiantes() {
+
+      const turnoBuscado =
+        turnoSeleccionado === "matutino"
+
+          ? "MATUTINO"
+
+          : "VESPERTINO";
+
+
+      const resultado =
+        estudiantesData.filter(
+          est => {
+
+            const horario =
+              normalizarTexto(
+                est.horario
+              );
+
+
+            const servicio =
+              normalizarTexto(
+                est.servicio
+              );
+
+
+            const estado =
+              normalizarTexto(
+                est.estado
+              );
+
+
+            /* ==========================
+               FILTRO DE TURNO
+            ========================== */
+
+            let perteneceTurno = false;
+
+
+            if (
+              turnoBuscado === "MATUTINO"
+            ) {
+
+              perteneceTurno =
+                horario.includes("matutino") ||
+                horario.includes("manana");
+
+            }
+
+            else {
+
+              perteneceTurno =
+                horario.includes("vespertino") ||
+                horario.includes("tarde");
+
+            }
+
+
+            if (!perteneceTurno) {
+
+              return false;
+
+            }
+
+
+            /* ==========================
+               SERVICIO
+            ========================== */
+
+            const esCompleto =
+              servicio.includes(
+                "completo"
+              );
+
+
+            const esIngreso =
+              servicio.includes(
+                "ingreso"
+              );
+
+
+            const esSalida =
+              servicio.includes(
+                "salida"
+              );
+
+
+            /* ==========================
+               TAMBIÉN REVISAMOS ESTADO
+               POR SI EL DATO VIENE ALLÍ
+            ========================== */
+
+            const estadoIngreso =
+              estado.includes(
+                "ingreso"
+              ) ||
+              estado.includes(
+                "manana"
+              );
+
+
+            const estadoSalida =
+              estado.includes(
+                "salida"
+              );
+
+
+            /* ==========================
+               ENTRADA
+            ========================== */
+
+            if (
+              recorridoSeleccionado ===
+              "entrada"
+            ) {
+
+              return (
+
+                esCompleto ||
+
+                esIngreso ||
+
+                (
+                  !servicio &&
+                  estadoIngreso
+                )
+
+              );
+
+            }
+
+
+            /* ==========================
+               SALIDA
+            ========================== */
+
+            if (
+              recorridoSeleccionado ===
+              "salida"
+            ) {
+
+              return (
+
+                esCompleto ||
+
+                esSalida ||
+
+                (
+                  !servicio &&
+                  estadoSalida
+                )
+
+              );
+
+            }
+
+
+            return false;
+
+          }
+        );
+
+
+      return resultado;
+
+    }
+
+
+    /* =====================================================
+       RENDERIZAR MAPA Y LISTA
+    ===================================================== */
+
+    function renderizarMapaYLista(
+      filtrados
+    ) {
+
+      const lista =
+        document.getElementById(
+          "lista-alumnos"
+        );
+
+
       lista.innerHTML = "";
+
+
       marcadoresGroup.clearLayers();
+
+
       puntosValidos = [];
 
+
       if (rutaLayer) {
-        map.removeLayer(rutaLayer);
+
+        map.removeLayer(
+          rutaLayer
+        );
+
         rutaLayer = null;
+
       }
 
-      const bounds = [[ESCUELA.lat, ESCUELA.lng]];
+
+      const bounds =
+        [
+          [
+            ESCUELA.lat,
+            ESCUELA.lng
+          ]
+        ];
+
+
       let contador = 0;
 
-      estudiantesData.forEach((est, idx) => {
-        const coords = extraerCoordenadas(est.urlMaps);
 
-        if (coords) {
-          contador++;
-          const punto = { ...est, lat: coords.lat, lng: coords.lng, ordenOriginal: idx };
-          puntosValidos.push(punto);
-          bounds.push([coords.lat, coords.lng]);
+      filtrados.forEach(
+        (est, idx) => {
 
-          agregarParadaAlMapaYLista(punto, contador, lista);
-        } else {
-          const card = document.createElement("div");
-          card.className = "card-alumno card-sin-coords";
-          card.innerHTML = `<strong>${escapar(est.estudiante || "Estudiante sin nombre")}</strong><div>Sin ubicación válida</div>`;
-          lista.appendChild(card);
+          const coords =
+            extraerCoordenadas(
+              est.urlMaps
+            );
+
+
+          if (coords) {
+
+            contador++;
+
+
+            const punto = {
+
+              ...est,
+
+              lat: coords.lat,
+
+              lng: coords.lng,
+
+              ordenOriginal: idx
+
+            };
+
+
+            puntosValidos.push(
+              punto
+            );
+
+
+            bounds.push(
+              [
+                coords.lat,
+                coords.lng
+              ]
+            );
+
+
+            agregarParadaAlMapaYLista(
+
+              punto,
+
+              contador,
+
+              lista
+
+            );
+
+          }
+
+          else {
+
+            const card =
+              document.createElement(
+                "div"
+              );
+
+
+            card.className =
+              "card-alumno card-sin-coords";
+
+
+            card.innerHTML = `
+
+              <strong>
+                ${escapar(
+                  est.estudiante ||
+                  "Estudiante sin nombre"
+                )}
+              </strong>
+
+              <div>
+                Sin ubicación válida
+              </div>
+
+              <div>
+                Turno:
+                ${escapar(
+                  est.horario ||
+                  "Sin turno"
+                )}
+              </div>
+
+              <div>
+                Servicio:
+                ${escapar(
+                  est.servicio ||
+                  "Sin servicio"
+                )}
+              </div>
+
+            `;
+
+
+            lista.appendChild(
+              card
+            );
+
+          }
+
         }
-      });
+      );
 
-      if (bounds.length > 1) map.fitBounds(bounds, { padding: [45, 45] });
-    }
 
-    function generarRuta() {
-      if (puntosValidos.length < 1) {
-        alert("No hay puntos válidos para trazar.");
-        return;
+      if (
+        bounds.length > 1
+      ) {
+
+        map.fitBounds(
+          bounds,
+          {
+            padding: [45,45]
+          }
+        );
+
       }
 
-      const btn = document.getElementById("btn-trazar");
+
+      if (
+        filtrados.length === 0
+      ) {
+
+        lista.innerHTML = `
+
+          <p
+            style="
+              text-align:center;
+              color:#777;
+              font-size:12px;
+              padding:15px;
+            "
+          >
+            No hay estudiantes para este recorrido.
+          </p>
+
+        `;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       GENERAR RUTA
+    ===================================================== */
+
+    function generarRuta() {
+
+      if (
+        puntosValidos.length < 1
+      ) {
+
+        alert(
+          "No hay puntos válidos para trazar."
+        );
+
+        return;
+
+      }
+
+
+      const btn =
+        document.getElementById(
+          "btn-trazar"
+        );
+
+
       btn.disabled = true;
-      btn.textContent = "Calculando...";
+
+      btn.textContent =
+        "CALCULANDO...";
+
 
       let ordenados;
 
-      if (modoRuta === "entrada") {
-        ordenados = ordenarPorCercania(ESCUELA, puntosValidos).reverse();
-      } else {
-        ordenados = ordenarPorCercania(ESCUELA, puntosValidos);
+
+      /* ==========================
+         ENTRADA
+         ÚLTIMA PARADA → ESCUELA
+      ========================== */
+
+      if (
+        recorridoSeleccionado ===
+        "entrada"
+      ) {
+
+        ordenados =
+          ordenarPorCercania(
+            ESCUELA,
+            puntosValidos
+          ).reverse();
+
       }
 
-      renderizarRutaOrdenada(ordenados);
 
-      const todosLosPuntos = modoRuta === "entrada"
-        ? [...ordenados, ESCUELA]
-        : [ESCUELA, ...ordenados];
+      /* ==========================
+         SALIDA
+         ESCUELA → PRIMERA PARADA
+      ========================== */
 
-      const waypoints = todosLosPuntos.map(p => `${p.lng},${p.lat}`).join(";");
-      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson`;
+      else {
+
+        ordenados =
+          ordenarPorCercania(
+            ESCUELA,
+            puntosValidos
+          );
+
+      }
+
+
+      renderizarRutaOrdenada(
+        ordenados
+      );
+
+
+      /* ==========================
+         PUNTOS PARA OSRM
+      ========================== */
+
+      const todosLosPuntos =
+
+        recorridoSeleccionado ===
+        "entrada"
+
+          ? [
+              ...ordenados,
+              ESCUELA
+            ]
+
+          : [
+              ESCUELA,
+              ...ordenados
+            ];
+
+
+      const waypoints =
+        todosLosPuntos
+          .map(
+            p =>
+              `${p.lng},${p.lat}`
+          )
+          .join(";");
+
+
+      const osrmUrl =
+        `https://router.project-osrm.org/route/v1/driving/${waypoints}` +
+        `?overview=full&geometries=geojson`;
+
 
       fetch(osrmUrl)
-        .then(res => res.json())
+
+        .then(
+          res => res.json()
+        )
+
         .then(data => {
-          if (!data.routes || !data.routes.length) throw new Error("OSRM no devolvió ruta");
 
-          const route = data.routes[0];
-          if (rutaLayer) map.removeLayer(rutaLayer);
+          if (
+            !data.routes ||
+            !data.routes.length
+          ) {
 
-          rutaLayer = L.geoJSON(route.geometry, {
-            style: {
-              color: modoRuta === "entrada" ? "#0066ff" : "#28a745",
-              weight: 6,
-              opacity: 0.85
+            throw new Error(
+              "OSRM no devolvió ruta"
+            );
+
+          }
+
+
+          const route =
+            data.routes[0];
+
+
+          if (rutaLayer) {
+
+            map.removeLayer(
+              rutaLayer
+            );
+
+          }
+
+
+          rutaLayer =
+            L.geoJSON(
+              route.geometry,
+              {
+
+                style: {
+
+                  color:
+
+                    recorridoSeleccionado ===
+                    "entrada"
+
+                      ? "#0066ff"
+
+                      : "#28a745",
+
+                  weight: 6,
+
+                  opacity: .85
+
+                }
+
+              }
+            )
+            .addTo(map);
+
+
+          map.fitBounds(
+            rutaLayer.getBounds(),
+            {
+              padding: [45,45]
             }
-          }).addTo(map);
+          );
 
-          map.fitBounds(rutaLayer.getBounds(), { padding: [45, 45] });
-          mostrarResumen(route, ordenados);
+
+          mostrarResumen(
+            route,
+            ordenados
+          );
+
 
           mostrarEstado(
-            modoRuta === "entrada"
-              ? "Ruta de entrada trazada: paradas hacia la escuela."
-              : "Ruta de salida trazada: escuela hacia paradas.",
+
+            recorridoSeleccionado ===
+            "entrada"
+
+              ? `Ruta ${turnoSeleccionado.toUpperCase()} de ENTRADA trazada correctamente.`
+
+              : `Ruta ${turnoSeleccionado.toUpperCase()} de SALIDA trazada correctamente.`,
+
             "ok"
+
           );
+
         })
-        .catch(error => {
-          console.error(error);
-          mostrarEstado("No se pudo trazar la ruta. Intenta nuevamente.", "error");
-        })
-        .finally(() => {
-          btn.disabled = false;
-          btn.textContent = "Trazar ruta";
-        });
-    }
 
-    function renderizarRutaOrdenada(ordenados) {
-      const lista = document.getElementById("lista-alumnos");
-      lista.innerHTML = "";
-      marcadoresGroup.clearLayers();
+        .catch(
+          error => {
 
-      const bounds = [[ESCUELA.lat, ESCUELA.lng]];
+            console.error(error);
 
-      ordenados.forEach((est, index) => {
-        const numero = index + 1;
-        bounds.push([est.lat, est.lng]);
-        agregarParadaAlMapaYLista(est, numero, lista);
-      });
 
-      map.fitBounds(bounds, { padding: [45, 45] });
-    }
+            mostrarEstado(
 
-    function agregarParadaAlMapaYLista(est, numero, lista) {
-      const icon = L.divIcon({
-        className: "numbered-icon",
-        html: numero,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
-      });
+              "No se pudo trazar la ruta. " +
+              "Intenta nuevamente.",
 
-      const linkNavegar = `https://www.google.com/maps/dir/?api=1&destination=${est.lat},${est.lng}&travelmode=driving`;
+              "error"
 
-      const marker = L.marker([est.lat, est.lng], { icon });
-      marker.bindPopup(`
-        <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong><br>
-        <b>Sector:</b> ${escapar(est.sector || "Sin sector")}<br>
-        <b>Representante:</b> ${escapar(est.representante || "Sin representante")}<br>
-        <b>Teléfono:</b> ${crearLinkWhatsApp(est.telefono)}<br><br>
-        <a href="${linkNavegar}" target="_blank">Navegar a esta parada</a>
-      `);
+            );
 
-      marcadoresGroup.addLayer(marker);
-
-      const card = document.createElement("div");
-      card.className = "card-alumno";
-      card.innerHTML = `
-        <strong>#${numero} ${escapar(est.estudiante || "Estudiante")}</strong>
-        <div>Sector: ${escapar(est.sector || "Sin sector")}</div>
-        <div>Teléfono: ${escapar(est.telefono || "Sin teléfono")}</div>
-        <div>Horario: ${escapar(est.horario || "Sin horario")}</div>
-        <button class="btn-nav" onclick="event.stopPropagation(); window.open('${linkNavegar}', '_blank')">
-          Navegar a parada #${numero}
-        </button>
-      `;
-
-      card.onclick = () => {
-        map.flyTo([est.lat, est.lng], 17);
-        marker.openPopup();
-      };
-
-      lista.appendChild(card);
-    }
-
-    function ordenarPorCercania(inicio, puntos) {
-      const pendientes = [...puntos];
-      const ordenados = [];
-      let actual = inicio;
-
-      while (pendientes.length) {
-        let mejorIndex = 0;
-        let mejorDistancia = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
-
-        for (let i = 1; i < pendientes.length; i++) {
-          const d = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng);
-          if (d < mejorDistancia) {
-            mejorDistancia = d;
-            mejorIndex = i;
           }
+        )
+
+        .finally(
+          () => {
+
+            btn.disabled =
+              false;
+
+            btn.textContent =
+              "TRAZAR RUTA";
+
+          }
+        );
+
+    }
+
+
+    /* =====================================================
+       ORDENAR PARADAS
+    ===================================================== */
+
+    function ordenarPorCercania(
+      inicio,
+      puntos
+    ) {
+
+      const pendientes =
+        [...puntos];
+
+
+      const ordenados =
+        [];
+
+
+      let actual =
+        inicio;
+
+
+      while (
+        pendientes.length
+      ) {
+
+        let mejorIndex = 0;
+
+
+        let mejorDistancia =
+          distanciaKm(
+
+            actual.lat,
+
+            actual.lng,
+
+            pendientes[0].lat,
+
+            pendientes[0].lng
+
+          );
+
+
+        for (
+          let i = 1;
+
+          i < pendientes.length;
+
+          i++
+        ) {
+
+          const d =
+            distanciaKm(
+
+              actual.lat,
+
+              actual.lng,
+
+              pendientes[i].lat,
+
+              pendientes[i].lng
+
+            );
+
+
+          if (
+            d < mejorDistancia
+          ) {
+
+            mejorDistancia = d;
+
+            mejorIndex = i;
+
+          }
+
         }
 
-        const siguiente = pendientes.splice(mejorIndex, 1)[0];
-        ordenados.push(siguiente);
-        actual = siguiente;
+
+        const siguiente =
+          pendientes.splice(
+            mejorIndex,
+            1
+          )[0];
+
+
+        ordenados.push(
+          siguiente
+        );
+
+
+        actual =
+          siguiente;
+
       }
 
+
       return ordenados;
+
     }
 
-    function mostrarResumen(route, ordenados) {
-      const km = (route.distance / 1000).toFixed(2);
-      const min = Math.round(route.duration / 60);
 
-      const resumen = document.getElementById("resumen");
-      resumen.style.display = "block";
-      resumen.innerHTML = `
-        <b>Resumen de ruta</b><br>
-        Tipo: <b>${modoRuta === "entrada" ? "Entrada mañana" : "Salida escuela"}</b><br>
-        Paradas: <b>${ordenados.length}</b><br>
-        Distancia: <b>${km} km</b><br>
-        Tiempo estimado: <b>${min} min</b><br>
-        Primera parada: <b>${escapar(ordenados[0]?.estudiante || "N/D")}</b><br>
-        Última parada: <b>${escapar(ordenados[ordenados.length - 1]?.estudiante || "N/D")}</b>
+    /* =====================================================
+       RENDERIZAR RUTA ORDENADA
+    ===================================================== */
+
+    function renderizarRutaOrdenada(
+      ordenados
+    ) {
+
+      const lista =
+        document.getElementById(
+          "lista-alumnos"
+        );
+
+
+      lista.innerHTML = "";
+
+
+      marcadoresGroup.clearLayers();
+
+
+      const bounds =
+        [
+          [
+            ESCUELA.lat,
+            ESCUELA.lng
+          ]
+        ];
+
+
+      ordenados.forEach(
+        (est, index) => {
+
+          const numero =
+            index + 1;
+
+
+          bounds.push(
+            [
+              est.lat,
+              est.lng
+            ]
+          );
+
+
+          agregarParadaAlMapaYLista(
+
+            est,
+
+            numero,
+
+            lista
+
+          );
+
+        }
+      );
+
+
+      map.fitBounds(
+        bounds,
+        {
+          padding: [45,45]
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       AGREGAR PARADA
+    ===================================================== */
+
+    function agregarParadaAlMapaYLista(
+      est,
+      numero,
+      lista
+    ) {
+
+      const icon =
+        L.divIcon({
+
+          className:
+            "numbered-icon",
+
+          html:
+            numero,
+
+          iconSize:
+            [28,28],
+
+          iconAnchor:
+            [14,14]
+
+        });
+
+
+      const linkNavegar =
+
+        `https://www.google.com/maps/dir/?api=1` +
+
+        `&destination=${est.lat},${est.lng}` +
+
+        `&travelmode=driving`;
+
+
+      const marker =
+        L.marker(
+          [
+            est.lat,
+            est.lng
+          ],
+          {
+            icon
+          }
+        );
+
+
+      marker.bindPopup(`
+
+        <strong>
+          #${numero}
+          ${escapar(
+            est.estudiante ||
+            "Estudiante"
+          )}
+        </strong>
+
+        <br><br>
+
+        <b>Turno:</b>
+        ${escapar(
+          est.horario ||
+          "Sin turno"
+        )}
+
+        <br>
+
+        <b>Servicio:</b>
+        ${escapar(
+          est.servicio ||
+          "Sin servicio"
+        )}
+
+        <br>
+
+        <b>Sector:</b>
+        ${escapar(
+          est.sector ||
+          "Sin sector"
+        )}
+
+        <br>
+
+        <b>Representante:</b>
+        ${escapar(
+          est.representante ||
+          "Sin representante"
+        )}
+
+        <br>
+
+        <b>Teléfono:</b>
+        ${crearLinkWhatsApp(
+          est.telefono
+        )}
+
+        <br><br>
+
+        <a
+          href="${linkNavegar}"
+          target="_blank"
+        >
+          Navegar a esta parada
+        </a>
+
+      `);
+
+
+      marcadoresGroup.addLayer(
+        marker
+      );
+
+
+      /* ==========================
+         TARJETA
+      ========================== */
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "card-alumno";
+
+
+      card.innerHTML = `
+
+        <strong>
+
+          #${numero}
+
+          ${escapar(
+            est.estudiante ||
+            "Estudiante"
+          )}
+
+        </strong>
+
+        <div>
+          Sector:
+          ${escapar(
+            est.sector ||
+            "Sin sector"
+          )}
+        </div>
+
+        <div>
+          Grado:
+          ${escapar(
+            est.grado ||
+            "Sin grado"
+          )}
+        </div>
+
+        <div>
+          Teléfono:
+          ${escapar(
+            est.telefono ||
+            "Sin teléfono"
+          )}
+        </div>
+
+        <span class="badge-turno">
+          ${escapar(
+            est.horario ||
+            "SIN TURNO"
+          )}
+        </span>
+
+        <span class="badge-servicio">
+          ${escapar(
+            est.servicio ||
+            "SIN SERVICIO"
+          )}
+        </span>
+
+        <button
+          class="btn-nav"
+          onclick="
+            event.stopPropagation();
+            window.open(
+              '${linkNavegar}',
+              '_blank'
+            )
+          "
+        >
+          NAVEGAR A PARADA #${numero}
+        </button>
+
       `;
+
+
+      card.onclick =
+        () => {
+
+          map.flyTo(
+            [
+              est.lat,
+              est.lng
+            ],
+            17
+          );
+
+
+          marker.openPopup();
+
+        };
+
+
+      lista.appendChild(
+        card
+      );
+
     }
 
-    function extraerCoordenadas(texto) {
+
+    /* =====================================================
+       EXTRAER COORDENADAS
+    ===================================================== */
+
+    function extraerCoordenadas(
+      texto
+    ) {
+
       if (!texto) return null;
-      const valor = String(texto);
 
-      let match = valor.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
-      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
 
-      match = valor.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
-      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
+      const valor =
+        String(texto);
 
-      match = valor.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
-      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
+
+      /* ==========================
+         GOOGLE MAPS ?q=
+      ========================== */
+
+      let match =
+        valor.match(
+          /q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i
+        );
+
+
+      if (match) {
+
+        return {
+
+          lat:
+            Number(match[1]),
+
+          lng:
+            Number(match[2])
+
+        };
+
+      }
+
+
+      /* ==========================
+         GOOGLE MAPS @
+      ========================== */
+
+      match =
+        valor.match(
+          /@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i
+        );
+
+
+      if (match) {
+
+        return {
+
+          lat:
+            Number(match[1]),
+
+          lng:
+            Number(match[2])
+
+        };
+
+      }
+
+
+      /* ==========================
+         COORDENADAS DIRECTAS
+      ========================== */
+
+      match =
+        valor.match(
+          /(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/
+        );
+
+
+      if (match) {
+
+        return {
+
+          lat:
+            Number(match[1]),
+
+          lng:
+            Number(match[2])
+
+        };
+
+      }
+
 
       return null;
+
     }
 
-    function distanciaKm(lat1, lng1, lat2, lng2) {
+
+    /* =====================================================
+       DISTANCIA
+    ===================================================== */
+
+    function distanciaKm(
+      lat1,
+      lng1,
+      lat2,
+      lng2
+    ) {
+
       const R = 6371;
-      const dLat = gradosARadianes(lat2 - lat1);
-      const dLng = gradosARadianes(lng2 - lng1);
+
+
+      const dLat =
+        gradosARadianes(
+          lat2 - lat1
+        );
+
+
+      const dLng =
+        gradosARadianes(
+          lng2 - lng1
+        );
+
 
       const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(gradosARadianes(lat1)) *
-        Math.cos(gradosARadianes(lat2)) *
-        Math.sin(dLng / 2) ** 2;
 
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        Math.sin(
+          dLat / 2
+        ) ** 2
+
+        +
+
+        Math.cos(
+          gradosARadianes(lat1)
+        )
+
+        *
+
+        Math.cos(
+          gradosARadianes(lat2)
+        )
+
+        *
+
+        Math.sin(
+          dLng / 2
+        ) ** 2;
+
+
+      return (
+
+        R *
+
+        2 *
+
+        Math.atan2(
+
+          Math.sqrt(a),
+
+          Math.sqrt(
+            1 - a
+          )
+
+        )
+
+      );
+
     }
 
-    function gradosARadianes(grados) {
-      return grados * Math.PI / 180;
+
+    /* =====================================================
+       GRADOS A RADIANES
+    ===================================================== */
+
+    function gradosARadianes(
+      grados
+    ) {
+
+      return (
+        grados *
+        Math.PI /
+        180
+      );
+
     }
 
-    function crearLinkWhatsApp(telefono) {
-      const limpio = String(telefono || "").replace(/\D/g, "");
-      if (!limpio) return "Sin teléfono";
 
-      const internacional = limpio.startsWith("0")
-        ? "593" + limpio.slice(1)
-        : "593" + limpio;
+    /* =====================================================
+       WHATSAPP
+    ===================================================== */
 
-      return `<a href="https://wa.me/${internacional}" target="_blank">${escapar(telefono)}</a>`;
+    function crearLinkWhatsApp(
+      telefono
+    ) {
+
+      const limpio =
+        String(
+          telefono || ""
+        )
+        .replace(
+          /\D/g,
+          ""
+        );
+
+
+      if (!limpio) {
+
+        return "Sin teléfono";
+
+      }
+
+
+      const internacional =
+
+        limpio.startsWith("0")
+
+          ? "593" +
+            limpio.slice(1)
+
+          : "593" +
+            limpio;
+
+
+      return `
+
+        <a
+          href="https://wa.me/${internacional}"
+          target="_blank"
+        >
+          ${escapar(
+            telefono
+          )}
+        </a>
+
+      `;
+
     }
 
-    function escapar(valor) {
-      return String(valor || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+    /* =====================================================
+       ESCAPAR HTML
+    ===================================================== */
+
+    function escapar(
+      valor
+    ) {
+
+      return String(
+        valor || ""
+      )
+
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+
+      .replace(
+        /</g,
+        "&lt;"
+      )
+
+      .replace(
+        />/g,
+        "&gt;"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
     }
 
-    window.addEventListener("load", () => {
-      setTimeout(() => map.invalidateSize(), 300);
-    });
+
+    /* =====================================================
+       INICIALIZAR MAPA
+    ===================================================== */
+
+    window.addEventListener(
+      "load",
+      () => {
+
+        setTimeout(
+          () => {
+
+            map.invalidateSize();
+
+          },
+          300
+        );
+
+      }
+    );
+
   </script>
+
 </body>
+
 </html>
