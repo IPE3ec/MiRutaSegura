@@ -1,9 +1,25 @@
-const CACHE_NAME = "mi-ruta-segura-padres-v3";
-const ASSETS = ["padre.html", "manifest-padres.webmanifest", "icon-padre.svg", "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css", "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"];
-self.addEventListener("install", event => { event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))); self.skipWaiting(); });
-self.addEventListener("activate", event => { event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))); self.clients.claim(); });
-self.addEventListener("fetch", event => { event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request))); });
-self.addEventListener("push", event => {
-  const data = event.data ? event.data.json() : { title: "Mi Ruta Segura", body: "Nuevo aviso del transporte" };
-  event.waitUntil(self.registration.showNotification(data.title || "Mi Ruta Segura", { body: data.body || "Nuevo aviso", icon: "icon-padre.svg", tag: "mi-ruta-segura" }));
+const CACHE_NAME = "mi-ruta-padres-v8";
+const APP_SHELL = ["./padres.html", "./manifest-padres.webmanifest"];
+
+self.addEventListener("install", event => {
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).catch(() => null));
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))));
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", event => {
+  const req = event.request;
+  if (req.mode === "navigate" || req.destination === "document") {
+    event.respondWith(fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+      return res;
+    }).catch(() => caches.match(req).then(cached => cached || caches.match("./padres.html"))));
+    return;
+  }
+  event.respondWith(caches.match(req).then(cached => cached || fetch(req)));
 });
