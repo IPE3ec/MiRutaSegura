@@ -64,12 +64,12 @@ thead th{
 
 .badge-aldia{
     background:#198754;
-    color:white;
+    color:#fff;
 }
 
 .badge-pendiente{
     background:#dc3545;
-    color:white;
+    color:#fff;
 }
 
 .loading{
@@ -94,6 +94,27 @@ thead th{
     min-width:220px;
 }
 
+.api-debug{
+    font-size:11px;
+    font-family:monospace;
+    white-space:pre-wrap;
+    word-break:break-word;
+    max-height:180px;
+    overflow:auto;
+}
+
+.student-name{
+    min-width:180px;
+}
+
+.address-cell{
+    min-width:220px;
+}
+
+.reference-cell{
+    min-width:180px;
+}
+
 @media(max-width:768px){
 
     .search-box{
@@ -104,14 +125,17 @@ thead th{
         font-size:15px;
     }
 
+    .header-info{
+        margin-top:10px;
+        text-align:left !important;
+    }
+
 }
 
 </style>
-
 </head>
 
 <body>
-
 
 <!-- =====================================================
      ENCABEZADO
@@ -141,7 +165,6 @@ COLEGIO SAN JOSÉ "LA SALLE"
 
 </div>
 
-
 <div class="text-white text-end header-info">
 
 <div>
@@ -163,7 +186,6 @@ COLEGIO SAN JOSÉ "LA SALLE"
 
 <div class="container-fluid px-4">
 
-
 <!-- =====================================================
      ESTADO
 ===================================================== -->
@@ -183,7 +205,6 @@ Iniciando sistema...
 ===================================================== -->
 
 <div class="row g-3 mb-4">
-
 
 <div class="col-6 col-md-3 col-lg">
 
@@ -259,12 +280,11 @@ Iniciando sistema...
 
 </div>
 
-
 </div>
 
 
 <!-- =====================================================
-     FILTROS Y PDF
+     FILTROS
 ===================================================== -->
 
 <div class="card shadow-sm mb-4">
@@ -276,30 +296,43 @@ Iniciando sistema...
 <div>
 
 <strong>
+
 <i class="fa-solid fa-file-pdf me-2"></i>
+
 REPORTE RUTA 18
+
 </strong>
 
 <div class="small text-muted">
-Colegio San José "La Salle" | Marcelo Muñoz
+
+Colegio San José "La Salle" |
+
+Marcelo Muñoz
+
 </div>
 
 </div>
+
 
 <div>
 
-<button class="btn btn-success btn-sm"
+<button
+class="btn btn-success btn-sm"
 onclick="cargarDatos()">
 
 <i class="fa-solid fa-rotate"></i>
+
 Actualizar
 
 </button>
 
-<button class="btn btn-danger btn-sm"
+
+<button
+class="btn btn-danger btn-sm"
 onclick="generarPDF()">
 
 <i class="fa-solid fa-file-pdf"></i>
+
 Generar PDF
 
 </button>
@@ -315,10 +348,10 @@ Generar PDF
 
 <div class="row g-2">
 
-
 <div class="col-md-6">
 
-<input type="text"
+<input
+type="text"
 id="searchInput"
 class="form-control"
 placeholder="🔍 Buscar estudiante, representante, sector...">
@@ -328,7 +361,8 @@ placeholder="🔍 Buscar estudiante, representante, sector...">
 
 <div class="col-md-3">
 
-<input type="text"
+<input
+type="text"
 id="filterID"
 class="form-control"
 placeholder="🔍 Buscar ID">
@@ -338,7 +372,8 @@ placeholder="🔍 Buscar ID">
 
 <div class="col-md-3">
 
-<select id="filterSector"
+<select
+id="filterSector"
 class="form-select">
 
 <option value="">
@@ -370,7 +405,9 @@ Todos los sectores
 <div class="col-md-12">
 
 <strong class="small">
+
 COLUMNAS PARA EL PDF:
+
 </strong>
 
 </div>
@@ -379,8 +416,14 @@ COLUMNAS PARA EL PDF:
 <div class="col-md-2">
 
 <label>
-<input type="checkbox" id="cEstudiante" checked>
- Estudiante
+
+<input
+type="checkbox"
+id="cEstudiante"
+checked>
+
+Estudiante
+
 </label>
 
 </div>
@@ -389,8 +432,14 @@ COLUMNAS PARA EL PDF:
 <div class="col-md-2">
 
 <label>
-<input type="checkbox" id="cGrado" checked>
- Grado
+
+<input
+type="checkbox"
+id="cGrado"
+checked>
+
+Grado
+
 </label>
 
 </div>
@@ -399,8 +448,14 @@ COLUMNAS PARA EL PDF:
 <div class="col-md-2">
 
 <label>
-<input type="checkbox" id="cRepresentante" checked>
- Representante
+
+<input
+type="checkbox"
+id="cRepresentante"
+checked>
+
+Representante
+
 </label>
 
 </div>
@@ -409,8 +464,14 @@ COLUMNAS PARA EL PDF:
 <div class="col-md-2">
 
 <label>
-<input type="checkbox" id="cTel" checked>
- Teléfono
+
+<input
+type="checkbox"
+id="cTel"
+checked>
+
+Teléfono
+
 </label>
 
 </div>
@@ -419,8 +480,14 @@ COLUMNAS PARA EL PDF:
 <div class="col-md-2">
 
 <label>
-<input type="checkbox" id="cSector" checked>
- Sector
+
+<input
+type="checkbox"
+id="cSector"
+checked>
+
+Sector
+
 </label>
 
 </div>
@@ -429,12 +496,17 @@ COLUMNAS PARA EL PDF:
 <div class="col-md-2">
 
 <label>
-<input type="checkbox" id="cDireccion" checked>
- Dirección
+
+<input
+type="checkbox"
+id="cDireccion"
+checked>
+
+Dirección
+
 </label>
 
 </div>
-
 
 </div>
 
@@ -454,12 +526,17 @@ COLUMNAS PARA EL PDF:
 <div>
 
 <strong>
+
 <i class="fa-solid fa-users me-2"></i>
+
 LISTADO DE ESTUDIANTES
+
 </strong>
 
 <span class="badge bg-primary ms-2">
+
 RUTA 18
+
 </span>
 
 </div>
@@ -467,7 +544,8 @@ RUTA 18
 
 <div>
 
-<button class="btn btn-outline-primary btn-sm"
+<button
+class="btn btn-outline-primary btn-sm"
 onclick="seleccionarTodos()">
 
 Seleccionar Todos
@@ -475,7 +553,8 @@ Seleccionar Todos
 </button>
 
 
-<button class="btn btn-outline-secondary btn-sm"
+<button
+class="btn btn-outline-secondary btn-sm"
 onclick="deseleccionarTodos()">
 
 Quitar Selección
@@ -497,7 +576,8 @@ Quitar Selección
 
 <th class="text-center">
 
-<input type="checkbox"
+<input
+type="checkbox"
 id="checkAll">
 
 </th>
@@ -533,7 +613,8 @@ id="checkAll">
 
 <tr>
 
-<td colspan="12"
+<td
+colspan="12"
 class="loading">
 
 <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
@@ -554,38 +635,39 @@ Cargando registros...
 
 </div>
 
-
 </div>
 
 
 <script>
 
-
 /* =========================================================
    CONFIGURACIÓN
 ========================================================= */
 
-const COLEGIO = 'COLEGIO SAN JOSÉ "LA SALLE"';
-const RUTA = 'RUTA 18';
-const CONDUCTOR = 'MARCELO MUÑOZ';
-const TELEFONO_CONDUCTOR = '0962831957';
+const COLEGIO =
+'COLEGIO SAN JOSÉ "LA SALLE"';
+
+const RUTA =
+'RUTA 18';
+
+const CONDUCTOR =
+'MARCELO MUÑOZ';
+
+const TELEFONO_CONDUCTOR =
+'0962831957';
 
 
 /* =========================================================
-   URL GOOGLE APPS SCRIPT
+   GOOGLE APPS SCRIPT
 ========================================================= */
-
-/*
-   IMPORTANTE:
-
-   ESTA DEBE SER LA MISMA URL DEL SISTEMA QUE YA FUNCIONABA.
-
-   Si tu Apps Script anterior tenía otra URL, reemplázala aquí.
-*/
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbwwbHOX3pRDCdF49xcuZ_t3OB0DQiFurGcFRhN_hxeA5ufkBCcX0OhVWAXssrTjHq4WHQ/exec";
 
+
+/* =========================================================
+   VARIABLES
+========================================================= */
 
 let datosAlumnos = [];
 
@@ -593,13 +675,18 @@ let seleccionados = new Set();
 
 
 /* =========================================================
-   UTILIDADES
+   TEXTO
 ========================================================= */
 
 function texto(valor){
 
-    if(valor === null || valor === undefined){
+    if(
+        valor === null ||
+        valor === undefined
+    ){
+
         return "";
+
     }
 
     return String(valor).trim();
@@ -607,43 +694,147 @@ function texto(valor){
 }
 
 
+/* =========================================================
+   NORMALIZAR TEXTO
+========================================================= */
+
 function normalizar(valor){
 
     return texto(valor)
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"");
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"");
 
 }
 
 
+/* =========================================================
+   ESCAPAR HTML
+========================================================= */
+
 function escaparHTML(valor){
 
     return texto(valor)
+
     .replace(/&/g,"&amp;")
+
     .replace(/</g,"&lt;")
+
     .replace(/>/g,"&gt;")
+
     .replace(/"/g,"&quot;")
+
     .replace(/'/g,"&#039;");
 
 }
 
 
-function obtenerCampo(objeto, nombres){
+/* =========================================================
+   OBTENER CAMPO INTELIGENTE
+========================================================= */
+
+function obtenerCampo(objeto,nombres){
+
+    if(!objeto || typeof objeto !== "object"){
+
+        return "";
+
+    }
+
+
+    const claves =
+    Object.keys(objeto);
+
+
+    const mapa = {};
+
+
+    claves.forEach(clave=>{
+
+        mapa[normalizar(clave)] =
+        clave;
+
+    });
+
 
     for(const nombre of nombres){
 
+        const claveNormalizada =
+        normalizar(nombre);
+
+
         if(
-            objeto[nombre] !== undefined &&
-            objeto[nombre] !== null &&
-            objeto[nombre] !== ""
+            mapa[claveNormalizada] !== undefined
         ){
 
-            return objeto[nombre];
+            const claveReal =
+            mapa[claveNormalizada];
+
+
+            const valor =
+            objeto[claveReal];
+
+
+            if(
+                valor !== null &&
+                valor !== undefined &&
+                String(valor).trim() !== ""
+            ){
+
+                return valor;
+
+            }
 
         }
 
     }
+
+
+    /* Búsqueda parcial */
+
+    for(const nombre of nombres){
+
+        const buscado =
+        normalizar(nombre);
+
+
+        if(!buscado){
+
+            continue;
+
+        }
+
+
+        const encontrada =
+        claves.find(clave=>
+
+            normalizar(clave)
+            .includes(buscado)
+
+        );
+
+
+        if(encontrada){
+
+            const valor =
+            objeto[encontrada];
+
+
+            if(
+                valor !== null &&
+                valor !== undefined &&
+                String(valor).trim() !== ""
+            ){
+
+                return valor;
+
+            }
+
+        }
+
+    }
+
 
     return "";
 
@@ -651,251 +842,238 @@ function obtenerCampo(objeto, nombres){
 
 
 /* =========================================================
-   NORMALIZAR REGISTRO
+   CONVERTIR MATRIZ A OBJETOS
 ========================================================= */
 
-function normalizarAlumno(raw,index){
+function matrizAObjetos(matriz){
 
-    const a = {...raw};
+    if(
+        !Array.isArray(matriz) ||
+        matriz.length === 0
+    ){
 
+        return [];
 
-    const estudiante = obtenerCampo(a,[
+    }
 
-        "estudiante",
-        "nombre_estudiante",
-        "nombres_estudiante",
-        "nombresestudiante",
-        "Nombres y Apellidos del Estudiante",
-        "nombre"
 
-    ]);
+    const primeraFila =
+    matriz[0];
 
 
-    const grado = obtenerCampo(a,[
+    if(!Array.isArray(primeraFila)){
 
-        "grado",
-        "gradoano",
-        "grado_año",
-        "Grado / Año de EGB"
+        return matriz;
 
-    ]);
+    }
 
 
-    const representante = obtenerCampo(a,[
+    const encabezados =
+    primeraFila.map((x,i)=>
+        texto(x) || ("columna_" + i)
+    );
 
-        "representante",
-        "nombre_representante",
-        "nombrerepresentante",
-        "Nombre del Representante Legal"
 
-    ]);
+    const resultado = [];
 
 
-    const telefono = obtenerCampo(a,[
+    for(
+        let i=1;
+        i<matriz.length;
+        i++
+    ){
 
-        "telefono",
-        "teléfono",
-        "Telefono",
-        "Teléfono / WhatsApp de Contacto"
+        const fila =
+        matriz[i];
 
-    ]);
 
+        if(!Array.isArray(fila)){
 
-    const sector = obtenerCampo(a,[
+            continue;
 
-        "sector",
-        "Sector"
+        }
 
-    ]);
 
+        const objeto = {};
 
-    const callePrincipal = obtenerCampo(a,[
 
-        "calle_principal",
-        "calleprincipal",
-        "calle_p",
-        "Calle Principal"
+        encabezados.forEach(
+            (encabezado,j)=>{
 
-    ]);
+                objeto[encabezado] =
+                fila[j] !== undefined
+                ? fila[j]
+                : "";
 
+            }
+        );
 
-    const calleSecundaria = obtenerCampo(a,[
 
-        "calle_secundaria",
-        "callesecundaria",
-        "calle_s",
-        "Calle Secundaria"
+        resultado.push(objeto);
 
-    ]);
+    }
 
 
-    const numeroCasa = obtenerCampo(a,[
-
-        "numero_casa",
-        "numerocasa",
-        "casa",
-        "Nro. Casa / Lote"
-
-    ]);
-
-
-    const referencia = obtenerCampo(a,[
-
-        "referencia",
-        "ref",
-        "Referencia"
-
-    ]);
-
-
-    const servicio = obtenerCampo(a,[
-
-        "horario_servicio",
-        "tipo_servicio",
-        "tipo_serv",
-        "servicio",
-        "Horario Requerido"
-
-    ]);
-
-
-    const maps = obtenerCampo(a,[
-
-        "url_maps",
-        "urlmaps",
-        "maps",
-        "Enlace Google Maps"
-
-    ]);
-
-
-    const pago = obtenerCampo(a,[
-
-        "pago",
-        "estado_pago",
-        "estadopago"
-
-    ]);
-
-
-    const id = obtenerCampo(a,[
-
-        "id",
-        "ID",
-        "token",
-        "codigo",
-        "cedula"
-
-    ]);
-
-
-    return {
-
-        raw:a,
-
-        index:index,
-
-        id:texto(id),
-
-        estudiante:texto(estudiante),
-
-        grado:texto(grado),
-
-        representante:texto(representante),
-
-        telefono:texto(telefono),
-
-        sector:texto(sector),
-
-        callePrincipal:texto(callePrincipal),
-
-        calleSecundaria:texto(calleSecundaria),
-
-        numeroCasa:texto(numeroCasa),
-
-        referencia:texto(referencia),
-
-        servicio:texto(servicio),
-
-        maps:texto(maps),
-
-        pago:texto(pago || "PENDIENTE"),
-
-        key:index + "|" +
-            texto(estudiante) + "|" +
-            texto(telefono)
-
-    };
+    return resultado;
 
 }
 
 
 /* =========================================================
-   EXTRAER REGISTROS DE CUALQUIER FORMATO
+   EXTRAER REGISTROS
 ========================================================= */
 
 function extraerRegistros(respuesta){
 
-    /* Si devuelve directamente un array */
+    console.log(
+        "Respuesta completa:",
+        respuesta
+    );
+
+
+    /* -----------------------------------------
+       ARRAY DIRECTO
+    ----------------------------------------- */
 
     if(Array.isArray(respuesta)){
 
-        return respuesta;
+        return matrizAObjetos(respuesta);
 
     }
 
 
-    /* Formatos comunes */
+    if(
+        !respuesta ||
+        typeof respuesta !== "object"
+    ){
 
-    if(Array.isArray(respuesta.records)){
-
-        return respuesta.records;
-
-    }
-
-
-    if(Array.isArray(respuesta.data)){
-
-        return respuesta.data;
+        return [];
 
     }
 
 
-    if(Array.isArray(respuesta.alumnos)){
+    /* -----------------------------------------
+       records
+    ----------------------------------------- */
 
-        return respuesta.alumnos;
+    if(
+        Array.isArray(respuesta.records)
+    ){
 
-    }
-
-
-    if(Array.isArray(respuesta.resultados)){
-
-        return respuesta.resultados;
-
-    }
-
-
-    if(Array.isArray(respuesta.registros)){
-
-        return respuesta.registros;
+        return matrizAObjetos(
+            respuesta.records
+        );
 
     }
 
 
-    if(Array.isArray(respuesta.rows)){
+    /* -----------------------------------------
+       data
+    ----------------------------------------- */
 
-        return respuesta.rows;
+    if(
+        Array.isArray(respuesta.data)
+    ){
+
+        return matrizAObjetos(
+            respuesta.data
+        );
 
     }
 
 
-    /* Buscar cualquier propiedad que sea array */
+    /* -----------------------------------------
+       alumnos
+    ----------------------------------------- */
 
-    for(const clave in respuesta){
+    if(
+        Array.isArray(respuesta.alumnos)
+    ){
 
-        if(Array.isArray(respuesta[clave])){
+        return matrizAObjetos(
+            respuesta.alumnos
+        );
 
-            return respuesta[clave];
+    }
+
+
+    /* -----------------------------------------
+       resultados
+    ----------------------------------------- */
+
+    if(
+        Array.isArray(respuesta.resultados)
+    ){
+
+        return matrizAObjetos(
+            respuesta.resultados
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       registros
+    ----------------------------------------- */
+
+    if(
+        Array.isArray(respuesta.registros)
+    ){
+
+        return matrizAObjetos(
+            respuesta.registros
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       rows
+    ----------------------------------------- */
+
+    if(
+        Array.isArray(respuesta.rows)
+    ){
+
+        return matrizAObjetos(
+            respuesta.rows
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       estudiantes
+    ----------------------------------------- */
+
+    if(
+        Array.isArray(respuesta.estudiantes)
+    ){
+
+        return matrizAObjetos(
+            respuesta.estudiantes
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       Buscar arrays internos
+    ----------------------------------------- */
+
+    for(
+        const clave of Object.keys(respuesta)
+    ){
+
+        if(
+            Array.isArray(
+                respuesta[clave]
+            )
+        ){
+
+            return matrizAObjetos(
+                respuesta[clave]
+            );
 
         }
 
@@ -908,48 +1086,413 @@ function extraerRegistros(respuesta){
 
 
 /* =========================================================
+   NORMALIZAR ESTUDIANTE
+========================================================= */
+
+function normalizarAlumno(raw,index){
+
+    const a =
+    raw && typeof raw === "object"
+    ? {...raw}
+    : {};
+
+
+    const estudiante =
+    obtenerCampo(a,[
+
+        "estudiante",
+
+        "nombre estudiante",
+
+        "nombre_estudiante",
+
+        "nombres estudiante",
+
+        "nombresestudiante",
+
+        "nombres y apellidos del estudiante",
+
+        "nombre del estudiante",
+
+        "alumno",
+
+        "nombre"
+
+    ]);
+
+
+    const nivel =
+    obtenerCampo(a,[
+
+        "nivel",
+
+        "nivel educativo",
+
+        "nivel / grado",
+
+        "nivel grado"
+
+    ]);
+
+
+    const grado =
+    obtenerCampo(a,[
+
+        "grado",
+
+        "grado año",
+
+        "grado / año",
+
+        "grado / año de egb",
+
+        "gradoano",
+
+        "curso",
+
+        "año"
+
+    ]);
+
+
+    const representante =
+    obtenerCampo(a,[
+
+        "representante",
+
+        "representante legal",
+
+        "nombre representante",
+
+        "nombre_representante",
+
+        "nombre representante legal",
+
+        "nombre del representante legal"
+
+    ]);
+
+
+    const telefono =
+    obtenerCampo(a,[
+
+        "telefono",
+
+        "teléfono",
+
+        "telefono representante",
+
+        "teléfono representante",
+
+        "telefono whatsapp",
+
+        "teléfono whatsapp",
+
+        "telefono whatsapp de contacto",
+
+        "teléfono / whatsapp de contacto",
+
+        "contacto"
+
+    ]);
+
+
+    const sector =
+    obtenerCampo(a,[
+
+        "sector"
+
+    ]);
+
+
+    const callePrincipal =
+    obtenerCampo(a,[
+
+        "calle principal",
+
+        "calle_principal",
+
+        "calleprincipal"
+
+    ]);
+
+
+    const calleSecundaria =
+    obtenerCampo(a,[
+
+        "calle secundaria",
+
+        "calle_secundaria",
+
+        "callesecundaria"
+
+    ]);
+
+
+    const numeroCasa =
+    obtenerCampo(a,[
+
+        "nro casa lote",
+
+        "nro. casa lote",
+
+        "nro casa / lote",
+
+        "numero casa",
+
+        "numero_casa",
+
+        "numero casa lote",
+
+        "casa lote",
+
+        "casa"
+
+    ]);
+
+
+    const referencia =
+    obtenerCampo(a,[
+
+        "referencia",
+
+        "ref"
+
+    ]);
+
+
+    const servicio =
+    obtenerCampo(a,[
+
+        "tipo de servicio",
+
+        "tipo servicio",
+
+        "tipo_servicio",
+
+        "horario requerido",
+
+        "horario servicio",
+
+        "horario_servicio",
+
+        "servicio"
+
+    ]);
+
+
+    const maps =
+    obtenerCampo(a,[
+
+        "enlace google maps",
+
+        "google maps",
+
+        "maps",
+
+        "url maps",
+
+        "urlmaps",
+
+        "url_maps",
+
+        "ubicacion",
+
+        "ubicación"
+
+    ]);
+
+
+    const pago =
+    obtenerCampo(a,[
+
+        "pago",
+
+        "estado pago",
+
+        "estado_pago",
+
+        "estado de pago"
+
+    ]);
+
+
+    const id =
+    obtenerCampo(a,[
+
+        "id",
+
+        "codigo",
+
+        "código",
+
+        "cedula",
+
+        "cédula",
+
+        "token"
+
+    ]);
+
+
+    let gradoFinal =
+    texto(grado);
+
+
+    if(
+        nivel &&
+        gradoFinal &&
+        !normalizar(gradoFinal)
+        .includes(normalizar(nivel))
+    ){
+
+        gradoFinal =
+        texto(nivel) +
+        " " +
+        texto(gradoFinal);
+
+    }
+
+    else if(
+        !gradoFinal &&
+        nivel
+    ){
+
+        gradoFinal =
+        texto(nivel);
+
+    }
+
+
+    return {
+
+        raw:a,
+
+        index:index,
+
+        id:texto(id),
+
+        estudiante:
+        texto(estudiante),
+
+        grado:
+        texto(gradoFinal),
+
+        representante:
+        texto(representante),
+
+        telefono:
+        texto(telefono),
+
+        sector:
+        texto(sector),
+
+        callePrincipal:
+        texto(callePrincipal),
+
+        calleSecundaria:
+        texto(calleSecundaria),
+
+        numeroCasa:
+        texto(numeroCasa),
+
+        referencia:
+        texto(referencia),
+
+        servicio:
+        texto(servicio),
+
+        maps:
+        texto(maps),
+
+        pago:
+        texto(pago || "PENDIENTE"),
+
+        key:
+        index +
+        "|" +
+        texto(estudiante) +
+        "|" +
+        texto(telefono)
+
+    };
+
+}
+
+
+/* =========================================================
    CARGAR DATOS
 ========================================================= */
 
 async function cargarDatos(){
 
     mostrarEstado(
-        '<i class="fa-solid fa-spinner fa-spin me-2"></i> Cargando estudiantes...',
+
+        '<i class="fa-solid fa-spinner fa-spin me-2"></i>' +
+
+        'Consultando Google Apps Script...',
+
         'secondary'
+
+    );
+
+
+    const timestamp =
+    Date.now();
+
+
+    const separador =
+    API_URL.includes("?")
+    ? "&"
+    : "?";
+
+
+    const url =
+    API_URL +
+    separador +
+    "action=records&t=" +
+    timestamp;
+
+
+    console.log(
+        "URL API:",
+        url
     );
 
 
     try{
 
-
-        const separador =
-        API_URL.includes("?") ? "&" : "?";
-
-
-        const url =
-        API_URL +
-        separador +
-        "action=records&t=" +
-        Date.now();
-
-
-        console.log("Consultando API:",url);
-
-
         const response =
-        await fetch(url,{
+        await fetch(
 
-            method:"GET",
+            url,
 
-            redirect:"follow"
+            {
 
-        });
+                method:"GET",
+
+                redirect:"follow",
+
+                cache:"no-store"
+
+            }
+
+        );
+
+
+        console.log(
+            "HTTP:",
+            response.status
+        );
 
 
         if(!response.ok){
 
             throw new Error(
-                "Error HTTP: " + response.status
+
+                "Error HTTP " +
+                response.status
+
             );
 
         }
@@ -960,9 +1503,18 @@ async function cargarDatos(){
 
 
         console.log(
-            "Respuesta API:",
-            textoRespuesta.substring(0,500)
+            "Respuesta recibida:",
+            textoRespuesta.substring(0,1000)
         );
+
+
+        if(!textoRespuesta){
+
+            throw new Error(
+                "Google Apps Script devolvió una respuesta vacía."
+            );
+
+        }
 
 
         let respuesta;
@@ -977,8 +1529,18 @@ async function cargarDatos(){
 
         catch(error){
 
+            console.error(
+                "Respuesta no JSON:",
+                textoRespuesta
+            );
+
+
             throw new Error(
-                "La respuesta del servidor no es JSON válido. Revisa que la URL sea la del Web App /exec."
+
+                "El servidor no devolvió JSON válido. " +
+
+                "Verifique que el Web App termine en /exec y que action=records esté implementado."
+
             );
 
         }
@@ -988,10 +1550,16 @@ async function cargarDatos(){
         extraerRegistros(respuesta);
 
 
+        console.log(
+            "Registros detectados:",
+            registros.length
+        );
+
+
         if(!Array.isArray(registros)){
 
             throw new Error(
-                "No se encontró un listado válido en la respuesta."
+                "La API no devolvió un arreglo de registros."
             );
 
         }
@@ -1002,9 +1570,27 @@ async function cargarDatos(){
 
 
         datosAlumnos =
-        registros.map(
-            (registro,index) =>
-            normalizarAlumno(registro,index)
+        registros
+
+        .map(
+            (registro,index)=>
+            normalizarAlumno(
+                registro,
+                index
+            )
+        )
+
+        /* quitar filas completamente vacías */
+
+        .filter(a=>
+
+            a.estudiante ||
+            a.representante ||
+            a.telefono ||
+            a.sector ||
+            a.callePrincipal ||
+            a.calleSecundaria
+
         );
 
 
@@ -1014,10 +1600,14 @@ async function cargarDatos(){
         datosAlumnos.forEach(alumno=>{
 
             if(
-                seleccionAnterior.has(alumno.key)
+                seleccionAnterior.has(
+                    alumno.key
+                )
             ){
 
-                seleccionados.add(alumno.key);
+                seleccionados.add(
+                    alumno.key
+                );
 
             }
 
@@ -1026,60 +1616,115 @@ async function cargarDatos(){
 
         actualizarDashboard();
 
-
         filtrarTabla();
 
 
-        mostrarEstado(
+        if(datosAlumnos.length === 0){
 
-            '<i class="fa-solid fa-circle-check me-2"></i>' +
-            '<strong>Conectado correctamente.</strong> ' +
-            datosAlumnos.length +
-            ' estudiantes cargados. Última actualización: ' +
-            new Date().toLocaleTimeString(),
+            mostrarEstado(
 
-            'success'
+                '<i class="fa-solid fa-triangle-exclamation me-2"></i>' +
 
-        );
+                '<strong>Conexión correcta, pero no se encontraron estudiantes.</strong> ' +
 
+                'La API respondió correctamente, pero no contiene registros reconocibles.',
+
+                'warning'
+
+            );
+
+
+            mostrarDiagnostico(respuesta);
+
+        }
+
+        else{
+
+            ocultarDiagnostico();
+
+
+            mostrarEstado(
+
+                '<i class="fa-solid fa-circle-check me-2"></i>' +
+
+                '<strong>Conectado correctamente.</strong> ' +
+
+                datosAlumnos.length +
+
+                ' estudiantes cargados. Última actualización: ' +
+
+                new Date().toLocaleTimeString(),
+
+                'success'
+
+            );
+
+        }
 
     }
 
     catch(error){
 
-
-        console.error("ERROR API:",error);
+        console.error(
+            "ERROR:",
+            error
+        );
 
 
         mostrarEstado(
 
             '<i class="fa-solid fa-triangle-exclamation me-2"></i>' +
-            '<strong>Error de conexión:</strong> ' +
-            escaparHTML(error.message),
+
+            '<strong>Error al cargar los estudiantes:</strong> ' +
+
+            escaparHTML(
+                error.message
+            ),
 
             'danger'
 
         );
 
 
-        document.getElementById("bodyTabla").innerHTML = `
+        document.getElementById(
+            "bodyTabla"
+        ).innerHTML = `
 
         <tr>
 
-        <td colspan="12"
+        <td
+        colspan="12"
         class="loading text-danger">
 
         <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
 
         <br><br>
 
+        <strong>
         NO SE PUDO CARGAR EL LISTADO
+        </strong>
 
         <br>
 
         <small>
-        ${escaparHTML(error.message)}
+
+        ${escaparHTML(
+            error.message
+        )}
+
         </small>
+
+        <br><br>
+
+        <button
+        class="btn btn-outline-danger btn-sm"
+        onclick="cargarDatos()">
+
+        <i class="fa-solid fa-rotate"></i>
+
+        Intentar nuevamente
+
+        </button>
 
         </td>
 
@@ -1087,6 +1732,108 @@ async function cargarDatos(){
 
         `;
 
+    }
+
+}
+
+
+/* =========================================================
+   DIAGNÓSTICO
+========================================================= */
+
+function mostrarDiagnostico(respuesta){
+
+    let panel =
+    document.getElementById(
+        "diagnosticoAPI"
+    );
+
+
+    if(!panel){
+
+        panel =
+        document.createElement("div");
+
+        panel.id =
+        "diagnosticoAPI";
+
+        panel.className =
+        "alert alert-warning api-debug mb-4";
+
+
+        const tabla =
+        document.querySelector(
+            ".table-responsive"
+        );
+
+
+        tabla.parentElement
+        .parentElement
+        .after(panel);
+
+    }
+
+
+    let resumen = "";
+
+
+    try{
+
+        resumen =
+        JSON.stringify(
+            respuesta,
+            null,
+            2
+        );
+
+    }
+
+    catch(e){
+
+        resumen =
+        String(respuesta);
+
+    }
+
+
+    panel.innerHTML = `
+
+    <strong>
+
+    Diagnóstico de la respuesta de Google Apps Script
+
+    </strong>
+
+    <br><br>
+
+    La conexión funciona, pero el HTML no encontró registros.
+
+    <br>
+
+    Primeros datos recibidos:
+
+    <br><br>
+
+    ${escaparHTML(
+        resumen.substring(0,5000)
+    )}
+
+    `;
+
+}
+
+
+function ocultarDiagnostico(){
+
+    const panel =
+    document.getElementById(
+        "diagnosticoAPI"
+    );
+
+
+    if(panel){
+
+        panel.remove();
 
     }
 
@@ -1094,78 +1841,136 @@ async function cargarDatos(){
 
 
 /* =========================================================
-   ACTUALIZAR CONTADORES
+   DASHBOARD
 ========================================================= */
 
 function actualizarDashboard(){
 
-
-    document.getElementById("totalAlumnos").innerText =
+    document.getElementById(
+        "totalAlumnos"
+    ).innerText =
     datosAlumnos.length;
 
 
-    document.getElementById("totalSeleccionados").innerText =
+    document.getElementById(
+        "totalSeleccionados"
+    ).innerText =
     seleccionados.size;
 
 
     const matutino =
-    datosAlumnos.filter(a=>
-        normalizar(a.servicio).includes("matutino") ||
-        normalizar(a.servicio).includes("mañana")
-    ).length;
+    datosAlumnos.filter(a=>{
+
+        const s =
+        normalizar(
+            a.servicio
+        );
+
+        return (
+
+            s.includes("matutino") ||
+
+            s.includes("manana")
+
+        );
+
+    }).length;
 
 
     const vespertino =
-    datosAlumnos.filter(a=>
-        normalizar(a.servicio).includes("vespertino") ||
-        normalizar(a.servicio).includes("tarde")
-    ).length;
+    datosAlumnos.filter(a=>{
+
+        const s =
+        normalizar(
+            a.servicio
+        );
+
+        return (
+
+            s.includes("vespertino") ||
+
+            s.includes("tarde")
+
+        );
+
+    }).length;
 
 
     const pendientes =
-    datosAlumnos.filter(a=>
-        !normalizar(a.pago).includes("al dia") &&
-        !normalizar(a.pago).includes("pagado")
-    ).length;
+    datosAlumnos.filter(a=>{
+
+        const p =
+        normalizar(
+            a.pago
+        );
 
 
-    document.getElementById("cntME").innerText =
+        return (
+
+            !p.includes("aldia") &&
+
+            !p.includes("pagado") &&
+
+            !p.includes("cancelado")
+
+        );
+
+    }).length;
+
+
+    document.getElementById(
+        "cntME"
+    ).innerText =
     matutino;
 
 
-    document.getElementById("cntMS").innerText =
+    document.getElementById(
+        "cntMS"
+    ).innerText =
     vespertino;
 
 
-    document.getElementById("cntPendientes").innerText =
+    document.getElementById(
+        "cntPendientes"
+    ).innerText =
     pendientes;
-
 
 }
 
 
 /* =========================================================
-   FILTRAR TABLA
+   FILTRAR
 ========================================================= */
 
 function filtrarTabla(){
 
-
     const buscar =
     normalizar(
-        document.getElementById("searchInput").value
+
+        document.getElementById(
+            "searchInput"
+        ).value
+
     );
 
 
     const buscarID =
     normalizar(
-        document.getElementById("filterID").value
+
+        document.getElementById(
+            "filterID"
+        ).value
+
     );
 
 
     const sector =
     normalizar(
-        document.getElementById("filterSector").value
+
+        document.getElementById(
+            "filterSector"
+        ).value
+
     );
 
 
@@ -1173,19 +1978,31 @@ function filtrarTabla(){
     datosAlumnos.filter(a=>{
 
 
-        const contenido =
+        const contenido = [
 
-        [
+            a.id,
 
             a.estudiante,
+
             a.grado,
+
             a.representante,
+
             a.telefono,
+
             a.sector,
+
             a.callePrincipal,
+
             a.calleSecundaria,
+
+            a.numeroCasa,
+
             a.referencia,
-            a.servicio
+
+            a.servicio,
+
+            a.pago
 
         ]
 
@@ -1198,35 +2015,47 @@ function filtrarTabla(){
 
         !buscar ||
 
-        contenido.includes(buscar);
+        contenido.includes(
+            buscar
+        );
 
 
         const coincideID =
 
         !buscarID ||
 
-        normalizar(a.id).includes(buscarID);
+        normalizar(
+            a.id
+        ).includes(
+            buscarID
+        );
 
 
         const coincideSector =
 
         !sector ||
 
-        normalizar(a.sector) === sector;
+        normalizar(
+            a.sector
+        ) === sector;
 
 
-        return
+        return (
 
-        coincideBusqueda &&
-        coincideID &&
-        coincideSector;
+            coincideBusqueda &&
 
+            coincideID &&
+
+            coincideSector
+
+        );
 
     });
 
 
-    renderTabla(filtrados);
-
+    renderTabla(
+        filtrados
+    );
 
 }
 
@@ -1237,26 +2066,27 @@ function filtrarTabla(){
 
 function renderTabla(lista){
 
-
     const tbody =
-    document.getElementById("bodyTabla");
+    document.getElementById(
+        "bodyTabla"
+    );
 
 
     if(lista.length === 0){
-
 
         tbody.innerHTML = `
 
         <tr>
 
-        <td colspan="12"
+        <td
+        colspan="12"
         class="loading">
 
         <i class="fa-solid fa-inbox fa-2x"></i>
 
         <br><br>
 
-        No existen registros.
+        No existen registros que coincidan con los filtros.
 
         </td>
 
@@ -1267,177 +2097,295 @@ function renderTabla(lista){
 
         return;
 
-
     }
 
 
     tbody.innerHTML =
-    lista.map((a,index)=>{
+
+    lista.map(
+        (a,index)=>{
 
 
-        const seleccionado =
-        seleccionados.has(a.key);
+            const seleccionado =
+            seleccionados.has(
+                a.key
+            );
 
 
-        const direccion =
+            const direccion = [
 
-        [
+                a.callePrincipal,
 
-            a.callePrincipal,
-            a.calleSecundaria,
-            a.numeroCasa
+                a.calleSecundaria,
 
-        ]
+                a.numeroCasa
 
-        .filter(x=>x)
+            ]
 
-        .join(" / ");
+            .filter(Boolean)
 
-
-        const pagoClase =
-
-        normalizar(a.pago).includes("al dia") ||
-        normalizar(a.pago).includes("pagado")
-
-        ?
-
-        "badge-aldia"
-
-        :
-
-        "badge-pendiente";
+            .join(" / ");
 
 
-        let mapsHTML =
-        '<span class="text-muted">Sin ubicación</span>';
+            const pagoNormalizado =
+            normalizar(
+                a.pago
+            );
 
 
-        if(a.maps){
+            const pagoClase =
 
-            mapsHTML =
+            pagoNormalizado.includes(
+                "aldia"
+            )
 
-            `<a href="${escaparHTML(a.maps)}"
-            target="_blank"
-            class="btn btn-sm btn-outline-primary">
+            ||
 
-            <i class="fa-solid fa-location-dot"></i>
+            pagoNormalizado.includes(
+                "pagado"
+            )
 
-            </a>`;
+            ||
+
+            pagoNormalizado.includes(
+                "cancelado"
+            )
+
+            ?
+
+            "badge-aldia"
+
+            :
+
+            "badge-pendiente";
+
+
+            let mapsHTML =
+            '<span class="text-muted">Sin ubicación</span>';
+
+
+            if(a.maps){
+
+                let urlMaps =
+                texto(a.maps);
+
+
+                if(
+                    !/^https?:\/\//i.test(
+                        urlMaps
+                    )
+                ){
+
+                    urlMaps =
+                    "https://" +
+                    urlMaps;
+
+                }
+
+
+                mapsHTML = `
+
+                <a
+                href="${escaparHTML(urlMaps)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline-primary"
+                title="Abrir ubicación">
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                </a>
+
+                `;
+
+            }
+
+
+            let whatsappHTML =
+            "";
+
+
+            if(a.telefono){
+
+                const numero =
+                a.telefono
+                .replace(
+                    /\D/g,
+                    ""
+                );
+
+
+                whatsappHTML = `
+
+                <a
+                href="https://wa.me/${numero}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline-success ms-1"
+                title="WhatsApp">
+
+                <i class="fa-brands fa-whatsapp"></i>
+
+                </a>
+
+                `;
+
+            }
+
+
+            return `
+
+            <tr
+            class="${seleccionado ? 'row-selected' : ''}">
+
+
+            <td class="text-center">
+
+            <input
+
+            type="checkbox"
+
+            class="student-check"
+
+            data-key="${escaparHTML(a.key)}"
+
+            ${seleccionado ? 'checked' : ''}
+
+            >
+
+            </td>
+
+
+            <td>
+
+            ${index + 1}
+
+            </td>
+
+
+            <td
+            class="fw-bold student-name">
+
+            ${escaparHTML(
+                a.estudiante ||
+                "SIN NOMBRE"
+            )}
+
+            </td>
+
+
+            <td>
+
+            ${escaparHTML(
+                a.grado
+            )}
+
+            </td>
+
+
+            <td>
+
+            ${escaparHTML(
+                a.representante
+            )}
+
+            </td>
+
+
+            <td>
+
+            ${escaparHTML(
+                a.telefono
+            )}
+
+            </td>
+
+
+            <td>
+
+            <span
+            class="badge bg-secondary">
+
+            ${escaparHTML(
+                a.sector
+            )}
+
+            </span>
+
+            </td>
+
+
+            <td
+            class="small address-cell">
+
+            ${escaparHTML(
+                direccion
+            )}
+
+            </td>
+
+
+            <td
+            class="small reference-cell">
+
+            ${escaparHTML(
+                a.referencia
+            )}
+
+            </td>
+
+
+            <td>
+
+            <span
+            class="badge bg-info text-dark">
+
+            ${escaparHTML(
+                a.servicio
+            )}
+
+            </span>
+
+            </td>
+
+
+            <td>
+
+            <span
+            class="badge ${pagoClase}">
+
+            ${escaparHTML(
+                a.pago
+            )}
+
+            </span>
+
+            </td>
+
+
+            <td
+            class="text-nowrap">
+
+            ${mapsHTML}
+
+            ${whatsappHTML}
+
+            </td>
+
+
+            </tr>
+
+            `;
 
         }
 
-
-        return `
-
-        <tr class="${seleccionado ? 'row-selected' : ''}">
-
-
-        <td class="text-center">
-
-        <input
-
-        type="checkbox"
-
-        class="student-check"
-
-        data-key="${escaparHTML(a.key)}"
-
-        ${seleccionado ? 'checked' : ''}
-
-        >
-
-        </td>
-
-
-        <td>
-        ${index+1}
-        </td>
-
-
-        <td class="fw-bold">
-        ${escaparHTML(a.estudiante)}
-        </td>
-
-
-        <td>
-        ${escaparHTML(a.grado)}
-        </td>
-
-
-        <td>
-        ${escaparHTML(a.representante)}
-        </td>
-
-
-        <td>
-        ${escaparHTML(a.telefono)}
-        </td>
-
-
-        <td>
-
-        <span class="badge bg-secondary">
-
-        ${escaparHTML(a.sector)}
-
-        </span>
-
-        </td>
-
-
-        <td class="small">
-
-        ${escaparHTML(direccion)}
-
-        </td>
-
-
-        <td class="small">
-
-        ${escaparHTML(a.referencia)}
-
-        </td>
-
-
-        <td>
-
-        <span class="badge bg-info text-dark">
-
-        ${escaparHTML(a.servicio)}
-
-        </span>
-
-        </td>
-
-
-        <td>
-
-        <span class="badge ${pagoClase}">
-
-        ${escaparHTML(a.pago)}
-
-        </span>
-
-        </td>
-
-
-        <td>
-
-        ${mapsHTML}
-
-        </td>
-
-
-        </tr>
-
-        `;
-
-
-    }).join("");
+    ).join("");
 
 
     document
-    .querySelectorAll(".student-check")
+    .querySelectorAll(
+        ".student-check"
+    )
     .forEach(check=>{
 
 
@@ -1445,19 +2393,24 @@ function renderTabla(lista){
             "change",
             function(){
 
+
                 const key =
                 this.dataset.key;
 
 
                 if(this.checked){
 
-                    seleccionados.add(key);
+                    seleccionados.add(
+                        key
+                    );
 
                 }
 
                 else{
 
-                    seleccionados.delete(key);
+                    seleccionados.delete(
+                        key
+                    );
 
                 }
 
@@ -1471,12 +2424,79 @@ function renderTabla(lista){
                     this.checked
                 );
 
+
+                actualizarCheckAll();
+
             }
         );
 
+    });
+
+
+    actualizarCheckAll();
+
+}
+
+
+/* =========================================================
+   CHECK GENERAL
+========================================================= */
+
+function actualizarCheckAll(){
+
+    const checkAll =
+    document.getElementById(
+        "checkAll"
+    );
+
+
+    if(!checkAll){
+
+        return;
+
+    }
+
+
+    const visibles =
+    document.querySelectorAll(
+        ".student-check"
+    );
+
+
+    if(visibles.length === 0){
+
+        checkAll.checked =
+        false;
+
+        checkAll.indeterminate =
+        false;
+
+        return;
+
+    }
+
+
+    let marcados = 0;
+
+
+    visibles.forEach(check=>{
+
+        if(check.checked){
+
+            marcados++;
+
+        }
 
     });
 
+
+    checkAll.checked =
+    marcados === visibles.length;
+
+
+    checkAll.indeterminate =
+    marcados > 0 &&
+    marcados < visibles.length;
 
 }
 
@@ -1487,71 +2507,66 @@ function renderTabla(lista){
 
 function seleccionarTodos(){
 
-
     datosAlumnos.forEach(a=>{
 
-        seleccionados.add(a.key);
+        seleccionados.add(
+            a.key
+        );
 
     });
 
 
     actualizarDashboard();
 
-
     filtrarTabla();
-
 
 }
 
 
 /* =========================================================
-   DESELECCIONAR
+   DESELECCIONAR TODOS
 ========================================================= */
 
 function deseleccionarTodos(){
-
 
     seleccionados.clear();
 
 
     actualizarDashboard();
 
-
     filtrarTabla();
-
 
 }
 
 
 /* =========================================================
-   CHECK TODOS
+   CHECK ALL
 ========================================================= */
 
 document.addEventListener(
-"change",
-function(e){
+    "change",
+    function(e){
 
+        if(
+            e.target &&
+            e.target.id === "checkAll"
+        ){
 
-    if(e.target.id === "checkAll"){
+            if(e.target.checked){
 
+                seleccionarTodos();
 
-        if(e.target.checked){
+            }
 
-            seleccionarTodos();
+            else{
+
+                deseleccionarTodos();
+
+            }
 
         }
-
-        else{
-
-            deseleccionarTodos();
-
-        }
-
 
     }
-
-
-}
 );
 
 
@@ -1561,28 +2576,30 @@ function(e){
 
 function generarPDF(){
 
-
     const alumnosPDF =
     datosAlumnos.filter(a=>
-        seleccionados.has(a.key)
+
+        seleccionados.has(
+            a.key
+        )
+
     );
 
 
     if(alumnosPDF.length === 0){
 
-
         alert(
             "Seleccione al menos un estudiante."
         );
 
-
         return;
-
 
     }
 
 
-    const { jsPDF } =
+    const {
+        jsPDF
+    } =
     window.jspdf;
 
 
@@ -1595,111 +2612,184 @@ function generarPDF(){
 
 
     const incluirEstudiante =
-    document.getElementById("cEstudiante").checked;
+    document.getElementById(
+        "cEstudiante"
+    ).checked;
 
 
     const incluirGrado =
-    document.getElementById("cGrado").checked;
+    document.getElementById(
+        "cGrado"
+    ).checked;
 
 
     const incluirRepresentante =
-    document.getElementById("cRepresentante").checked;
+    document.getElementById(
+        "cRepresentante"
+    ).checked;
 
 
     const incluirTelefono =
-    document.getElementById("cTel").checked;
+    document.getElementById(
+        "cTel"
+    ).checked;
 
 
     const incluirSector =
-    document.getElementById("cSector").checked;
+    document.getElementById(
+        "cSector"
+    ).checked;
 
 
     const incluirDireccion =
-    document.getElementById("cDireccion").checked;
+    document.getElementById(
+        "cDireccion"
+    ).checked;
 
 
-    const headers = ["#"];
+    const headers =
+    ["#"];
 
 
-    if(incluirEstudiante)
-    headers.push("ESTUDIANTE");
+    if(incluirEstudiante){
+
+        headers.push(
+            "ESTUDIANTE"
+        );
+
+    }
 
 
-    if(incluirGrado)
-    headers.push("GRADO");
+    if(incluirGrado){
+
+        headers.push(
+            "GRADO"
+        );
+
+    }
 
 
-    if(incluirRepresentante)
-    headers.push("REPRESENTANTE");
+    if(incluirRepresentante){
+
+        headers.push(
+            "REPRESENTANTE"
+        );
+
+    }
 
 
-    if(incluirTelefono)
-    headers.push("TELÉFONO");
+    if(incluirTelefono){
+
+        headers.push(
+            "TELÉFONO"
+        );
+
+    }
 
 
-    if(incluirSector)
-    headers.push("SECTOR");
+    if(incluirSector){
+
+        headers.push(
+            "SECTOR"
+        );
+
+    }
 
 
-    if(incluirDireccion)
-    headers.push("DIRECCIÓN");
+    if(incluirDireccion){
+
+        headers.push(
+            "DIRECCIÓN"
+        );
+
+    }
 
 
     const rows =
-    alumnosPDF.map((a,index)=>{
+    alumnosPDF.map(
+        (a,index)=>{
 
 
-        const fila = [index+1];
+            const fila =
+            [index + 1];
 
 
-        if(incluirEstudiante)
-        fila.push(a.estudiante);
+            if(incluirEstudiante){
+
+                fila.push(
+                    a.estudiante
+                );
+
+            }
 
 
-        if(incluirGrado)
-        fila.push(a.grado);
+            if(incluirGrado){
+
+                fila.push(
+                    a.grado
+                );
+
+            }
 
 
-        if(incluirRepresentante)
-        fila.push(a.representante);
+            if(incluirRepresentante){
+
+                fila.push(
+                    a.representante
+                );
+
+            }
 
 
-        if(incluirTelefono)
-        fila.push(a.telefono);
+            if(incluirTelefono){
+
+                fila.push(
+                    a.telefono
+                );
+
+            }
 
 
-        if(incluirSector)
-        fila.push(a.sector);
+            if(incluirSector){
+
+                fila.push(
+                    a.sector
+                );
+
+            }
 
 
-        if(incluirDireccion){
+            if(incluirDireccion){
 
-            fila.push(
+                fila.push(
 
-                [
+                    [
 
-                    a.callePrincipal,
-                    a.calleSecundaria,
-                    a.numeroCasa
+                        a.callePrincipal,
 
-                ]
+                        a.calleSecundaria,
 
-                .filter(Boolean)
+                        a.numeroCasa
 
-                .join(" / ")
+                    ]
 
-            );
+                    .filter(Boolean)
+
+                    .join(" / ")
+
+                );
+
+            }
+
+
+            return fila;
 
         }
-
-
-        return fila;
-
-
-    });
+    );
 
 
     doc.setFontSize(16);
+
 
     doc.text(
         COLEGIO,
@@ -1710,14 +2800,17 @@ function generarPDF(){
 
     doc.setFontSize(13);
 
+
     doc.text(
-        "LISTADO DE RECORRIDO ESCOLAR - " + RUTA,
+        "LISTADO DE RECORRIDO ESCOLAR - " +
+        RUTA,
         14,
         19
     );
 
 
     doc.setFontSize(9);
+
 
     doc.text(
 
@@ -1736,9 +2829,12 @@ function generarPDF(){
 
     doc.autoTable({
 
-        head:[headers],
+        head:[
+            headers
+        ],
 
-        body:rows,
+        body:
+        rows,
 
         startY:30,
 
@@ -1754,7 +2850,11 @@ function generarPDF(){
 
         headStyles:{
 
-            fillColor:[18,58,109],
+            fillColor:[
+                18,
+                58,
+                109
+            ],
 
             textColor:255
 
@@ -1769,14 +2869,11 @@ function generarPDF(){
 
         new Date()
         .toISOString()
-        .slice(0,10)
-
-        +
+        .slice(0,10) +
 
         ".pdf"
 
     );
-
 
 }
 
@@ -1785,11 +2882,15 @@ function generarPDF(){
    ESTADO
 ========================================================= */
 
-function mostrarEstado(mensaje,tipo){
-
+function mostrarEstado(
+    mensaje,
+    tipo
+){
 
     const estado =
-    document.getElementById("estadoConexion");
+    document.getElementById(
+        "estadoConexion"
+    );
 
 
     estado.className =
@@ -1801,7 +2902,6 @@ function mostrarEstado(mensaje,tipo){
     estado.innerHTML =
     mensaje;
 
-
 }
 
 
@@ -1810,7 +2910,9 @@ function mostrarEstado(mensaje,tipo){
 ========================================================= */
 
 document
-.getElementById("searchInput")
+.getElementById(
+    "searchInput"
+)
 .addEventListener(
     "input",
     filtrarTabla
@@ -1818,7 +2920,9 @@ document
 
 
 document
-.getElementById("filterID")
+.getElementById(
+    "filterID"
+)
 .addEventListener(
     "input",
     filtrarTabla
@@ -1826,7 +2930,9 @@ document
 
 
 document
-.getElementById("filterSector")
+.getElementById(
+    "filterSector"
+)
 .addEventListener(
     "change",
     filtrarTabla
@@ -1838,25 +2944,26 @@ document
 ========================================================= */
 
 document.addEventListener(
-"DOMContentLoaded",
-function(){
+    "DOMContentLoaded",
+    function(){
+
+        cargarDatos();
 
 
-    cargarDatos();
+        /*
+         * Actualización automática
+         * cada 30 segundos
+         */
 
+        setInterval(
+            cargarDatos,
+            30000
+        );
 
-    /* Actualizar cada 30 segundos */
-
-    setInterval(
-        cargarDatos,
-        30000
-    );
-
-
-});
+    }
+);
 
 </script>
-
 
 </body>
 </html>
