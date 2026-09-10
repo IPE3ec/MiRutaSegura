@@ -1,447 +1,2715 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conductor - Mi Ruta Segura</title>
-  <link rel="manifest" href="manifest-conductor.webmanifest">
-  <meta name="theme-color" content="#111111">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <style>
-    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, sans-serif; }
-    body { margin: 0; background: #f2f3f5; color: #111; }
-    #app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-    #map { width: 100%; height: 100%; }
-    .stats { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 900; display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
-    .stat { background: rgba(17,17,17,.92); color: #fff; border-radius: 8px; padding: 8px; font-size: 11px; }
-    .stat b { display: block; color: #ffcc00; font-size: 15px; margin-top: 2px; }
-    .panel { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 1000; max-height: 75vh; background: rgba(255,255,255,.98); border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,.28); overflow: hidden; display: flex; flex-direction: column; }
-    .panel.min { max-height: 174px; }
-    .panel.min .body, .panel.min .tabs { display: none; }
-    .head { background: #111; color: #ffcc00; padding: 12px; font-weight: 900; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
-    .head small { display: block; color: #fff; font-weight: 600; margin-top: 2px; }
-    .head button { width: auto; margin: 0; background: #ffcc00; color: #111; }
-    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #d7d7d7; }
-    .tab { border: 0; background: #eee; padding: 10px 4px; font-size: 11px; font-weight: 900; cursor: pointer; }
-    .tab.active { background: #ffcc00; color: #111; }
-    .body { overflow-y: auto; padding: 10px; }
-    .view { display: none; }
-    .view.active { display: block; }
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    label { display: grid; gap: 4px; font-size: 12px; font-weight: 800; }
-    select, input { width: 100%; border: 1px solid #cfcfcf; border-radius: 6px; background: #fff; padding: 10px; font-size: 13px; }
-    button { width: 100%; border: 0; border-radius: 6px; padding: 11px; font-size: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-bottom: 8px; }
-    button:disabled { background: #ccc !important; color: #777 !important; cursor: not-allowed; }
-    .primary { background: #111; color: #ffcc00; }
-    .success { background: #28a745; color: #fff; }
-    .danger { background: #dc3545; color: #fff; }
-    .soft { background: #e9ecef; color: #111; border: 1px solid #bbb; }
-    .warn { background: #ffcc00; color: #111; }
-    .notice { display: none; padding: 9px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; }
-    .notice.info { display: block; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-    .notice.ok { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .notice.error { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .card { background: #f8f9fa; border-left: 4px solid #ffcc00; border-radius: 6px; padding: 9px; margin-bottom: 8px; font-size: 12px; line-height: 1.45; }
-    .card.current { border-left-color: #28a745; outline: 2px solid rgba(40,167,69,.35); }
-    .card.omitida { opacity: .55; border-left-color: #dc3545; }
-    .card strong { display: block; font-size: 13px; margin-bottom: 4px; }
-    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px; }
-    .numbered-icon { background: #ffcc00; color: #111; border: 2px solid #111; border-radius: 50%; font-weight: 900; text-align: center; line-height: 26px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
-    .gps-icon { background: #28a745; color: #fff; border: 2px solid #fff; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 900; }
-    .fixed-icon { border-radius: 50%; font-weight: 900; text-align: center; line-height: 30px; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,.4); }
-    .school-icon { background: #111; color: #ffcc00; border: 2px solid #ffcc00; }
-    .home-icon { background: #0066ff; color: #fff; border: 2px solid #fff; }
-    @media (min-width: 780px) { .panel { left: 14px; right: auto; width: 430px; } }
-    @media (max-width: 520px) { .stats { grid-template-columns: repeat(2,1fr); } .panel { max-height: 70vh; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pagos - Ruta 18 | Mi Ruta Segura</title>
+
+<meta name="theme-color" content="#4f46e5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+:root{
+    --primary:#4f46e5;
+    --primary-dark:#3730a3;
+    --secondary:#7c3aed;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#dc2626;
+    --info:#0284c7;
+
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#64748b;
+    --border:#e5e7eb;
+
+    --shadow:0 12px 35px rgba(15,23,42,.08);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Work Sans',sans-serif;
+}
+
+/* HEADER */
+
+.top-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:linear-gradient(135deg,var(--primary-dark),var(--secondary));
+    color:white;
+    box-shadow:0 8px 30px rgba(49,46,129,.25);
+}
+
+.header-inner{
+    max-width:1500px;
+    margin:auto;
+    padding:15px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.brand-icon{
+    width:48px;
+    height:48px;
+    border-radius:15px;
+    background:rgba(255,255,255,.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    backdrop-filter:blur(10px);
+}
+
+.brand h1{
+    margin:0;
+    font-size:20px;
+    font-weight:800;
+}
+
+.brand small{
+    opacity:.85;
+    font-size:12px;
+}
+
+.header-actions{
+    display:flex;
+    gap:8px;
+}
+
+.btn-header{
+    border:1px solid rgba(255,255,255,.25);
+    color:white;
+    background:rgba(255,255,255,.12);
+    border-radius:12px;
+    padding:10px 14px;
+    font-weight:600;
+}
+
+.btn-header:hover{
+    color:white;
+    background:rgba(255,255,255,.2);
+}
+
+/* CONTAINER */
+
+.main-container{
+    max-width:1500px;
+    margin:auto;
+    padding:22px 20px 50px;
+}
+
+/* TITLE */
+
+.page-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.page-title h2{
+    margin:0;
+    font-size:27px;
+    font-weight:800;
+}
+
+.page-title p{
+    margin:5px 0 0;
+    color:var(--muted);
+}
+
+/* SUMMARY */
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.summary-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:19px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+}
+
+.summary-card::after{
+    content:"";
+    position:absolute;
+    width:80px;
+    height:80px;
+    right:-30px;
+    top:-30px;
+    border-radius:50%;
+    background:rgba(79,70,229,.06);
+}
+
+.summary-icon{
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:12px;
+    background:#eef2ff;
+    color:var(--primary);
+}
+
+.summary-card h3{
+    margin:0;
+    font-size:25px;
+    font-weight:800;
+}
+
+.summary-card span{
+    color:var(--muted);
+    font-size:13px;
+    font-weight:500;
+}
+
+.summary-success .summary-icon{
+    background:#dcfce7;
+    color:var(--success);
+}
+
+.summary-warning .summary-icon{
+    background:#fef3c7;
+    color:var(--warning);
+}
+
+.summary-danger .summary-icon{
+    background:#fee2e2;
+    color:var(--danger);
+}
+
+.summary-info .summary-icon{
+    background:#e0f2fe;
+    color:var(--info);
+}
+
+/* FILTERS */
+
+.filter-card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:18px;
+    box-shadow:var(--shadow);
+    margin-bottom:20px;
+}
+
+.filter-title{
+    font-weight:800;
+    margin-bottom:13px;
+}
+
+.filter-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr auto;
+    gap:12px;
+}
+
+.form-control,
+.form-select{
+    min-height:45px;
+    border-radius:12px;
+    border-color:#dbe1ea;
+}
+
+.form-control:focus,
+.form-select:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(79,70,229,.1);
+}
+
+.btn-main{
+    background:var(--primary);
+    color:white;
+    border:0;
+    border-radius:12px;
+    padding:11px 18px;
+    font-weight:700;
+}
+
+.btn-main:hover{
+    background:var(--primary-dark);
+    color:white;
+}
+
+/* TABLE */
+
+.table-card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:20px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+}
+
+.table-header{
+    padding:18px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.table-header h3{
+    margin:0;
+    font-size:18px;
+    font-weight:800;
+}
+
+.table-responsive{
+    overflow-x:auto;
+}
+
+table{
+    min-width:1150px;
+    margin:0 !important;
+}
+
+thead th{
+    background:#f8fafc !important;
+    color:#475569 !important;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    white-space:nowrap;
+    padding:14px 12px !important;
+}
+
+tbody td{
+    padding:14px 12px !important;
+    vertical-align:middle;
+    font-size:13px;
+}
+
+tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* STUDENT */
+
+.student-name{
+    font-weight:800;
+    color:#172033;
+}
+
+.student-rep{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+/* MONEY */
+
+.money{
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.money-paid{
+    color:var(--success);
+}
+
+.money-pending{
+    color:var(--danger);
+}
+
+/* STATUS */
+
+.status{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.status-paid{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-pending{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.status-partial{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-empty{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+/* SERVICE */
+
+.service-badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:8px;
+    background:#eef2ff;
+    color:#3730a3;
+    font-size:11px;
+    font-weight:700;
+}
+
+/* ACTIONS */
+
+.actions{
+    display:flex;
+    gap:6px;
+}
+
+.btn-action{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.btn-action:hover{
+    background:#f1f5f9;
+}
+
+.btn-pay{
+    color:var(--success);
+}
+
+.btn-history{
+    color:var(--primary);
+}
+
+/* LOADING */
+
+.loading{
+    padding:60px 20px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.spinner{
+    width:42px;
+    height:42px;
+    border:4px solid #e2e8f0;
+    border-top-color:var(--primary);
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+    margin:0 auto 15px;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+/* EMPTY */
+
+.empty{
+    padding:60px 20px;
+    text-align:center;
+}
+
+.empty i{
+    font-size:45px;
+    color:#94a3b8;
+    margin-bottom:15px;
+}
+
+.empty h4{
+    font-weight:800;
+}
+
+/* MODAL */
+
+.modal-content{
+    border:0;
+    border-radius:22px;
+    overflow:hidden;
+}
+
+.modal-header{
+    background:linear-gradient(135deg,var(--primary-dark),var(--secondary));
+    color:white;
+    border:0;
+}
+
+.modal-title{
+    font-weight:800;
+}
+
+.modal-body{
+    padding:22px;
+}
+
+.student-detail{
+    background:#f8fafc;
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:18px;
+}
+
+.detail-name{
+    font-size:18px;
+    font-weight:800;
+}
+
+.detail-line{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:4px;
+}
+
+.payment-box{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.payment-stat{
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:13px;
+    text-align:center;
+}
+
+.payment-stat small{
+    display:block;
+    color:var(--muted);
+}
+
+.payment-stat strong{
+    display:block;
+    font-size:19px;
+    margin-top:3px;
+}
+
+/* ALERT */
+
+#alertContainer{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    z-index:3000;
+    width:min(400px,calc(100% - 40px));
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+
+    .summary-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .filter-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .header-inner{
+        padding:12px 14px;
+    }
+
+    .brand h1{
+        font-size:16px;
+    }
+
+    .brand-icon{
+        width:40px;
+        height:40px;
+    }
+
+    .btn-header span{
+        display:none;
+    }
+
+    .main-container{
+        padding:16px 12px 40px;
+    }
+
+    .page-title{
+        align-items:flex-start;
+    }
+
+    .page-title h2{
+        font-size:22px;
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .summary-card{
+        padding:14px;
+    }
+
+    .summary-card h3{
+        font-size:20px;
+    }
+
+    .filter-grid{
+        grid-template-columns:1fr;
+    }
+
+    .payment-box{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
 </head>
+
 <body>
-  <div id="app">
-    <div class="stats">
-      <div class="stat">Modo<b id="statModo">-</b></div>
-      <div class="stat">Paradas<b id="statParadas">0</b></div>
-      <div class="stat">Siguiente<b id="statActual">-</b></div>
-      <div class="stat">ETA<b id="statEta">-</b></div>
+
+<!-- HEADER -->
+
+<header class="top-header">
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+
+            <div>
+                <h1>Pagos de Estudiantes</h1>
+                <small>Mi Ruta Segura · Ruta 18</small>
+            </div>
+
+        </div>
+
+        <div class="header-actions">
+
+            <button class="btn btn-header" onclick="cargarDatos()">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Actualizar</span>
+            </button>
+
+            <button class="btn btn-header" onclick="volverRuta()">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Volver</span>
+            </button>
+
+        </div>
+
     </div>
-    <div id="map"></div>
-    <section class="panel" id="panel">
-      <div class="head">
-        <div>Conductor Ruta 7<small id="subtitulo">Detectando horario...</small></div>
-        <button onclick="togglePanel()">Panel</button>
-      </div>
-      <div class="tabs">
-        <button class="tab active" onclick="tab('ruta')">Ruta</button>
-        <button class="tab" onclick="tab('lista')">Lista/PDF</button>
-        <button class="tab" onclick="tab('avisos')">Avisos</button>
-        <button class="tab" onclick="tab('ajustes')">Ajustes</button>
-      </div>
-      <div class="body">
-        <div id="msg" class="notice"></div>
-        <div id="view-ruta" class="view active">
-          <button class="primary" onclick="cargarDatos()">Cargar estudiantes</button>
-          <button class="success" onclick="calcularRuta()" id="btnCalcular" disabled>Calcular ruta</button>
-          <button class="warn" onclick="iniciarRecorrido()" id="btnIniciar" disabled>Iniciar recorrido</button>
-          <button class="primary" onclick="navegarActual()" id="btnNav" disabled>Navegar al destino actual</button>
-          <div class="grid2">
-            <button class="success" onclick="confirmarLlegada()" id="btnLlegada" disabled>Confirmar llegada</button>
-            <button class="danger" onclick="omitirActual()" id="btnOmitir" disabled>Omitir parada</button>
-          </div>
-          <div id="resumen"></div>
+
+</header>
+
+
+<main class="main-container">
+
+    <!-- TITLE -->
+
+    <section class="page-title">
+
+        <div>
+            <h2>Control de pagos</h2>
+            <p>
+                Colegio San José "La Salle" · Ruta 18 · Marcelo Muñoz
+            </p>
         </div>
-        <div id="view-lista" class="view">
-          <div class="grid2">
-            <label>Buscar<input id="filtroTexto" oninput="renderLista()" placeholder="Nombre, sector, telefono"></label>
-            <label>Servicio<select id="filtroServicio" onchange="renderLista()"><option value="">Todos</option><option>COMPLETO</option><option>INGRESO</option><option>SALIDA</option></select></label>
-          </div>
-          <button class="primary" onclick="generarPdf()">Generar PDF del listado filtrado</button>
-          <div id="lista"></div>
+
+        <div>
+            <span class="badge text-bg-light">
+                <i class="fa-solid fa-clock"></i>
+                <span id="ultimaActualizacion">--:--</span>
+            </span>
         </div>
-        <div id="view-avisos" class="view">
-          <button class="primary" onclick="leerEventosPadres()">Actualizar avisos</button>
-          <div id="avisos"></div>
-        </div>
-        <div id="view-ajustes" class="view">
-          <div class="grid2">
-            <label>Recorrido<select id="modo" onchange="seleccionarModo(this.value)"></select></label>
-            <label>Calculo<select id="calculo"><option value="logica">Logica/ahorro</option><option value="rapida">Mas rapida</option></select></label>
-          </div>
-          <label>Hora objetivo<input id="horaObjetivo" type="time"></label>
-          <button class="soft" onclick="detectarModoHorario()">Detectar horario actual</button>
-          <button class="soft" onclick="centrarMapa()">Centrar mapa</button>
-        </div>
-      </div>
+
     </section>
-  </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpwqzD-vpZP_IAyEfgqhTpZFKJKuCbcG5-9JflBkVaSkEIdOlqJ4xHrmCOczSFxlR_sQ/exec";
-    const CASA_CONDUCTOR = { nombre: "Casa conductor", lat: -0.256837, lng: -78.558433 };
-    const ESCUELA = { nombre: "Unidad Educativa San Gabriel", lat: -0.268130, lng: -78.543977 };
-    const MODOS = {
-      mananaEntrada: { label: "Manana entrada", horario: "MATUTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "06:50", color: "#0066ff" },
-      mananaSalida: { label: "Manana salida", horario: "MATUTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "12:30", color: "#28a745" },
-      tardeEntrada: { label: "Tarde entrada", horario: "VESPERTINO", servicio: "INGRESO", sentido: "entrada", inicio: CASA_CONDUCTOR, fin: ESCUELA, hora: "12:45", color: "#8e44ad" },
-      tardeSalida: { label: "Tarde salida", horario: "VESPERTINO", servicio: "SALIDA", sentido: "salida", inicio: ESCUELA, fin: null, hora: "16:30", color: "#f39c12" }
-    };
-    let modoActual = "mananaEntrada";
-    let runId = "";
-    let registros = [];
-    let paradas = [];
-    let orden = [];
-    let omitidas = new Set();
-    let indiceActual = 0;
-    let recorridoActivo = false;
-    let ubicacionGps = null;
-    let watchId = null;
-    let routeLayer = null;
-    let gpsMarker = null;
-    let markers = L.layerGroup();
-    let eventosVistos = new Set();
 
-    const map = L.map("map").setView([ESCUELA.lat, ESCUELA.lng], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "OpenStreetMap" }).addTo(map);
-    markers.addTo(map);
-    init();
+    <!-- SUMMARY -->
 
-    function init() {
-      const sel = document.getElementById("modo");
-      Object.keys(MODOS).forEach(k => sel.add(new Option(MODOS[k].label, k)));
-      detectarModoHorario();
-      colocarFijos();
-      registrarSW();
-      setInterval(() => { if (recorridoActivo) enviarUbicacion(); }, 12000);
-      setInterval(leerEventosPadres, 10000);
-    }
+    <section class="summary-grid">
 
-    function detectarModoHorario() {
-      const now = new Date();
-      const m = now.getHours() * 60 + now.getMinutes();
-      let modo = "mananaEntrada";
-      if (m >= 240 && m < 420) modo = "mananaEntrada";
-      else if (m >= 630 && m < 720) modo = "tardeEntrada";
-      else if (m >= 720 && m < 840) modo = "mananaSalida";
-      else if (m >= 900 && m < 1080) modo = "tardeSalida";
-      seleccionarModo(modo);
-    }
+        <div class="summary-card">
 
-    function seleccionarModo(modo) {
-      modoActual = modo;
-      document.getElementById("modo").value = modo;
-      document.getElementById("horaObjetivo").value = MODOS[modo].hora;
-      document.getElementById("statModo").textContent = MODOS[modo].label;
-      document.getElementById("subtitulo").textContent = MODOS[modo].label;
-      if (registros.length) filtrarParadas();
-    }
+            <div class="summary-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
 
-    function colocarFijos() {
-      const home = L.divIcon({ className: "fixed-icon home-icon", html: "C", iconSize: [32,32], iconAnchor: [16,16] });
-      const school = L.divIcon({ className: "fixed-icon school-icon", html: "E", iconSize: [32,32], iconAnchor: [16,16] });
-      L.marker([CASA_CONDUCTOR.lat, CASA_CONDUCTOR.lng], { icon: home }).bindPopup("Casa conductor").addTo(map);
-      L.marker([ESCUELA.lat, ESCUELA.lng], { icon: school }).bindPopup("Escuela").addTo(map);
-    }
+            <h3 id="totalEstudiantes">0</h3>
+            <span>Estudiantes</span>
 
-    function cargarDatos() {
-      aviso("Leyendo Google Sheets...", "info");
-      jsonp(SCRIPT_URL + "?action=records").then(data => {
-        registros = (Array.isArray(data) ? data : data.records || []).map(normalizarRegistro);
-        filtrarParadas();
-        aviso("Datos cargados: " + registros.length + " registros.", "ok");
-      }).catch(() => aviso("No se pudo leer Google Sheets.", "error"));
-    }
+        </div>
 
-    function filtrarParadas() {
-      const cfg = MODOS[modoActual];
-      paradas = registros.filter(r => coincideHorario(r.horario, cfg.horario) && coincideServicio(r.servicio, cfg.servicio))
-        .map(r => ({ ...r, coords: extraerCoordenadas(r.urlMaps) }))
-        .filter(r => r.coords)
-        .map(r => ({ ...r, lat: r.coords.lat, lng: r.coords.lng }));
-      orden = [];
-      document.getElementById("btnCalcular").disabled = paradas.length === 0;
-      document.getElementById("statParadas").textContent = paradas.length;
-      renderLista();
-      pintarMarcadores(paradas);
-    }
 
-    async function calcularRuta() {
-      if (!paradas.length) return;
-      const cfg = MODOS[modoActual];
-      try {
-        orden = document.getElementById("calculo").value === "rapida" ? await ordenarRapida(cfg) : ordenarLogica(cfg, paradas);
-      } catch (e) {
-        orden = ordenarLogica(cfg, paradas);
-      }
-      await trazarRuta(cfg);
-      indiceActual = 0;
-      renderLista();
-      document.getElementById("btnIniciar").disabled = false;
-      document.getElementById("btnNav").disabled = false;
-      document.getElementById("resumen").innerHTML = "<div class='card'><strong>Ruta lista</strong>Paradas: " + orden.length + "</div>";
-      togglePanel(true);
-    }
+        <div class="summary-card summary-info">
 
-    function iniciarRecorrido() {
-      if (!orden.length) return;
-      recorridoActivo = true;
-      runId = modoActual + "-" + Date.now();
-      indiceActual = siguientePendiente(0);
-      document.getElementById("btnLlegada").disabled = false;
-      document.getElementById("btnOmitir").disabled = false;
-      enviarEvento("inicio_recorrido", { runId, mensaje: "Recorrido iniciado" });
-      iniciarGps();
-      actualizarActual();
-      navegarActual();
-      leerEventosPadres();
-    }
+            <div class="summary-icon">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
 
-    function iniciarGps() {
-      if (!navigator.geolocation) return aviso("Este celular no tiene GPS disponible.", "error");
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-      watchId = navigator.geolocation.watchPosition(pos => {
-        ubicacionGps = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy };
-        pintarGps();
-        enviarUbicacion();
-        revisarLlegadaAutomatica();
-      }, () => aviso("Activa permiso de ubicacion GPS.", "error"), { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 });
-    }
+            <h3 id="totalFacturado">$0.00</h3>
+            <span>Total registrado</span>
 
-    function revisarLlegadaAutomatica() {
-      const actual = orden[indiceActual];
-      if (!recorridoActivo || !actual || !ubicacionGps) return;
-      const metros = distanciaKm(ubicacionGps.lat, ubicacionGps.lng, actual.lat, actual.lng) * 1000;
-      document.getElementById("statEta").textContent = Math.max(1, Math.round(metros / 260)) + " min";
-      if (metros <= 70) confirmarLlegada();
-    }
+        </div>
 
-    function confirmarLlegada() {
-      const actual = orden[indiceActual];
-      if (!actual) return finalizarRecorrido();
-      enviarEvento("llegada_parada", { runId, estudiante: actual.estudiante, telefono: actual.telefono, parada: String(indiceActual + 1), lat: actual.lat, lng: actual.lng, mensaje: "Conductor llego a la parada" });
-      indiceActual = siguientePendiente(indiceActual + 1);
-      actualizarActual();
-      if (orden[indiceActual]) navegarActual(); else finalizarRecorrido();
-    }
 
-    function omitirActual() {
-      const actual = orden[indiceActual];
-      if (!actual) return;
-      omitidas.add(actual.telefono || actual.estudiante);
-      enviarEvento("omitir_parada", { runId, estudiante: actual.estudiante, telefono: actual.telefono, parada: String(indiceActual + 1), mensaje: "Parada omitida por conductor" });
-      indiceActual = siguientePendiente(indiceActual + 1);
-      actualizarActual();
-      renderLista();
-      if (orden[indiceActual]) navegarActual(); else finalizarRecorrido();
-    }
+        <div class="summary-card summary-success">
 
-    function siguientePendiente(i) {
-      while (i < orden.length && omitidas.has(orden[i].telefono || orden[i].estudiante)) i++;
-      return i;
-    }
+            <div class="summary-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
 
-    function finalizarRecorrido() {
-      recorridoActivo = false;
-      enviarEvento("fin_recorrido", { runId, mensaje: "Recorrido finalizado" });
-      aviso("Recorrido finalizado.", "ok");
-      document.getElementById("btnLlegada").disabled = true;
-      document.getElementById("btnOmitir").disabled = true;
-      document.getElementById("statActual").textContent = "Fin";
-    }
+            <h3 id="totalPagado">$0.00</h3>
+            <span>Total pagado</span>
 
-    function actualizarActual() {
-      const actual = orden[indiceActual];
-      document.getElementById("statActual").textContent = actual ? "#" + (indiceActual + 1) : "Fin";
-      pintarMarcadores(orden.length ? orden : paradas);
-    }
+        </div>
 
-    function navegarActual() {
-      const actual = orden[indiceActual] || orden[0];
-      if (!actual) return;
-      window.open("https://www.google.com/maps/dir/?api=1&destination=" + actual.lat + "," + actual.lng + "&travelmode=driving", "_blank");
-    }
 
-    function leerEventosPadres() {
-      jsonp(SCRIPT_URL + "?action=events").then(data => {
-        const eventos = (data.events || []).filter(e => String(e.tipo || "").startsWith("padre_"));
-        const box = document.getElementById("avisos");
-        if (!eventos.length) box.innerHTML = "<div class='card'>Sin avisos de padres.</div>";
-        eventos.slice(-20).reverse().forEach(e => {
-          const key = [e.fechaservidor, e.tipo, e.telefono, e.estudiante].join("|");
-          if (!eventosVistos.has(key)) {
-            eventosVistos.add(key);
-            avisoSonoro("Aviso de padre: " + (e.tipo || "aviso") + " | Alumno: " + (e.estudiante || "Sin nombre") + " | Sector: " + (e.sector || "Sin sector") + " | Tel: " + (e.telefono || "Sin telefono"));
-          }
-        });
-        box.innerHTML = eventos.slice(-20).reverse().map(e => "<div class='card'><strong>" + esc(e.tipo) + "</strong>" + esc(e.estudiante || "") + "<br>" + esc(e.mensaje || "") + "<br><small>" + esc(e.fechaservidor || "") + "</small></div>").join("");
-        aplicarOmisionesPadres(eventos);
-      }).catch(() => {});
-    }
+        <div class="summary-card summary-danger">
 
-    function aplicarOmisionesPadres(eventos) {
-      eventos.forEach(e => {
-        if (e.tipo === "padre_no_asiste" || e.tipo === "padre_retiro_escuela") {
-          const tel = normalizarTelefono(e.telefono);
-          orden.forEach(p => { if (normalizarTelefono(p.telefono) === tel) omitidas.add(p.telefono || p.estudiante); });
+            <div class="summary-icon">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+
+            <h3 id="totalPendiente">$0.00</h3>
+            <span>Total pendiente</span>
+
+        </div>
+
+
+        <div class="summary-card summary-warning">
+
+            <div class="summary-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+
+            <h3 id="porcentajePago">0%</h3>
+            <span>Recaudación</span>
+
+        </div>
+
+    </section>
+
+
+    <!-- FILTERS -->
+
+    <section class="filter-card">
+
+        <div class="filter-title">
+            <i class="fa-solid fa-filter"></i>
+            Buscar y filtrar
+        </div>
+
+        <div class="filter-grid">
+
+            <div>
+                <input
+                    type="search"
+                    id="busqueda"
+                    class="form-control"
+                    placeholder="Estudiante, representante, teléfono o sector..."
+                    oninput="aplicarFiltros()">
+            </div>
+
+            <div>
+
+                <select id="filtroSector"
+                        class="form-select"
+                        onchange="aplicarFiltros()">
+
+                    <option value="">Todos los sectores</option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <select id="filtroEstado"
+                        class="form-select"
+                        onchange="aplicarFiltros()">
+
+                    <option value="">Todos los estados</option>
+                    <option value="PAGADO">Pagado</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="PARCIAL">Pago parcial</option>
+                    <option value="SIN REGISTRO">Sin registro</option>
+
+                </select>
+
+            </div>
+
+            <button class="btn-main" onclick="limpiarFiltros()">
+                <i class="fa-solid fa-broom"></i>
+                Limpiar
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- TABLE -->
+
+    <section class="table-card">
+
+        <div class="table-header">
+
+            <h3>
+                <i class="fa-solid fa-list"></i>
+                Lista de estudiantes
+            </h3>
+
+            <span class="badge text-bg-light" id="contadorResultados">
+                0 registros
+            </span>
+
+        </div>
+
+
+        <div id="contenidoTabla">
+
+            <div class="loading">
+
+                <div class="spinner"></div>
+
+                <div>
+                    Cargando estudiantes...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- PAYMENT MODAL -->
+
+<div class="modal fade"
+     id="modalPago"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                    Registrar pago
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="student-detail">
+
+                    <div class="detail-name"
+                         id="modalEstudiante">
+                        -
+                    </div>
+
+                    <div class="detail-line"
+                         id="modalRepresentante">
+                        -
+                    </div>
+
+                    <div class="detail-line"
+                         id="modalServicio">
+                        -
+                    </div>
+
+                    <div class="detail-line"
+                         id="modalToken">
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="payment-box">
+
+                    <div class="payment-stat">
+
+                        <small>Valor</small>
+
+                        <strong id="modalValor">
+                            $0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-stat">
+
+                        <small>Pagado</small>
+
+                        <strong id="modalPagado"
+                               class="text-success">
+                            $0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="payment-stat">
+
+                        <small>Pendiente</small>
+
+                        <strong id="modalPendiente"
+                               class="text-danger">
+                            $0.00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-bold">
+                        Valor del pago
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            $
+                        </span>
+
+                        <input
+                            type="number"
+                            id="valorPago"
+                            class="form-control"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00">
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-bold">
+                        Observación
+                    </label>
+
+                    <textarea
+                        id="observacionPago"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Ej.: Pago mensual, abono, transferencia...">
+                    </textarea>
+
+                </div>
+
+
+                <div class="alert alert-warning small">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    El pago se enviará al sistema mediante el
+                    identificador del estudiante. No se modificará
+                    la dirección ni los datos de Ruta.
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button class="btn btn-light"
+                        data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+
+                <button class="btn btn-success"
+                        onclick="registrarPago()">
+
+                    <i class="fa-solid fa-check"></i>
+                    Registrar pago
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- HISTORY MODAL -->
+
+<div class="modal fade"
+     id="modalHistorial"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    Historial de pagos
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div id="historialContenido">
+
+                    <div class="text-center text-muted py-4">
+                        No hay historial disponible.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="alertContainer"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+
+/* ============================================================
+   CONFIGURACIÓN
+============================================================ */
+
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbzpwqzD-vpZP_IAyEfgqhTpZFKJKuCbcG5-9JflBkVaSkEIdOlqJ4xHrmCOczSFxlR_sQ/exec";
+
+const RUTA = "RUTA 18";
+
+const COLEGIO = 'COLEGIO SAN JOSÉ "LA SALLE"';
+
+const CONDUCTOR = "MARCELO MUÑOZ";
+
+const TELEFONO = "0962831957";
+
+
+/* ============================================================
+   VARIABLES
+============================================================ */
+
+let registros = [];
+
+let registrosFiltrados = [];
+
+let estudianteSeleccionado = null;
+
+let modalPago;
+
+let modalHistorial;
+
+
+/* ============================================================
+   INICIO
+============================================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    modalPago =
+        new bootstrap.Modal(
+            document.getElementById("modalPago")
+        );
+
+    modalHistorial =
+        new bootstrap.Modal(
+            document.getElementById("modalHistorial")
+        );
+
+    cargarDatos();
+
+});
+
+
+/* ============================================================
+   JSONP
+============================================================ */
+
+function cargarDatos(){
+
+    mostrarCarga();
+
+    const callback =
+        "jsonpPagos_" + Date.now();
+
+    const script =
+        document.createElement("script");
+
+    const timeout =
+        setTimeout(() => {
+
+            try{
+                delete window[callback];
+            }catch(e){}
+
+            script.remove();
+
+            mostrarError(
+                "No se pudo conectar con el servidor."
+            );
+
+        },15000);
+
+
+    window[callback] = function(data){
+
+        clearTimeout(timeout);
+
+        try{
+
+            const lista =
+                extraerRegistros(data);
+
+            registros =
+                lista.map(normalizarRegistro)
+                     .filter(r => r.estudiante);
+
+            actualizarSectores();
+
+            calcularResumen();
+
+            aplicarFiltros();
+
+            document.getElementById(
+                "ultimaActualizacion"
+            ).textContent =
+                new Date().toLocaleTimeString(
+                    "es-EC",
+                    {
+                        hour:"2-digit",
+                        minute:"2-digit"
+                    }
+                );
+
+        }catch(error){
+
+            console.error(error);
+
+            mostrarError(
+                "Los datos recibidos no tienen el formato esperado."
+            );
+
         }
-      });
-      renderLista();
+
+        script.remove();
+
+        try{
+            delete window[callback];
+        }catch(e){}
+
+    };
+
+
+    script.src =
+        SCRIPT_URL +
+        "?action=records" +
+        "&t=" +
+        Date.now() +
+        "&callback=" +
+        callback;
+
+    script.onerror = function(){
+
+        clearTimeout(timeout);
+
+        mostrarError(
+            "Error de conexión con Google Sheets."
+        );
+
+        script.remove();
+
+        try{
+            delete window[callback];
+        }catch(e){}
+
+    };
+
+
+    document.body.appendChild(script);
+
+}
+
+
+/* ============================================================
+   EXTRAER REGISTROS
+============================================================ */
+
+function extraerRegistros(data){
+
+    if(Array.isArray(data))
+        return data;
+
+    if(!data)
+        return [];
+
+    const posibles = [
+        "records",
+        "data",
+        "alumnos",
+        "resultados",
+        "registros",
+        "rows"
+    ];
+
+    for(const key of posibles){
+
+        if(Array.isArray(data[key]))
+            return data[key];
+
     }
 
-    function renderLista() {
-      const texto = normalizar(document.getElementById("filtroTexto")?.value || "");
-      const serv = normalizar(document.getElementById("filtroServicio")?.value || "");
-      const base = orden.length ? orden : paradas;
-      const filtrada = base.filter(p => (!texto || normalizar([p.estudiante,p.sector,p.telefono].join(" ")).includes(texto)) && (!serv || normalizar(p.servicio).includes(serv)));
-      document.getElementById("lista").innerHTML = filtrada.map((p, i) => cardAlumno(p, base.indexOf(p) + 1)).join("") || "<div class='card'>Sin alumnos.</div>";
+    return [];
+
+}
+
+
+/* ============================================================
+   NORMALIZADOR
+============================================================ */
+
+function normalizarRegistro(r){
+
+    const get = (...keys) => {
+
+        for(const key of keys){
+
+            if(
+                r[key] !== undefined &&
+                r[key] !== null &&
+                String(r[key]).trim() !== ""
+            ){
+
+                return String(r[key]).trim();
+
+            }
+
+        }
+
+        return "";
+
+    };
+
+
+    return {
+
+        fecha:
+            get(
+                "Fecha de Registro",
+                "fecha",
+                "fecharegistro",
+                "FechaRegistro"
+            ),
+
+        estudiante:
+            get(
+                "Estudiante",
+                "estudiante",
+                "nombresestudiante",
+                "nombre",
+                "NOMBRE"
+            ),
+
+        nivel:
+            get(
+                "Nivel",
+                "nivel"
+            ),
+
+        grado:
+            get(
+                "Grado / Año",
+                "grado",
+                "gradoano",
+                "gradoaño",
+                "curso"
+            ),
+
+        representante:
+            get(
+                "Representante",
+                "representante"
+            ),
+
+        telefono:
+            get(
+                "Teléfono",
+                "telefono",
+                "celular",
+                "phone"
+            ),
+
+        sector:
+            get(
+                "Sector",
+                "sector"
+            ),
+
+        callePrincipal:
+            get(
+                "Calle Principal",
+                "calleprincipal"
+            ),
+
+        calleSecundaria:
+            get(
+                "Calle Secundaria",
+                "callesecundaria"
+            ),
+
+        casa:
+            get(
+                "Nro. Casa / Lote",
+                "Nro Casa / Lote",
+                "nrocasa",
+                "lote"
+            ),
+
+        referencia:
+            get(
+                "Referencia",
+                "referencia"
+            ),
+
+        tipoServicio:
+            get(
+                "Tipo de Servicio",
+                "tipodeservicio",
+                "tiposervicio"
+            ),
+
+        maps:
+            get(
+                "Enlace Google Maps",
+                "enlacegooglemaps",
+                "urlmaps",
+                "url_maps",
+                "maps"
+            ),
+
+        valor:
+            get(
+                "VALOR",
+                "valor",
+                "Valor"
+            ),
+
+        estado:
+            get(
+                "ESTADO",
+                "estado",
+                "Estado"
+            ),
+
+        servicio:
+            get(
+                "SERVICIO",
+                "servicio",
+                "Servicio"
+            ),
+
+        pagos:
+            get(
+                "PAGOS",
+                "pagos",
+                "Pago",
+                "pago"
+            ),
+
+        vacuna:
+            get(
+                "VACUNA",
+                "vacuna"
+            ),
+
+        token:
+            get(
+                "TOKEN",
+                "token",
+                "Token"
+            ),
+
+        hora:
+            get(
+                "HORA",
+                "hora",
+                "Hora"
+            )
+
+    };
+
+}
+
+
+/* ============================================================
+   NÚMERO
+============================================================ */
+
+function numero(valor){
+
+    if(
+        valor === null ||
+        valor === undefined ||
+        valor === ""
+    ){
+        return 0;
     }
 
-    function cardAlumno(p, n) {
-      const omitida = omitidas.has(p.telefono || p.estudiante);
-      const tel = telefonoInternacional(p.telefono);
-      return "<div class='card " + (omitida ? "omitida" : "") + "'><strong>#" + n + " " + esc(p.estudiante) + "</strong>Sector: " + esc(p.sector) + "<br>Telefono: " + esc(p.telefono) + "<br>Servicio: " + esc(p.servicio) + "<div class='actions'><button class='soft' onclick=\"window.open('tel:" + tel + "')\">Llamar</button><button class='soft' onclick=\"window.open('https://wa.me/" + tel + "')\">WhatsApp</button></div></div>";
+    let texto =
+        String(valor)
+        .replace("$","")
+        .replace(/\s/g,"")
+        .replace(/,/g,".");
+
+    /*
+       Si viniera como 1.234,56
+    */
+
+    if(
+        texto.includes(".") &&
+        texto.includes(",")
+    ){
+
+        texto =
+            texto.replace(/\./g,"")
+                 .replace(",",".");
     }
 
-    function generarPdf() {
-      const base = orden.length ? orden : paradas;
-      const html = "<!doctype html><html><head><title>Listado Ruta 7</title><style>body{font-family:Arial;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:6px;font-size:12px}h2{margin:0 0 10px}</style></head><body><h2>Listado Ruta 7 - " + MODOS[modoActual].label + "</h2><table><thead><tr><th>#</th><th>Estudiante</th><th>Sector</th><th>Telefono</th><th>Servicio</th><th>Estado</th></tr></thead><tbody>" + base.map((p,i)=>"<tr><td>"+(i+1)+"</td><td>"+esc(p.estudiante)+"</td><td>"+esc(p.sector)+"</td><td>"+esc(p.telefono)+"</td><td>"+esc(p.servicio)+"</td><td></td></tr>").join("") + "</tbody></table><script>window.print()<\/script></body></html>";
-      const w = window.open("", "_blank");
-      w.document.write(html);
-      w.document.close();
+    const n =
+        parseFloat(texto);
+
+    return Number.isFinite(n)
+        ? n
+        : 0;
+
+}
+
+
+/* ============================================================
+   FORMATO DINERO
+============================================================ */
+
+function dinero(valor){
+
+    return new Intl.NumberFormat(
+        "es-EC",
+        {
+            style:"currency",
+            currency:"USD",
+            minimumFractionDigits:2
+        }
+    ).format(
+        numero(valor)
+    );
+
+}
+
+
+/* ============================================================
+   ESTADO DE PAGO
+============================================================ */
+
+function calcularEstado(r){
+
+    const valor =
+        numero(r.valor);
+
+    const pagado =
+        numero(r.pagos);
+
+    const estadoOriginal =
+        String(r.estado || "")
+        .trim()
+        .toUpperCase();
+
+
+    if(
+        estadoOriginal === "PAGADO" ||
+        estadoOriginal === "CANCELADO"
+    ){
+
+        return "PAGADO";
+
     }
 
-    async function ordenarRapida(cfg) {
-      const puntos = cfg.sentido === "entrada" ? [cfg.inicio, ...paradas, cfg.fin] : [cfg.inicio, ...paradas];
-      const coords = puntos.map(p => p.lng + "," + p.lat).join(";");
-      const dest = cfg.sentido === "entrada" ? "last" : "any";
-      const data = await fetch("https://router.project-osrm.org/trip/v1/driving/" + coords + "?source=first&destination=" + dest + "&roundtrip=false&overview=false").then(r => r.json());
-      if (!data.waypoints) throw new Error("Sin ruta rapida");
-      return data.waypoints.map((wp, idx) => ({ idx, order: wp.waypoint_index })).sort((a,b)=>a.order-b.order).map(x=>x.idx)
-        .filter(i => i !== 0 && !(cfg.sentido === "entrada" && i === puntos.length - 1)).map(i => puntos[i]);
+
+    if(valor > 0){
+
+        if(pagado >= valor)
+            return "PAGADO";
+
+        if(pagado > 0)
+            return "PARCIAL";
+
+        return "PENDIENTE";
+
     }
 
-    function ordenarLogica(cfg, puntos) {
-      if (cfg.sentido === "entrada") {
-        const pendientes = [...puntos].sort((a,b)=>distanciaKm(ESCUELA.lat,ESCUELA.lng,b.lat,b.lng)-distanciaKm(ESCUELA.lat,ESCUELA.lng,a.lat,a.lng));
-        return ordenarDesde(pendientes.shift(), pendientes);
-      }
-      return ordenarDesde(cfg.inicio, [...puntos]);
+
+    if(pagado > 0)
+        return "PAGADO";
+
+
+    return "SIN REGISTRO";
+
+}
+
+
+/* ============================================================
+   RESUMEN
+============================================================ */
+
+function calcularResumen(){
+
+    const total =
+        registros.length;
+
+    let facturado = 0;
+    let pagado = 0;
+    let pendiente = 0;
+
+
+    registros.forEach(r => {
+
+        const valor =
+            numero(r.valor);
+
+        const pago =
+            numero(r.pagos);
+
+        facturado += valor;
+
+        pagado += pago;
+
+        pendiente +=
+            Math.max(
+                valor - pago,
+                0
+            );
+
+    });
+
+
+    document.getElementById(
+        "totalEstudiantes"
+    ).textContent = total;
+
+
+    document.getElementById(
+        "totalFacturado"
+    ).textContent =
+        dinero(facturado);
+
+
+    document.getElementById(
+        "totalPagado"
+    ).textContent =
+        dinero(pagado);
+
+
+    document.getElementById(
+        "totalPendiente"
+    ).textContent =
+        dinero(pendiente);
+
+
+    const porcentaje =
+        facturado > 0
+            ? Math.min(
+                100,
+                (pagado / facturado) * 100
+              )
+            : 0;
+
+
+    document.getElementById(
+        "porcentajePago"
+    ).textContent =
+        porcentaje.toFixed(1) + "%";
+
+}
+
+
+/* ============================================================
+   SECTORES
+============================================================ */
+
+function actualizarSectores(){
+
+    const select =
+        document.getElementById(
+            "filtroSector"
+        );
+
+    const actual =
+        select.value;
+
+    const sectores =
+        [...new Set(
+            registros
+            .map(r => r.sector)
+            .filter(Boolean)
+        )]
+        .sort(
+            (a,b) =>
+                a.localeCompare(
+                    b,
+                    "es",
+                    {sensitivity:"base"}
+                )
+        );
+
+
+    select.innerHTML =
+        '<option value="">Todos los sectores</option>';
+
+
+    sectores.forEach(sector => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = sector;
+
+        option.textContent = sector;
+
+        select.appendChild(option);
+
+    });
+
+
+    if(
+        sectores.includes(actual)
+    ){
+
+        select.value = actual;
+
     }
 
-    function ordenarDesde(inicio, pendientes) {
-      const ordenados = [];
-      let actual = inicio;
-      if (actual && actual.estudiante) ordenados.push(actual);
-      while (pendientes.length) {
-        let best = 0, d = distanciaKm(actual.lat, actual.lng, pendientes[0].lat, pendientes[0].lng);
-        for (let i=1;i<pendientes.length;i++) { const nd = distanciaKm(actual.lat, actual.lng, pendientes[i].lat, pendientes[i].lng); if (nd < d) { d = nd; best = i; } }
-        actual = pendientes.splice(best, 1)[0];
-        ordenados.push(actual);
-      }
-      return ordenados;
+}
+
+
+/* ============================================================
+   FILTROS
+============================================================ */
+
+function aplicarFiltros(){
+
+    const texto =
+        document.getElementById(
+            "busqueda"
+        ).value
+        .trim()
+        .toUpperCase();
+
+
+    const sector =
+        document.getElementById(
+            "filtroSector"
+        ).value
+        .trim()
+        .toUpperCase();
+
+
+    const estado =
+        document.getElementById(
+            "filtroEstado"
+        ).value
+        .trim()
+        .toUpperCase();
+
+
+    registrosFiltrados =
+        registros.filter(r => {
+
+            const contenido = [
+
+                r.estudiante,
+                r.representante,
+                r.telefono,
+                r.sector,
+                r.grado,
+                r.servicio
+
+            ]
+            .join(" ")
+            .toUpperCase();
+
+
+            if(
+                texto &&
+                !contenido.includes(texto)
+            ){
+
+                return false;
+
+            }
+
+
+            if(
+                sector &&
+                r.sector.toUpperCase() !== sector
+            ){
+
+                return false;
+
+            }
+
+
+            if(
+                estado &&
+                calcularEstado(r) !== estado
+            ){
+
+                return false;
+
+            }
+
+
+            return true;
+
+        });
+
+
+    renderTabla();
+
+}
+
+
+/* ============================================================
+   RENDER TABLA
+============================================================ */
+
+function renderTabla(){
+
+    const contenedor =
+        document.getElementById(
+            "contenidoTabla"
+        );
+
+
+    document.getElementById(
+        "contadorResultados"
+    ).textContent =
+        `${registrosFiltrados.length} registros`;
+
+
+    if(
+        registrosFiltrados.length === 0
+    ){
+
+        contenedor.innerHTML = `
+
+            <div class="empty">
+
+                <i class="fa-solid fa-users-slash"></i>
+
+                <h4>No existen registros</h4>
+
+                <p>
+                    No hay estudiantes que coincidan
+                    con los filtros seleccionados.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
     }
 
-    async function trazarRuta(cfg) {
-      const puntos = cfg.sentido === "entrada" ? [cfg.inicio, ...orden, cfg.fin] : [cfg.inicio, ...orden];
-      const url = "https://router.project-osrm.org/route/v1/driving/" + puntos.map(p=>p.lng+","+p.lat).join(";") + "?overview=full&geometries=geojson";
-      const data = await fetch(url).then(r=>r.json());
-      if (!data.routes || !data.routes[0]) return;
-      if (routeLayer) map.removeLayer(routeLayer);
-      routeLayer = L.geoJSON(data.routes[0].geometry, { style: { color: cfg.color, weight: 6, opacity: .85 } }).addTo(map);
-      map.fitBounds(routeLayer.getBounds(), { padding: [45,45] });
+
+    let html = `
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Estudiante</th>
+
+                        <th>Representante</th>
+
+                        <th>Sector</th>
+
+                        <th>Servicio</th>
+
+                        <th>Valor</th>
+
+                        <th>Pagado</th>
+
+                        <th>Pendiente</th>
+
+                        <th>Estado</th>
+
+                        <th>Hora</th>
+
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+    `;
+
+
+    registrosFiltrados.forEach(
+        (r,index) => {
+
+            const valor =
+                numero(r.valor);
+
+            const pagado =
+                numero(r.pagos);
+
+            const pendiente =
+                Math.max(
+                    valor - pagado,
+                    0
+                );
+
+
+            const estado =
+                calcularEstado(r);
+
+
+            let estadoClass =
+                "status-empty";
+
+
+            if(estado === "PAGADO")
+                estadoClass =
+                    "status-paid";
+
+            else if(estado === "PENDIENTE")
+                estadoClass =
+                    "status-pending";
+
+            else if(estado === "PARCIAL")
+                estadoClass =
+                    "status-partial";
+
+
+            const grado =
+                [r.nivel,r.grado]
+                .filter(Boolean)
+                .join(" · ");
+
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        <strong>${index+1}</strong>
+                    </td>
+
+
+                    <td>
+
+                        <div class="student-name">
+                            ${escapeHtml(r.estudiante)}
+                        </div>
+
+                        ${
+                            grado
+                            ? `<div class="student-rep">
+                                ${escapeHtml(grado)}
+                               </div>`
+                            : ""
+                        }
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="student-name"
+                             style="font-size:13px;font-weight:600">
+
+                            ${escapeHtml(
+                                r.representante || "-"
+                            )}
+
+                        </div>
+
+                        ${
+                            r.telefono
+                            ? `<div class="student-rep">
+                                ${escapeHtml(r.telefono)}
+                               </div>`
+                            : ""
+                        }
+
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(r.sector || "-")}
+                    </td>
+
+
+                    <td>
+
+                        <span class="service-badge">
+
+                            ${escapeHtml(
+                                r.servicio ||
+                                r.tipoServicio ||
+                                "-"
+                            )}
+
+                        </span>
+
+                    </td>
+
+
+                    <td class="money">
+
+                        ${dinero(valor)}
+
+                    </td>
+
+
+                    <td class="money money-paid">
+
+                        ${dinero(pagado)}
+
+                    </td>
+
+
+                    <td class="money money-pending">
+
+                        ${dinero(pendiente)}
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="status ${estadoClass}">
+
+                            <i class="fa-solid ${
+                                estado === "PAGADO"
+                                ? "fa-check"
+                                : estado === "PARCIAL"
+                                ? "fa-clock"
+                                : estado === "PENDIENTE"
+                                ? "fa-hourglass-half"
+                                : "fa-minus"
+                            }"></i>
+
+                            ${estado}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(r.hora || "-")}
+                    </td>
+
+
+                    <td>
+
+                        <div class="actions">
+
+                            <button
+                                class="btn-action btn-pay"
+                                title="Registrar pago"
+                                onclick="abrirPago(${index})">
+
+                                <i class="fa-solid fa-money-bill-wave"></i>
+
+                            </button>
+
+
+                            <button
+                                class="btn-action btn-history"
+                                title="Historial"
+                                onclick="abrirHistorial(${index})">
+
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    html += `
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+
+    contenedor.innerHTML =
+        html;
+
+}
+
+
+/* ============================================================
+   ABRIR PAGO
+============================================================ */
+
+function abrirPago(index){
+
+    const r =
+        registrosFiltrados[index];
+
+    if(!r)
+        return;
+
+
+    estudianteSeleccionado =
+        r;
+
+
+    const valor =
+        numero(r.valor);
+
+    const pagado =
+        numero(r.pagos);
+
+    const pendiente =
+        Math.max(
+            valor - pagado,
+            0
+        );
+
+
+    document.getElementById(
+        "modalEstudiante"
+    ).textContent =
+        r.estudiante;
+
+
+    document.getElementById(
+        "modalRepresentante"
+    ).textContent =
+        "Representante: " +
+        (r.representante || "-");
+
+
+    document.getElementById(
+        "modalServicio"
+    ).textContent =
+        "Servicio: " +
+        (
+            r.servicio ||
+            r.tipoServicio ||
+            "-"
+        );
+
+
+    document.getElementById(
+        "modalToken"
+    ).textContent =
+        r.token
+        ? "TOKEN: " + r.token
+        : "TOKEN: no registrado";
+
+
+    document.getElementById(
+        "modalValor"
+    ).textContent =
+        dinero(valor);
+
+
+    document.getElementById(
+        "modalPagado"
+    ).textContent =
+        dinero(pagado);
+
+
+    document.getElementById(
+        "modalPendiente"
+    ).textContent =
+        dinero(pendiente);
+
+
+    const input =
+        document.getElementById(
+            "valorPago"
+        );
+
+
+    input.value = "";
+
+    input.max =
+        pendiente > 0
+        ? pendiente.toFixed(2)
+        : "";
+
+
+    document.getElementById(
+        "observacionPago"
+    ).value = "";
+
+
+    modalPago.show();
+
+}
+
+
+/* ============================================================
+   REGISTRAR PAGO
+============================================================ */
+
+function registrarPago(){
+
+    if(!estudianteSeleccionado){
+
+        mostrarAlerta(
+            "No se seleccionó ningún estudiante.",
+            "danger"
+        );
+
+        return;
+
     }
 
-    function pintarMarcadores(lista) {
-      markers.clearLayers();
-      lista.forEach((p,i)=>{
-        const icon = L.divIcon({ className: "numbered-icon", html: i+1, iconSize:[28,28], iconAnchor:[14,14] });
-        markers.addLayer(L.marker([p.lat,p.lng], { icon }).bindPopup("#" + (i+1) + " " + esc(p.estudiante) + "<br>Tel: " + esc(p.telefono)));
-      });
+
+    const valorPago =
+        numero(
+            document.getElementById(
+                "valorPago"
+            ).value
+        );
+
+
+    if(valorPago <= 0){
+
+        mostrarAlerta(
+            "Ingrese un valor de pago válido.",
+            "warning"
+        );
+
+        return;
+
     }
 
-    function pintarGps() {
-      const icon = L.divIcon({ className: "gps-icon", html: "G", iconSize:[28,28], iconAnchor:[14,14] });
-      if (!gpsMarker) gpsMarker = L.marker([ubicacionGps.lat, ubicacionGps.lng], { icon }).addTo(map);
-      else gpsMarker.setLatLng([ubicacionGps.lat, ubicacionGps.lng]);
-    }
 
-    function enviarUbicacion() {
-      if (!ubicacionGps) return;
-      enviarEvento("ubicacion", { runId, lat: ubicacionGps.lat, lng: ubicacionGps.lng, precision: ubicacionGps.accuracy, mensaje: "Ubicacion conductor" });
-    }
+    const observacion =
+        document.getElementById(
+            "observacionPago"
+        ).value.trim();
 
-    function enviarEvento(tipo, extra) {
-      const payload = { action: "event", tipo, modo: modoActual, fecha: new Date().toISOString(), ...extra };
-      fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams(payload) }).catch(()=>{});
-    }
 
-    function jsonp(url) {
-      return new Promise((resolve, reject) => {
-        const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*10000);
-        const s = document.createElement("script");
-        window[cb] = data => { cleanup(); resolve(data); };
-        s.onerror = () => { cleanup(); reject(new Error("JSONP fallo")); };
-        s.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb + "&t=" + Date.now();
-        document.body.appendChild(s);
-        function cleanup(){ delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
-      });
-    }
+    const r =
+        estudianteSeleccionado;
 
-    function coincideHorario(v,h){ return normalizar(v).includes(h); }
-    function coincideServicio(v,s){ const t = normalizar(v || "COMPLETO"); return !t || t.includes("COMPLETO") || (s === "INGRESO" && (t.includes("INGRESO") || t.includes("ENTRADA") || t.includes("MANANA"))) || (s === "SALIDA" && t.includes("SALIDA")); }
-    function normalizarRegistro(r){ return { token: clean(r.token), estudiante: clean(r.estudiante||r.nombresestudiante), representante: clean(r.representante), telefono: clean(r.telefono), sector: clean(r.sector), horario: clean(r.tipodeservicio||r.horario||r.tiposervicio), servicio: clean(r.servicio||"COMPLETO"), estado: clean(r.estado), valor: clean(r.valor), urlMaps: clean(r.enlacegooglemaps||r.urlmaps||r.url_maps) }; }
-    function extraerCoordenadas(t){ const v=clean(t).replace(/"/g," ").replace(/\n/g," "); let m=v.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i)||v.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i)||v.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/); return m ? {lat:+m[1], lng:+m[2]} : null; }
-    function distanciaKm(a,b,c,d){ const R=6371, dLat=rad(c-a), dLng=rad(d-b); const x=Math.sin(dLat/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); }
-    function centrarMapa(){ const pts=[CASA_CONDUCTOR,ESCUELA,...(orden.length?orden:paradas)].map(p=>[p.lat,p.lng]); map.fitBounds(pts,{padding:[45,45]}); }
-    function tab(id){ document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active")); event.target.classList.add("active"); document.querySelectorAll(".view").forEach(v=>v.classList.remove("active")); document.getElementById("view-"+id).classList.add("active"); }
-    function togglePanel(forceMin){ const p=document.getElementById("panel"); p.classList.toggle("min", typeof forceMin==="boolean" ? forceMin : !p.classList.contains("min")); setTimeout(()=>map.invalidateSize(),250); }
-    function aviso(t, tipo){ const el=document.getElementById("msg"); el.textContent=t; el.className="notice "+(tipo||"info"); }
-    function avisoSonoro(t){ aviso(t,"info"); try{ if(Notification.permission==="granted") new Notification(t); const c=new (AudioContext||webkitAudioContext)(), o=c.createOscillator(), g=c.createGain(); o.frequency.value=880; g.gain.value=.08; o.connect(g); g.connect(c.destination); o.start(); setTimeout(()=>{o.stop();c.close();},350); }catch(e){} }
-    function registrarSW(){ if("serviceWorker" in navigator) navigator.serviceWorker.register("sw-conductor.js").catch(()=>{}); if("Notification" in window && Notification.permission==="default") Notification.requestPermission(); }
-    function telefonoInternacional(t){ let n=clean(t).replace(/\D/g,""); if(n.startsWith("593")) return n; if(n.startsWith("0")) return "593"+n.slice(1); return "593"+n; }
-    function normalizarTelefono(t){ let n=clean(t).replace(/\D/g,""); if(n.startsWith("593")) n=n.slice(3); if(n.startsWith("0")) n=n.slice(1); return n; }
-    function normalizar(v){ return clean(v).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
-    function clean(v){ return String(v||"").trim(); }
-    function rad(n){ return n*Math.PI/180; }
-    function esc(v){ return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
-  </script>
+
+    const payload = {
+
+        action:
+            "registrarPago",
+
+        token:
+            r.token,
+
+        estudiante:
+            r.estudiante,
+
+        valor:
+            valorPago,
+
+        observacion:
+            observacion,
+
+        fecha:
+            new Date().toISOString()
+
+    };
+
+
+    const boton =
+        document.querySelector(
+            "#modalPago .btn-success"
+        );
+
+
+    const textoOriginal =
+        boton.innerHTML;
+
+
+    boton.disabled = true;
+
+    boton.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+
+
+    enviarPago(payload)
+        .then(resultado => {
+
+            console.log(
+                "Respuesta pago:",
+                resultado
+            );
+
+
+            modalPago.hide();
+
+
+            mostrarAlerta(
+                "Pago enviado correctamente.",
+                "success"
+            );
+
+
+            setTimeout(
+                cargarDatos,
+                700
+            );
+
+        })
+        .catch(error => {
+
+            console.error(error);
+
+            mostrarAlerta(
+                "No se pudo registrar el pago. Verifique la conexión con el Apps Script.",
+                "danger"
+            );
+
+        })
+        .finally(() => {
+
+            boton.disabled = false;
+
+            boton.innerHTML =
+                textoOriginal;
+
+        });
+
+}
+
+
+/* ============================================================
+   ENVÍO DEL PAGO
+============================================================ */
+
+function enviarPago(payload){
+
+    return new Promise(
+        (resolve,reject) => {
+
+            const callback =
+                "jsonpPago_" +
+                Date.now();
+
+
+            const script =
+                document.createElement(
+                    "script"
+                );
+
+
+            const timeout =
+                setTimeout(() => {
+
+                    try{
+                        delete window[callback];
+                    }catch(e){}
+
+                    script.remove();
+
+                    reject(
+                        new Error(
+                            "Tiempo de espera agotado"
+                        )
+                    );
+
+                },15000);
+
+
+            window[callback] =
+                function(data){
+
+                    clearTimeout(
+                        timeout
+                    );
+
+
+                    script.remove();
+
+
+                    try{
+                        delete window[callback];
+                    }catch(e){}
+
+
+                    resolve(data);
+
+                };
+
+
+            const params =
+                new URLSearchParams({
+
+                    action:
+                        "registrarPago",
+
+                    token:
+                        payload.token || "",
+
+                    estudiante:
+                        payload.estudiante || "",
+
+                    valor:
+                        payload.valor || "",
+
+                    observacion:
+                        payload.observacion || "",
+
+                    fecha:
+                        payload.fecha || "",
+
+                    callback:
+                        callback
+
+                });
+
+
+            script.src =
+                SCRIPT_URL +
+                "?" +
+                params.toString();
+
+
+            script.onerror =
+                function(){
+
+                    clearTimeout(
+                        timeout
+                    );
+
+                    script.remove();
+
+                    try{
+                        delete window[callback];
+                    }catch(e){}
+
+                    reject(
+                        new Error(
+                            "Error de conexión"
+                        )
+                    );
+
+                };
+
+
+            document.body.appendChild(
+                script
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   HISTORIAL
+============================================================ */
+
+function abrirHistorial(index){
+
+    const r =
+        registrosFiltrados[index];
+
+    if(!r)
+        return;
+
+
+    const contenedor =
+        document.getElementById(
+            "historialContenido"
+        );
+
+
+    contenedor.innerHTML = `
+
+        <div class="student-detail">
+
+            <div class="detail-name">
+                ${escapeHtml(r.estudiante)}
+            </div>
+
+            <div class="detail-line">
+                Representante:
+                ${escapeHtml(
+                    r.representante || "-"
+                )}
+            </div>
+
+            <div class="detail-line">
+                TOKEN:
+                ${escapeHtml(
+                    r.token || "No registrado"
+                )}
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Valor</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Valor registrado</td>
+                        <td>
+                            <strong>
+                                ${dinero(r.valor)}
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Total PAGOS</td>
+                        <td>
+                            <strong class="text-success">
+                                ${dinero(r.pagos)}
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Pendiente</td>
+                        <td>
+                            <strong class="text-danger">
+                                ${dinero(
+                                    Math.max(
+                                        numero(r.valor) -
+                                        numero(r.pagos),
+                                        0
+                                    )
+                                )}
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Estado</td>
+                        <td>
+                            ${escapeHtml(
+                                calcularEstado(r)
+                            )}
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="alert alert-info">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            El campo <strong>PAGOS</strong> corresponde
+            al valor acumulado recibido según los datos
+            actualmente entregados por el sistema.
+
+        </div>
+
+    `;
+
+
+    modalHistorial.show();
+
+}
+
+
+/* ============================================================
+   LIMPIAR
+============================================================ */
+
+function limpiarFiltros(){
+
+    document.getElementById(
+        "busqueda"
+    ).value = "";
+
+    document.getElementById(
+        "filtroSector"
+    ).value = "";
+
+    document.getElementById(
+        "filtroEstado"
+    ).value = "";
+
+
+    aplicarFiltros();
+
+}
+
+
+/* ============================================================
+   CARGA
+============================================================ */
+
+function mostrarCarga(){
+
+    document.getElementById(
+        "contenidoTabla"
+    ).innerHTML = `
+
+        <div class="loading">
+
+            <div class="spinner"></div>
+
+            <div>
+                Cargando estudiantes...
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function mostrarError(mensaje){
+
+    document.getElementById(
+        "contenidoTabla"
+    ).innerHTML = `
+
+        <div class="empty">
+
+            <i class="fa-solid fa-triangle-exclamation text-danger"></i>
+
+            <h4>Error de conexión</h4>
+
+            <p>
+                ${escapeHtml(mensaje)}
+            </p>
+
+            <button
+                class="btn-main"
+                onclick="cargarDatos()">
+
+                <i class="fa-solid fa-rotate"></i>
+                Reintentar
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   ALERTA
+============================================================ */
+
+function mostrarAlerta(
+    mensaje,
+    tipo="info"
+){
+
+    const container =
+        document.getElementById(
+            "alertContainer"
+        );
+
+
+    const id =
+        "alerta_" +
+        Date.now();
+
+
+    container.insertAdjacentHTML(
+        "beforeend",
+        `
+
+        <div id="${id}"
+             class="alert alert-${tipo} shadow-lg">
+
+            ${escapeHtml(mensaje)}
+
+        </div>
+
+        `
+    );
+
+
+    setTimeout(() => {
+
+        const el =
+            document.getElementById(id);
+
+        if(el)
+            el.remove();
+
+    },4500);
+
+}
+
+
+/* ============================================================
+   VOLVER
+============================================================ */
+
+function volverRuta(){
+
+    /*
+       Si pagos.html está en la misma carpeta
+       que el dashboard del conductor.
+    */
+
+    window.location.href =
+        "conductor.html";
+
+}
+
+
+/* ============================================================
+   ESCAPE HTML
+============================================================ */
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+</script>
+
 </body>
 </html>
